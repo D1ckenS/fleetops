@@ -1,0 +1,44 @@
+# Auto-detect text vs binary; force LF for all text files on commit
+# This overrides git's `core.autocrlf` setting on a per-repo basis,
+# so Windows clones don't end up with CRLF in tracked files.
+* text=auto eol=lf
+
+# Windows-only scripts must keep CRLF or they break in cmd/PowerShell
+*.bat       text eol=crlf
+*.cmd       text eol=crlf
+*.ps1       text eol=crlf
+
+# Generated lockfiles: collapse in GitHub PR diffs
+pnpm-lock.yaml  linguist-generated=true -diff
+
+# Image / binary assets (be explicit so git never tries to normalize)
+*.png       binary
+*.jpg       binary
+*.jpeg      binary
+*.gif       binary
+*.ico       binary
+*.webp      binary
+*.pdf       binary
+*.zip       binary
+*.gz        binary
+*.tar       binary
+*.7z        binary
+*.exe       binary
+*.msi       binary
+*.dll       binary
+*.dmg       binary
+*.AppImage  binary
+*.node      binary
+*.wasm      binary
+*.woff      binary
+*.woff2     binary
+*.ttf       binary
+*.otf       binary
+*.eot       binary
+*.mp3       binary
+*.mp4       binary
+*.mov       binary
+*.webm      binary
+*.db        binary
+*.sqlite    binary
+*.sqlite3   binary
