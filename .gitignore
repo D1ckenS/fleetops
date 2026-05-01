@@ -1,0 +1,60 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+out/
+.turbo/
+*.tsbuildinfo
+
+# Test / coverage
+coverage/
+.nyc_output/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Env files
+.env
+.env.*
+!.env.example
+
+# IDE / editor
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+.idea/
+*.iml
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+$RECYCLE.BIN/
+
+# Claude Code per-user settings (not shared)
+.claude/settings.local.json
+
+# Flutter (uncomment when apps/mobile is added in P1-11)
+# **/.dart_tool/
+# **/.flutter-plugins
+# **/.flutter-plugins-dependencies
+# **/build/
+
+# Electron build artefacts (uncomment in P0-8 / P1)
+# release/
+# *.exe
+# *.msi
+# *.dmg
+# *.AppImage
