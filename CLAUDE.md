@@ -68,7 +68,9 @@ Pin to these versions. When you bump, update this section in the same commit.
 | Package mgr | pnpm | `10.x (≥10.33)` |
 | Monorepo | Turborepo | `2.x` |
 | Backend | NestJS | `10.x` |
-| Backend lang | TypeScript | `5.4+` |
+| Backend lang | TypeScript | `5.9+` (hold 5.x; 6.x stabilising) |
+| Lint | ESLint + typescript-eslint | `eslint 10.x` + `typescript-eslint 8.59+` (flat config) |
+| Format | Prettier | `3.x` |
 | Web framework | React | `18.x` |
 | Web bundler | Vite | `5.x` |
 | Web styling | Tailwind CSS | `3.x` |
@@ -86,7 +88,7 @@ Pin to these versions. When you bump, update this section in the same commit.
 | Object store | S3-compatible (MinIO for local dev) | latest |
 | Auth | OIDC via `openid-client` | `5.x` |
 | Logging | pino | `9.x` |
-| Testing | Vitest, Playwright (e2e), flutter_test | latest stable |
+| Testing | Vitest, Playwright (e2e), flutter_test | `vitest 4.x`, Playwright/flutter_test latest stable |
 | BI / dashboards | Apache Superset (later phase) | `4.x` |
 
 **Rule:** If a package is not listed, justify the addition in the commit message and add it here.
@@ -519,6 +521,26 @@ A task is done only if **all** are true:
 
 > Append a dated entry every time you finish a task. Most-recent entry first.
 
+### 2026-05-01 — P0-2 — Tooling baselines
+- Branch: `main`  PR: n/a (no remote yet)  Commit: see `git log` (this commit)
+- Files added: `tsconfig.base.json`, `tsconfig.json`, `eslint.config.mjs`, `.prettierrc.json`, `.prettierignore`, `vitest.config.ts`. Modified: `package.json` (added `"type": "module"`, dev deps, expanded scripts).
+- Tooling pinned (latest stable except TypeScript held at 5.x):
+  - `typescript@5.9.3` — TS 6.0.3 deferred (released 15 days ago, too new)
+  - `eslint@10.2.1` + `typescript-eslint@8.59.1` (flat config)
+  - `prettier@3.8.3` + `eslint-config-prettier@10.1.8`
+  - `vitest@4.1.5` + `@vitest/coverage-v8@4.1.5`
+  - `globals@17.5.0`
+  - `@types/node@24.12.2` (matches Node 24 LTS line; held off 25.x)
+- Notes:
+  - §11 P0-2 originally specified `.eslintrc.cjs`; **replaced with `eslint.config.mjs`** (ESLint 9+ flat config). The legacy format file is not created.
+  - `package.json` got `"type": "module"` so TS's `verbatimModuleSyntax` accepts `.ts` config files as ESM. Future packages may opt out per-package as needed.
+  - Vitest 4.x errors on "no test files found"; opted in via `passWithNoTests: true` so the empty workspace passes — remove this if/when test discovery is enforced project-wide.
+  - Root `tsconfig.json` includes only the dev-tool config files (`eslint.config.mjs`, `vitest.config.ts`); per-package `tsconfig.json`s extend `tsconfig.base.json` directly when packages land.
+  - `pnpm run ci:full` now runs lint + typecheck + test + format:check.
+  - §3 updated this commit: TS pin bumped to `5.9+`, new rows for ESLint+Prettier, Vitest row clarified to `4.x`.
+- Verify (P0-2 DoD): `pnpm run lint && pnpm run typecheck && pnpm run test && pnpm run format:check` all green ✓
+- Next: **P0-3** — CI (GitHub Actions: lint/typecheck/test on PR, Node 24 matrix, pnpm cache).
+
 ### 2026-05-01 — P0-1 — Initialize monorepo
 - Branch: `main`  PR: n/a (inaugural commit, no remote yet)  Commit: see `git log` (this commit)
 - Files added: `.editorconfig`, `.gitignore`, `.nvmrc` (`24.15.0`), `package.json` (private root, name `marad-clone`), `pnpm-workspace.yaml` (`packages/*`, `apps/*`), `turbo.json` (tasks: build/lint/typecheck/test), `pnpm-lock.yaml`. Branch initialized as `main`.
@@ -546,9 +568,9 @@ Format for entries:
 
 > Single, unambiguous next task for any fresh Claude Code session.
 
-**Task: P0-2 — Tooling baselines.**
+**Task: P0-3 — CI (GitHub Actions).**
 
-Open §11 → Phase 0 → P0-2 for the steps. Goal: ESLint, Prettier, Vitest, TypeScript root configs that pass on the empty workspace. Verify with `pnpm run lint && pnpm run typecheck && pnpm run test`. After completion, update §15 and set this section to `P0-3`.
+Open §11 → Phase 0 → P0-3 for the steps. Goal: `.github/workflows/ci.yml` runs lint/typecheck/test on PR using Node 24 matrix, Flutter 3.22+, and pnpm cache. Required checks configured on `main`. After completion, update §15 and set this section to `P0-4`.
 
 ---
 

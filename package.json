@@ -2,6 +2,7 @@
   "name": "marad-clone",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "description": "Maritime fleet management system. Working title — final product name TBD per CLAUDE.md §17.",
   "license": "UNLICENSED",
   "engines": {
@@ -11,12 +12,26 @@
   "packageManager": "pnpm@10.33.2",
   "scripts": {
     "build": "turbo run build",
-    "lint": "turbo run lint",
-    "typecheck": "turbo run typecheck",
-    "test": "turbo run test",
-    "ci:full": "pnpm run lint && pnpm run typecheck && pnpm run test"
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "ci:full": "pnpm run lint && pnpm run typecheck && pnpm run test && pnpm run format:check"
   },
   "devDependencies": {
-    "turbo": "^2.9.6"
+    "@types/node": "24.12.2",
+    "@vitest/coverage-v8": "4.1.5",
+    "eslint": "10.2.1",
+    "eslint-config-prettier": "10.1.8",
+    "globals": "17.5.0",
+    "prettier": "3.8.3",
+    "turbo": "^2.9.6",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.59.1",
+    "vitest": "4.1.5"
   }
 }

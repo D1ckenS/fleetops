@@ -1,0 +1,13 @@
+node_modules
+dist
+build
+out
+.turbo
+coverage
+.next
+.cache
+pnpm-lock.yaml
+
+# CLAUDE.md is hand-formatted; do not let prettier reflow it
+CLAUDE.md
+**/CLAUDE.md
