@@ -4,8 +4,10 @@
     "module": "CommonJS",
     "moduleResolution": "Node10",
     "outDir": "./dist",
+    "rootDir": "./src",
     "noEmit": false,
     "verbatimModuleSyntax": false,
+    "isolatedModules": false,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true
