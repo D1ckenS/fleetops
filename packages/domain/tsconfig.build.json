@@ -3,12 +3,13 @@
   "compilerOptions": {
     "module": "CommonJS",
     "moduleResolution": "Node10",
-    "target": "ES2022",
     "outDir": "./dist",
-    "noEmit": true,
+    "noEmit": false,
     "verbatimModuleSyntax": false,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true
   },
-  "include": ["src/**/*", "test/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["src/**/*.test.ts"]
 }
