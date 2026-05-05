@@ -1,5 +1,4 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import Database from 'better-sqlite3';
 import { drizzle, BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
@@ -11,11 +10,9 @@ export class DrizzleService implements OnModuleInit, OnModuleDestroy {
   private sqlite!: Database.Database;
   db!: BetterSQLite3Database<typeof schema>;
 
-  constructor(private readonly config: ConfigService) {}
-
   onModuleInit() {
-    const url = this.config.get<string>('DATABASE_URL', 'vessel.db');
-    const migrationsFolder = resolve(this.config.get<string>('MIGRATIONS_DIR', 'drizzle'));
+    const url = process.env['DATABASE_URL'] ?? 'vessel.db';
+    const migrationsFolder = resolve(process.env['MIGRATIONS_DIR'] ?? 'drizzle');
 
     this.sqlite = new Database(url);
     // WAL mode not supported by in-memory databases
