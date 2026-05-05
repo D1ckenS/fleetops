@@ -80,7 +80,7 @@ Pin to these versions. When you bump, update this section in the same commit.
 | Desktop builder | electron-builder | `24.x` |
 | Mobile | Flutter | `3.22+` (Dart `3.11+`; standalone Dart 3.11.5 installed at P0-4 for protoc-gen-dart, until Flutter SDK lands at P1-11) |
 | ORM (shore) | Prisma + `@prisma/client` + `@prisma/adapter-pg` | `7.x (7.8.0)` — config via `prisma.config.ts`; `datasource.url` moved out of schema |
-| ORM (vessel) | Drizzle ORM | latest stable (SQLite provider via `better-sqlite3`) |
+| ORM (vessel) | Drizzle ORM + drizzle-kit + better-sqlite3 | `drizzle-orm 0.45.2` / `drizzle-kit 0.31.10` / `better-sqlite3 12.9.0` |
 | Sync RPC | gRPC | `@grpc/grpc-js 1.10+` |
 | Sync proto | Protobuf (`protoc 34+`, `ts-proto 2.11+` for TS, `protoc_plugin 25+` for Dart) | `proto3` |
 | Postgres | PostgreSQL | `16.x` |
@@ -528,6 +528,30 @@ A task is done only if **all** are true:
 
 > Append a dated entry, most-recent first. Format: `### YYYY-MM-DD — <task> — <summary>` then bullets for PR/commit, files added/modified, departures from §11, verify, next.
 
+### 2026-05-05 — P0-8 — api-vessel skeleton — PR #7 (feat/p0-8-api-vessel)
+
+| File/Dir | Notes |
+|---|---|
+| `apps/api-vessel/src/db/schema.ts` | `tenants`, `vessels`, `users` tables; `ROLES` const + `Role` type (mirrors Prisma enum) |
+| `apps/api-vessel/src/db/drizzle.service.ts` | `DrizzleService` — opens SQLite (WAL skipped for `:memory:`), runs `migrate()` on init, WAL checkpoint on destroy |
+| `apps/api-vessel/src/db/drizzle.module.ts` | `@Global()` module exporting `DrizzleService` |
+| `apps/api-vessel/drizzle/0000_brief_spectrum.sql` | Generated migration: 3 tables, unique index on `(tenant_id, email)`, FK constraints |
+| `apps/api-vessel/src/tenant/` | `TenantService` + `TenantController` — identical routes to api-shore |
+| `apps/api-vessel/src/vessel/` | `VesselService` + `VesselController` — identical routes |
+| `apps/api-vessel/src/user/` | `UserService` + `UserController` — identical routes; `Role` imported from local schema |
+| `apps/api-vessel/src/auth/` | `AuthService` + `AuthController` — identical JWT login |
+| `apps/api-vessel/test/app.e2e.ts` | 8 e2e tests (1 more than api-shore: vessel list + duplicate-email 409) |
+| `apps/api-vessel/.env` / `.env.test` | Dev: `DATABASE_URL=./vessel.db`; Test: `DATABASE_URL=:memory:` |
+| Root `package.json` | Added `better-sqlite3` to `pnpm.onlyBuiltDependencies` |
+
+**Key decisions:** Drizzle `.returning()` on the synchronous better-sqlite3 driver requires `.all()` as a terminator (unlike Prisma which auto-executes). `Role` defined as a const-array + type in `schema.ts` instead of importing from `@prisma/client`. `MIGRATIONS_DIR` env var (defaults to `./drizzle` relative to CWD) lets Electron set an absolute path at runtime. No RLS on SQLite (single-tenant vessel DB — no multi-tenant enforcement needed at DB level).
+
+**New deps:** `drizzle-orm@0.45.2`, `drizzle-kit@0.31.10`, `better-sqlite3@12.9.0`, `@types/better-sqlite3@7.6.13`.
+
+**Verify:** `pnpm --filter @marad-clone/api-vessel test:e2e` → 8 tests ✓; `pnpm -w run ci:full` → 102 tests ✓, lint ✓, typecheck ✓, format ✓.
+
+---
+
 ### 2026-05-05 — P0-7 — api-shore skeleton — PR #5 (feat/p0-7-api-shore)
 
 | File/Dir | Notes |
@@ -596,9 +620,9 @@ A task is done only if **all** are true:
 
 > Single, unambiguous next task for any fresh Claude Code session.
 
-**Task: P0-8 — api-vessel skeleton (NestJS + Drizzle + SQLite).**
+**Task: P0-9 — Sync wire-up between api-shore and api-vessel.**
 
-Spec: §11 → Phase 0 → P0-8. NestJS app at `apps/api-vessel/`. Drizzle ORM with `better-sqlite3`. Same domain endpoints as `api-shore` (`Tenant`, `Vessel`, `User`, `Role`). Designed to run inside Electron (single-tenant, offline). Integration test: create same fixtures, round-trip through SQLite. OpenAPI surface must match `api-shore`.
+Spec: §11 → Phase 0 → P0-9. Bidirectional gRPC stream replicating tenant/vessel/user changes. SMTP fallback stub. Verify with `pnpm run soak:sync` end-to-end: 24h simulated offline, then sync; zero divergence. Write ADR `apps/docs/adr/0002-sync-wire-protocol.md`.
 
 
 ---
