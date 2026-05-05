@@ -5,7 +5,6 @@
     "moduleResolution": "Node10",
     "target": "ES2022",
     "outDir": "./dist",
-    "rootDir": "./src",
     "noEmit": true,
     "verbatimModuleSyntax": false,
     "experimentalDecorators": true,
