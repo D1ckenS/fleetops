@@ -75,18 +75,12 @@
       "indexes": {
         "outbox_pending_idx": {
           "name": "outbox_pending_idx",
-          "columns": [
-            "sent_at",
-            "created_at"
-          ],
+          "columns": ["sent_at", "created_at"],
           "isUnique": false
         },
         "outbox_entity_idx": {
           "name": "outbox_entity_idx",
-          "columns": [
-            "entity_type",
-            "entity_id"
-          ],
+          "columns": ["entity_type", "entity_id"],
           "isUnique": false
         }
       },
@@ -137,10 +131,7 @@
       "indexes": {
         "sync_records_pk": {
           "name": "sync_records_pk",
-          "columns": [
-            "entity_type",
-            "entity_id"
-          ],
+          "columns": ["entity_type", "entity_id"],
           "isUnique": true
         }
       },
@@ -283,10 +274,7 @@
       "indexes": {
         "users_tenant_email_uniq": {
           "name": "users_tenant_email_uniq",
-          "columns": [
-            "tenant_id",
-            "email"
-          ],
+          "columns": ["tenant_id", "email"],
           "isUnique": true
         }
       },
@@ -295,12 +283,8 @@
           "name": "users_tenant_id_tenants_id_fk",
           "tableFrom": "users",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -308,12 +292,8 @@
           "name": "users_vessel_id_vessels_id_fk",
           "tableFrom": "users",
           "tableTo": "vessels",
-          "columnsFrom": [
-            "vessel_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["vessel_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -390,12 +370,8 @@
           "name": "vessels_tenant_id_tenants_id_fk",
           "tableFrom": "vessels",
           "tableTo": "tenants",
-          "columnsFrom": [
-            "tenant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tenant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }

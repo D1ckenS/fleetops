@@ -135,16 +135,16 @@ A separate end-to-end test that boots both NestJS apps and uses real Postgres + 
 
 ## Alternatives Rejected
 
-| Option                                    | Reason rejected                                                                           |
-| ----------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Option                                    | Reason rejected                                                                             |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------- |
 | Server-streaming-only (long-poll uploads) | Halves the streams to manage but doubles the connection count and complicates back-pressure |
-| WebSockets                                 | No first-class proto support; we'd hand-roll framing                                       |
-| HTTP/3 / QUIC                              | `@grpc/grpc-js` is HTTP/2-only; switching SDKs is out of scope                             |
-| Per-record ack                             | Doubles message count without improving recovery — cursor replay already handles loss     |
-| Sequence numbers instead of HLCs on wire   | Adds a second ordering scheme alongside HLC; HLC alone is sufficient                       |
-| One stream per entity-type                 | Multiplies the connection count without isolation benefit                                   |
-| Fixed reconnect interval                   | Causes thundering-herd on shore recovery                                                   |
-| Real NestJS+DB end-to-end soak              | Order-of-magnitude slower; logical coverage already provided by in-memory loopback soak    |
+| WebSockets                                | No first-class proto support; we'd hand-roll framing                                        |
+| HTTP/3 / QUIC                             | `@grpc/grpc-js` is HTTP/2-only; switching SDKs is out of scope                              |
+| Per-record ack                            | Doubles message count without improving recovery — cursor replay already handles loss       |
+| Sequence numbers instead of HLCs on wire  | Adds a second ordering scheme alongside HLC; HLC alone is sufficient                        |
+| One stream per entity-type                | Multiplies the connection count without isolation benefit                                   |
+| Fixed reconnect interval                  | Causes thundering-herd on shore recovery                                                    |
+| Real NestJS+DB end-to-end soak            | Order-of-magnitude slower; logical coverage already provided by in-memory loopback soak     |
 
 ---
 

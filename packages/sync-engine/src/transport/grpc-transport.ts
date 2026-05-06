@@ -83,8 +83,7 @@ function deltaToWire(d: SyncDelta): WireDelta {
   return {
     entityType: d.entityType,
     entityId: d.entityId,
-    operation:
-      d.operation === 'upsert' ? 'SYNC_OPERATION_UPSERT' : 'SYNC_OPERATION_DELETE',
+    operation: d.operation === 'upsert' ? 'SYNC_OPERATION_UPSERT' : 'SYNC_OPERATION_DELETE',
     hlc: d.hlc,
     nodeId: d.nodeId,
     payload: Buffer.from(JSON.stringify(d.payload ?? null)),
@@ -144,13 +143,11 @@ export async function startSyncServer(
 
   server.addService(serviceImpl, {
     Stream: (call: grpc.ServerDuplexStream<ClientMessage, ServerMessage>) => {
-      let session:
-        | {
-            send: (delta: SyncDelta) => Promise<void>;
-            onReceive: (delta: SyncDelta) => Promise<void>;
-            onClose: () => Promise<void>;
-          }
-        | null = null;
+      let session: {
+        send: (delta: SyncDelta) => Promise<void>;
+        onReceive: (delta: SyncDelta) => Promise<void>;
+        onClose: () => Promise<void>;
+      } | null = null;
 
       call.on('data', (msg: ClientMessage) => {
         void (async () => {

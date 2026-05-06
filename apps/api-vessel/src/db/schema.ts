@@ -68,7 +68,9 @@ export const outbox = sqliteTable(
     hlc: text('hlc').notNull(),
     nodeId: text('node_id').notNull(),
     sentAt: integer('sent_at'), // unix ms; null = pending
-    createdAt: integer('created_at').notNull().default(sql`(unixepoch('subsec') * 1000)`),
+    createdAt: integer('created_at')
+      .notNull()
+      .default(sql`(unixepoch('subsec') * 1000)`),
   },
   (t) => [
     index('outbox_pending_idx').on(t.sentAt, t.createdAt),
