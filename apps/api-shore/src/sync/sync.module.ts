@@ -10,10 +10,7 @@ import { PrismaSyncAdapter } from './prisma-sync-adapter';
  * factory and let the future SyncGatewayService instantiate adapters
  * per-stream.
  */
-export type PrismaSyncAdapterFactory = (
-  tenantId: string,
-  vesselId: string,
-) => PrismaSyncAdapter;
+export type PrismaSyncAdapterFactory = (tenantId: string, vesselId: string) => PrismaSyncAdapter;
 
 export const PRISMA_SYNC_ADAPTER_FACTORY = Symbol('PrismaSyncAdapterFactory');
 
