@@ -24,6 +24,7 @@
     "format:check": "prettier --check .",
     "proto:gen": "node scripts/proto-gen.mjs",
     "gen:jwt-keys": "node scripts/gen-jwt-keys.mjs",
+    "seed": "tsx scripts/seed.ts",
     "soak:sync": "tsx scripts/sync-soak-test.ts",
     "typecheck:all": "pnpm run typecheck && pnpm -r --workspace-concurrency=1 run typecheck",
     "ci:full": "pnpm run lint && pnpm run typecheck:all && pnpm run test && pnpm run format:check"
