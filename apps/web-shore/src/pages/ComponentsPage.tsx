@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Badge, Spinner } from '@marad-clone/ui-kit';
+﻿import { useEffect, useState } from 'react';
+import { Badge, Spinner } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
 
 interface Component {

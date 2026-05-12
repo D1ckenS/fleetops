@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+﻿import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '../user/user.service';
@@ -87,7 +87,7 @@ export class AuthService {
         secret: localSecret,
         algorithm: 'HS256',
         expiresIn: VESSEL_LOCAL_TTL_S,
-        issuer: 'marad-vessel',
+        issuer: 'fleetops-vessel',
       },
     );
     return { access_token };

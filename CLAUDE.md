@@ -1,4 +1,4 @@
-# CLAUDE.md — MARAD-Equivalent Maritime Fleet Management System
+﻿# CLAUDE.md — MARAD-Equivalent Maritime Fleet Management System
 
 > **Entry point for every Claude Code session.** Read this file first, then the two companion files below, then act.
 
@@ -38,7 +38,7 @@ If uncertain, **stop and ask** rather than guess.
 
 Decisions only Ziad can make. Ask before acting.
 
-- [ ] **Production product name.** Working title is `marad-clone`. Trademark check required before Phase 4.
+- [x] **Production product name.** Decided: **FleetOps**. Trademark check still required before public release (Phase 4).
 - [ ] **First pilot vessel.** Which ship, when, offline-window expectations.
 - [ ] **Class society for initial type-approval.** DNV (most common for Marad), or another?
 - [ ] **Hosting target for shore.** AWS / Azure / on-prem / customer-private-cloud?

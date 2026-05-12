@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { HlcClock } from '@marad-clone/domain';
+﻿import { Injectable } from '@nestjs/common';
+import { HlcClock } from '@fleetops/domain';
 
 /**
  * Per-(tenantId, vesselId) HLC clock registry. On the vessel side typically

@@ -1,5 +1,5 @@
-{
-  "name": "@marad-clone/sync-engine",
+﻿{
+  "name": "@fleetops/sync-engine",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -26,6 +26,6 @@
   "dependencies": {
     "@grpc/grpc-js": "^1.14.3",
     "@grpc/proto-loader": "^0.8.0",
-    "@marad-clone/domain": "workspace:*"
+    "@fleetops/domain": "workspace:*"
   }
 }

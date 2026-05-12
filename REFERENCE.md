@@ -1,4 +1,4 @@
-# CLAUDE-REFERENCE.md — Stable reference for MARAD project
+﻿# CLAUDE-REFERENCE.md — Stable reference for MARAD project
 
 > **This file is read at the start of every session, after CLAUDE.md.** It contains all sections that rarely change. Update §3 when bumping a version; update §4 when adding a package or app; update §9 when a module spec is refined.
 
@@ -8,7 +8,7 @@
 
 | Field                  | Value                                                                                                                                                                                                                  |
 | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Project name**       | `marad-clone` (working title; replace before launch — see §17 of CLAUDE.md)                                                                                                                                            |
+| **Project name**       | **FleetOps** (decided 2026-05-12; trademark check required before public release)                                                                                                                                      |
 | **What**               | Hybrid maritime fleet management system: planned maintenance, spare parts inventory, procurement, certificates, crewing, fuel/tank logistics, safety, QHSE. Functional parity with Marad by MaraSoft B.V. (marad.com). |
 | **Surfaces**           | Onboard desktop (Electron), shoreside web (React), companion mobile (Flutter).                                                                                                                                         |
 | **Offline-first**      | Vessel installs run with **full feature parity** offline. Sync to shore when connectivity is available.                                                                                                                |
@@ -85,7 +85,7 @@ Pin to these versions. When you bump, update this section in the same commit.
 ## 4. Repository Layout
 
 ```
-marad-clone/
+FleetOps/
   CLAUDE.md                  ← Entry point. Read first every session.
   REFERENCE.md               ← THIS FILE. Stable reference.
   PROGRESS.md                ← Progress log + next action (volatile).

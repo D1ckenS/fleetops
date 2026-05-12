@@ -1,5 +1,5 @@
-import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { AppShell } from '@marad-clone/ui-kit';
+﻿import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { AppShell } from '@fleetops/ui-kit';
 import { useAuth } from './context/AuthContext.js';
 import { LoginPage } from './pages/LoginPage.js';
 import { ComponentsPage } from './pages/ComponentsPage.js';

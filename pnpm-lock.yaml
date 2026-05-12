@@ -8,10 +8,10 @@ importers:
 
   .:
     dependencies:
-      '@marad-clone/domain':
+      '@fleetops/domain':
         specifier: workspace:*
         version: link:packages/domain
-      '@marad-clone/sync-engine':
+      '@fleetops/sync-engine':
         specifier: workspace:*
         version: link:packages/sync-engine
     devDependencies:
@@ -60,10 +60,10 @@ importers:
       '@aws-sdk/client-s3':
         specifier: ^3.1044.0
         version: 3.1044.0
-      '@marad-clone/domain':
+      '@fleetops/domain':
         specifier: workspace:*
         version: link:../../packages/domain
-      '@marad-clone/shared-types':
+      '@fleetops/shared-types':
         specifier: workspace:*
         version: link:../../packages/shared-types
       '@nestjs/common':
@@ -166,10 +166,10 @@ importers:
       '@aws-sdk/client-s3':
         specifier: ^3.1044.0
         version: 3.1044.0
-      '@marad-clone/domain':
+      '@fleetops/domain':
         specifier: workspace:*
         version: link:../../packages/domain
-      '@marad-clone/shared-types':
+      '@fleetops/shared-types':
         specifier: workspace:*
         version: link:../../packages/shared-types
       '@nestjs/common':
@@ -266,7 +266,7 @@ importers:
 
   apps/web-shore:
     dependencies:
-      '@marad-clone/ui-kit':
+      '@fleetops/ui-kit':
         specifier: workspace:*
         version: link:../../packages/ui-kit
       react:
@@ -317,15 +317,15 @@ importers:
 
   packages/sync-engine:
     dependencies:
+      '@fleetops/domain':
+        specifier: workspace:*
+        version: link:../domain
       '@grpc/grpc-js':
         specifier: ^1.14.3
         version: 1.14.3
       '@grpc/proto-loader':
         specifier: ^0.8.0
         version: 0.8.0
-      '@marad-clone/domain':
-        specifier: workspace:*
-        version: link:../domain
 
   packages/ui-kit:
     devDependencies:

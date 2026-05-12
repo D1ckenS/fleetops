@@ -1,11 +1,11 @@
-import {
+﻿import {
   BadRequestException,
   ConflictException,
   Injectable,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { newId } from '@marad-clone/domain';
+import { newId } from '@fleetops/domain';
 import { and, desc, eq, isNull } from 'drizzle-orm';
 import type { AuthContext } from '../auth/auth-context';
 import { requireVesselId } from '../auth/vessel-bound';
