@@ -6,9 +6,12 @@ import net from 'net';
 
 const port = parseInt(process.argv[2] ?? '5173', 10);
 
-const inUse = await new Promise(resolve => {
+const inUse = await new Promise((resolve) => {
   const s = net.createServer();
-  s.once('listening', () => { s.close(); resolve(false); });
+  s.once('listening', () => {
+    s.close();
+    resolve(false);
+  });
   s.once('error', () => resolve(true));
   s.listen(port);
 });
@@ -20,8 +23,10 @@ try {
     const out = execSync('netstat -ano', { encoding: 'utf8' });
     const procId = out
       .split('\n')
-      .find(l => l.includes(`:${port}`) && l.includes('LISTENING'))
-      ?.trim().split(/\s+/).at(-1);
+      .find((l) => l.includes(`:${port}`) && l.includes('LISTENING'))
+      ?.trim()
+      .split(/\s+/)
+      .at(-1);
     if (procId) {
       execSync(`taskkill /F /PID ${procId}`, { stdio: 'ignore' });
       console.log(`kill-port: freed :${port} (PID ${procId})`);
