@@ -8,6 +8,24 @@
 
 > Most-recent first. Format: `### YYYY-MM-DD — <task> — <summary>` then bullets.
 
+### 2026-05-13 — P1-10 — Cross-module: job sign-off → StockMovement → reorder Requisition
+
+| Item | Detail |
+|---|---|
+| `apps/api-shore/src/job-history/job-history.service.ts` | Added `PartConsumed` interface + `extractValidConsumed()` helper; P1-10 block inside the `withTenant` tx: (1) creates a CONSUMPTION `StockMovement` per consumed item, referencing the JobHistory; (2) deduplicates (partId, locationId) pairs; (3) checks post-movement ROB via `$queryRaw` SUM; (4) if ROB ≤ `StockLevel.reorderPoint`, auto-creates a draft `Requisition` + `RequisitionLine`; return shape unchanged (backward compat) |
+| `apps/api-vessel/src/job-history/job-history.service.ts` | Mirror of shore but Drizzle/sync: added `stockMovements, stockLevels, requisitions, requisitionLines, parts` imports; same helper + P1-10 block inside `db.transaction()`; uses `parseFloat()` for Decimal comparison |
+| `apps/api-shore/test/sign-off-cross-module.e2e.ts` | 5 e2e tests: no partsConsumed → no movement; old-format (missing locationId/quantity) → backward-compat skip; valid format → CONSUMPTION movement with negated qty; ROB 14 > reorder 10 → no requisition; ROB 8 ≤ reorder 10 → draft Requisition with line qty=2 (deficit) |
+| `apps/api-vessel/test/sign-off-cross-module.e2e.ts` | 4 e2e tests: same coverage on SQLite |
+| `packages/domain/src/running-hour-scheduler.test.ts` | Added 15 000 ms per-test timeout to all 5 property-based tests (numRuns=500 each) that were consistently hitting the 5 000 ms default under CI load |
+| CI | `pnpm run lint` ✓; `pnpm run typecheck` ✓; 139 ✓ unit; shore e2e → 100 ✓ (11 files); vessel e2e → 80 ✓ (10 files) |
+
+**Key design decisions:**
+
+- `extractValidConsumed` uses duck-typing: items missing `locationId` or `quantity` (the old free-form format) are silently skipped — ensures backward compat with the P1-2 sign-off test
+- Movements and reorder check happen inside the same `withTenant` / `db.transaction` as the JobHistory insert — fully atomic; if the requisition create fails, no orphan movements are committed
+- Return value of `signOff()` is unchanged (still the `JobHistory` record) — the suggested Requisition is created silently; UI discovers it via `GET /requisitions?status=DRAFT`
+- Deficit qty = `max(reorderPoint - rob, 1)` so the requisition line is never zero-quantity
+
 ### 2026-05-13 — P1-9 — Purchase UI (web-shore)
 
 | Item | Detail |
@@ -200,7 +218,7 @@
 
 > Single, unambiguous next task for any fresh Claude Code session. Update this immediately when a task completes.
 
-**P1-9 done.** Next: **P1-10 — Cross-module integration** — signing off a Job consumes parts → `StockMovement` → ROB updates → suggest Requisition if ROB ≤ reorder point. Touches `JobInstance` sign-off endpoint on both api-shore and api-vessel; requires reading `JobHistory.partsConsumed` (or a new join) and calling `StockMovementService.create` within the sign-off transaction.
+**P1-10 done.** Next: **P1-11 — Mobile app (Flutter)** — login screen, view assigned jobs, sign-off with photo, barcode scan, adjust stock. Covers `apps/mobile/` (Flutter 3.22, Dart 3.11). Needs: login → JWT stored in secure storage; job list filtered by logged-in vessel; sign-off multipart POST; barcode scan → `GET /barcode-bindings/lookup/:barcode`; stock adjustment via `POST /stock-movements`.
 
 **Outstanding follow-up tickets (deferred, not blocking P1-4):**
 
