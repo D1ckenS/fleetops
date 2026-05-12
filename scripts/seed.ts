@@ -52,7 +52,20 @@ async function main() {
   const vesselId = vessel.id;
   console.log(`✓ Vessel created       id=${vesselId}`);
 
-  // 4. Create a CHIEF_ENGINEER bound to the vessel (this is the UI login)
+  // 4a. Create a MASTER (Captain) — highest vessel authority, "superuser" for vessel modules
+  await post(
+    '/users',
+    {
+      email: 'master@demo.local',
+      password: 'Master1234!',
+      role: 'MASTER',
+      vesselId,
+    },
+    adminToken,
+  );
+  console.log('✓ Master (Captain) created');
+
+  // 4b. Create a CHIEF_ENGINEER as a second vessel-bound user for testing role differences
   await post(
     '/users',
     {
@@ -67,11 +80,24 @@ async function main() {
 
   console.log(`
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  Login credentials for http://localhost:5173
+  Local dev credentials  (http://localhost:5173)
 
   Organisation ID : ${tenantId}
-  Email           : chief@demo.local
-  Password        : Chief1234!
+
+  ★ Master / Captain  (full vessel access — use this as your superuser)
+    Email    : master@demo.local
+    Password : Master1234!
+
+  Chief Engineer  (vessel-bound, limited to maintenance/engineering)
+    Email    : chief@demo.local
+    Password : Chief1234!
+
+  Tenant Admin  (fleet manager — no vessel binding yet, 403 on vessel endpoints)
+    Email    : admin@demo.local
+    Password : Admin1234!
+
+  Note: fleet-wide TENANT_ADMIN access across vessels is a Fleetview
+  (P4-1) feature. Use Master for now.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 `);
 }
