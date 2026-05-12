@@ -5,11 +5,13 @@ import { LoginPage } from './pages/LoginPage.js';
 import { ComponentsPage } from './pages/ComponentsPage.js';
 import { InventoryPage } from './pages/InventoryPage.js';
 import { JobInstancesPage } from './pages/JobInstancesPage.js';
+import { PurchasePage } from './pages/PurchasePage.js';
 
 const NAV = [
   { label: 'Components', href: '/components', icon: '🔧' },
-  { label: 'Jobs', href: '/jobs', icon: '📋' },
+  { label: 'Jobs', href: '/jobs', icon: '🗂️' },
   { label: 'Inventory', href: '/inventory', icon: '📦' },
+  { label: 'Purchase', href: '/purchase', icon: '🛒' },
 ];
 
 function ProtectedLayout() {
@@ -31,6 +33,7 @@ function ProtectedLayout() {
         <Route path="components" element={<ComponentsPage />} />
         <Route path="jobs" element={<JobInstancesPage />} />
         <Route path="inventory" element={<InventoryPage />} />
+        <Route path="purchase" element={<PurchasePage />} />
         <Route path="*" element={<Navigate to="components" replace />} />
       </Routes>
     </AppShell>

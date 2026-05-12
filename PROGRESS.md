@@ -8,6 +8,24 @@
 
 > Most-recent first. Format: `### YYYY-MM-DD — <task> — <summary>` then bullets.
 
+### 2026-05-13 — P1-9 — Purchase UI (web-shore)
+
+| Item | Detail |
+|---|---|
+| `apps/web-shore/src/pages/PurchasePage.tsx` | Two-tab page (Requisitions / Purchase Orders); `RequisitionsTab` with ALL/DRAFT/SUBMITTED/APPROVED/REJECTED filter, inline Submit/Approve/Reject actions per row; `PurchaseOrdersTab` with ALL/DRAFT/SENT/IN_TRANSIT/PARTIALLY_RECEIVED/RECEIVED filter, inline Send action, click-row to detail |
+| `apps/web-shore/src/components/CreateRequisitionModal.tsx` | Form modal: title (required), notes, totalAmount, currency; `POST /requisitions`; resets on close |
+| `apps/web-shore/src/components/RejectRequisitionModal.tsx` | Reject modal with optional reason textarea; `POST /requisitions/:id/reject` |
+| `apps/web-shore/src/components/PODetailModal.tsx` | PO detail: header grid (status badge, supplier, total, PO#, expected delivery, notes); order lines table; receipt history; inline `GrnSection` for receivable POs with per-line qty inputs + `POST /purchase-orders/:id/receive` |
+| `apps/web-shore/src/App.tsx` | Added `🛒 Purchase` nav link at `/purchase`; changed Jobs icon to `🗂️` to free `📋`; added `<Route path="purchase">` |
+| CI | `pnpm run lint` ✓; `pnpm run typecheck` ✓; `pnpm --filter web-shore exec tsc --noEmit` ✓; 139 ✓ unit tests |
+
+**Key design decisions:**
+
+- Types defined in `PurchasePage.tsx` (exported for sibling tabs) and re-declared locally in `PODetailModal.tsx` to avoid circular imports
+- `useCallback` + `useEffect([load])` pattern for re-fetchable data with filter dependency
+- GRN entry is an inline section inside `PODetailModal` (no nested modal), only rendered when `canReceive(po.status) && po.lines.length > 0`
+- `stopPropagation` on action-column cells prevents row-click from opening the detail modal when clicking Send/Receive buttons
+
 ### 2026-05-13 — P1-8 — Purchase API (Requisition + approval + PO + GRN)
 
 | Item | Detail |
@@ -182,7 +200,7 @@
 
 > Single, unambiguous next task for any fresh Claude Code session. Update this immediately when a task completes.
 
-**P1-8 done.** Next: **P1-9 — Purchase UI** — `web-shore` pages for requisition list (with status filter), approval queue, PO detail with lines, and GRN entry modal. Reuse `ui-kit` components. Add `📋 Purchase` nav link.
+**P1-9 done.** Next: **P1-10 — Cross-module integration** — signing off a Job consumes parts → `StockMovement` → ROB updates → suggest Requisition if ROB ≤ reorder point. Touches `JobInstance` sign-off endpoint on both api-shore and api-vessel; requires reading `JobHistory.partsConsumed` (or a new join) and calling `StockMovementService.create` within the sign-off transaction.
 
 **Outstanding follow-up tickets (deferred, not blocking P1-4):**
 
