@@ -38,6 +38,14 @@ enum RunningHourSource {
   PLC
 }
 
+enum StockMovementType {
+  CONSUMPTION  // stock removed (job sign-off, manual)
+  RECEIPT      // stock added (GRN)
+  ADJUSTMENT   // cycle-count variance (signed quantity)
+  TRANSFER_IN  // received from another location
+  TRANSFER_OUT // sent to another location
+}
+
 // ── Tenant ───────────────────────────────────────────────────────────────────
 // Root aggregate. Not sync-aware (shore-only master record).
 
@@ -57,6 +65,12 @@ model Tenant {
   jobInstances        JobInstance[]
   jobHistories        JobHistory[]
   runningHourReadings RunningHourReading[]
+  partCategories      PartCategory[]
+  parts               Part[]
+  stockLocations      StockLocation[]
+  stockLevels         StockLevel[]
+  stockMovements      StockMovement[]
+  barcodeBindings     BarcodeBinding[]
 
   @@map("tenants")
 }
@@ -81,6 +95,9 @@ model Vessel {
   jobInstances        JobInstance[]
   jobHistories        JobHistory[]
   runningHourReadings RunningHourReading[]
+  stockLocations      StockLocation[]
+  stockLevels         StockLevel[]
+  stockMovements      StockMovement[]
 
   @@map("vessels")
 }
@@ -290,6 +307,151 @@ model RunningHourReading {
 
   @@index([tenantId, vesselId, componentId, recordedAt])
   @@map("running_hour_readings")
+}
+
+// ── Inventory (P1-5) ─────────────────────────────────────────────────────────
+
+// PartCategory — hierarchical part classification (fleet-wide, tenant-scoped).
+model PartCategory {
+  id          String    @id
+  tenantId    String    @map("tenant_id")
+  parentId    String?   @map("parent_id")
+  name        String
+  description String?
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  hlc         String?
+  deletedAt   DateTime? @map("deleted_at")
+
+  tenant   Tenant         @relation(fields: [tenantId], references: [id])
+  parent   PartCategory?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children PartCategory[] @relation("CategoryHierarchy")
+  parts    Part[]
+
+  @@index([tenantId])
+  @@map("part_categories")
+}
+
+// Part — spare-part catalog entry (fleet-wide, tenant-scoped; not vessel-scoped).
+model Part {
+  id          String    @id
+  tenantId    String    @map("tenant_id")
+  categoryId  String?   @map("category_id")
+  name        String
+  description String?
+  partNumber  String?   @map("part_number")
+  unit        String    @default("pcs")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  hlc         String?
+  deletedAt   DateTime? @map("deleted_at")
+
+  tenant          Tenant           @relation(fields: [tenantId], references: [id])
+  category        PartCategory?    @relation(fields: [categoryId], references: [id])
+  stockLevels     StockLevel[]
+  stockMovements  StockMovement[]
+  barcodeBindings BarcodeBinding[]
+
+  @@index([tenantId])
+  @@index([tenantId, partNumber])
+  @@map("parts")
+}
+
+// StockLocation — named storage location onboard (vessel-scoped).
+model StockLocation {
+  id          String    @id
+  tenantId    String    @map("tenant_id")
+  vesselId    String    @map("vessel_id")
+  name        String
+  description String?
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  hlc         String?
+  deletedAt   DateTime? @map("deleted_at")
+
+  tenant         Tenant          @relation(fields: [tenantId], references: [id])
+  vessel         Vessel          @relation(fields: [vesselId], references: [id])
+  stockLevels    StockLevel[]
+  stockMovements StockMovement[]
+
+  @@index([tenantId, vesselId])
+  @@map("stock_locations")
+}
+
+// StockLevel — min/max/reorder configuration per Part × StockLocation.
+// The ROB quantity is NOT stored here; compute it by SUM(StockMovement.quantity).
+model StockLevel {
+  id           String   @id
+  tenantId     String   @map("tenant_id")
+  vesselId     String   @map("vessel_id")
+  partId       String   @map("part_id")
+  locationId   String   @map("location_id")
+  minStock     Decimal  @default(0) @map("min_stock") @db.Decimal(14, 4)
+  maxStock     Decimal? @map("max_stock") @db.Decimal(14, 4)
+  reorderPoint Decimal? @map("reorder_point") @db.Decimal(14, 4)
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  hlc          String?
+  deletedAt    DateTime? @map("deleted_at")
+
+  tenant   Tenant        @relation(fields: [tenantId], references: [id])
+  vessel   Vessel        @relation(fields: [vesselId], references: [id])
+  part     Part          @relation(fields: [partId], references: [id])
+  location StockLocation @relation(fields: [locationId], references: [id])
+
+  @@unique([tenantId, vesselId, partId, locationId])
+  @@index([tenantId, vesselId])
+  @@map("stock_levels")
+}
+
+// StockMovement — append-only ledger; ROB = SUM(quantity) per (vessel, part, location).
+// Signed quantity: positive = stock added, negative = stock removed.
+model StockMovement {
+  id               String            @id
+  tenantId         String            @map("tenant_id")
+  vesselId         String            @map("vessel_id")
+  partId           String            @map("part_id")
+  locationId       String            @map("location_id")
+  movementType     StockMovementType @map("movement_type")
+  quantity         Decimal           @db.Decimal(14, 4)
+  referenceType    String?           @map("reference_type")
+  referenceId      String?           @map("reference_id")
+  notes            String?
+  recordedByUserId String?           @map("recorded_by_user_id")
+  recordedAt       DateTime          @map("recorded_at")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+  hlc              String?
+  deletedAt        DateTime? @map("deleted_at")
+
+  tenant   Tenant        @relation(fields: [tenantId], references: [id])
+  vessel   Vessel        @relation(fields: [vesselId], references: [id])
+  part     Part          @relation(fields: [partId], references: [id])
+  location StockLocation @relation(fields: [locationId], references: [id])
+
+  @@index([tenantId, vesselId, partId, locationId, recordedAt])
+  @@index([tenantId, vesselId, movementType, recordedAt])
+  @@map("stock_movements")
+}
+
+// BarcodeBinding — maps a barcode string to a Part (for mobile barcode scan).
+model BarcodeBinding {
+  id              String    @id
+  tenantId        String    @map("tenant_id")
+  partId          String    @map("part_id")
+  barcode         String
+  createdByUserId String?   @map("created_by_user_id")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  hlc             String?
+  deletedAt       DateTime? @map("deleted_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  part   Part   @relation(fields: [partId], references: [id])
+
+  @@unique([tenantId, barcode])
+  @@index([tenantId, partId])
+  @@map("barcode_bindings")
 }
 
 // ── Sync engine tables ───────────────────────────────────────────────────────

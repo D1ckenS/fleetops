@@ -256,6 +256,186 @@ export const runningHourReadings = sqliteTable(
   ],
 );
 
+// ── Inventory (P1-5) ─────────────────────────────────────────────────────────
+// Mirrors the Prisma inventory schema. PartCategory and Part are tenant-scoped
+// (no vessel_id) — fleet-wide catalogs replicated shore→vessel. StockLocation,
+// StockLevel, and StockMovement are vessel-scoped. BarcodeBinding is
+// tenant-scoped (fleet-wide barcode→part map).
+// Quantity in StockMovement is signed: + = stock in, − = stock out.
+// ROB = SUM(quantity) per (tenant, vessel, part, location).
+
+export const partCategories = sqliteTable(
+  'part_categories',
+  {
+    id: text('id').primaryKey(),
+    tenantId: text('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    parentId: text('parent_id'), // soft self-FK — SQLite cannot enforce circular FK
+    name: text('name').notNull(),
+    description: text('description'),
+    createdAt: text('created_at').notNull().default(nowIso),
+    updatedAt: text('updated_at').notNull().default(nowIso),
+    hlc: text('hlc'),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [index('part_categories_tenant_idx').on(t.tenantId)],
+);
+
+export const parts = sqliteTable(
+  'parts',
+  {
+    id: text('id').primaryKey(),
+    tenantId: text('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    categoryId: text('category_id').references(() => partCategories.id),
+    name: text('name').notNull(),
+    description: text('description'),
+    partNumber: text('part_number'),
+    unit: text('unit').notNull().default('pcs'),
+    createdAt: text('created_at').notNull().default(nowIso),
+    updatedAt: text('updated_at').notNull().default(nowIso),
+    hlc: text('hlc'),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [
+    index('parts_tenant_idx').on(t.tenantId),
+    index('parts_tenant_part_number_idx').on(t.tenantId, t.partNumber),
+  ],
+);
+
+export const stockLocations = sqliteTable(
+  'stock_locations',
+  {
+    id: text('id').primaryKey(),
+    tenantId: text('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    vesselId: text('vessel_id')
+      .notNull()
+      .references(() => vessels.id),
+    name: text('name').notNull(),
+    description: text('description'),
+    createdAt: text('created_at').notNull().default(nowIso),
+    updatedAt: text('updated_at').notNull().default(nowIso),
+    hlc: text('hlc'),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [index('stock_locations_tenant_vessel_idx').on(t.tenantId, t.vesselId)],
+);
+
+export const stockLevels = sqliteTable(
+  'stock_levels',
+  {
+    id: text('id').primaryKey(),
+    tenantId: text('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    vesselId: text('vessel_id')
+      .notNull()
+      .references(() => vessels.id),
+    partId: text('part_id')
+      .notNull()
+      .references(() => parts.id),
+    locationId: text('location_id')
+      .notNull()
+      .references(() => stockLocations.id),
+    minStock: numeric('min_stock').notNull().default('0'),
+    maxStock: numeric('max_stock'),
+    reorderPoint: numeric('reorder_point'),
+    createdAt: text('created_at').notNull().default(nowIso),
+    updatedAt: text('updated_at').notNull().default(nowIso),
+    hlc: text('hlc'),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [
+    unique('stock_levels_vessel_part_location_uniq').on(
+      t.tenantId,
+      t.vesselId,
+      t.partId,
+      t.locationId,
+    ),
+    index('stock_levels_tenant_vessel_idx').on(t.tenantId, t.vesselId),
+  ],
+);
+
+export const STOCK_MOVEMENT_TYPES = [
+  'CONSUMPTION',
+  'RECEIPT',
+  'ADJUSTMENT',
+  'TRANSFER_IN',
+  'TRANSFER_OUT',
+] as const;
+export type StockMovementType = (typeof STOCK_MOVEMENT_TYPES)[number];
+
+export const stockMovements = sqliteTable(
+  'stock_movements',
+  {
+    id: text('id').primaryKey(),
+    tenantId: text('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    vesselId: text('vessel_id')
+      .notNull()
+      .references(() => vessels.id),
+    partId: text('part_id')
+      .notNull()
+      .references(() => parts.id),
+    locationId: text('location_id')
+      .notNull()
+      .references(() => stockLocations.id),
+    movementType: text('movement_type', { enum: STOCK_MOVEMENT_TYPES }).notNull(),
+    quantity: numeric('quantity').notNull(), // signed: + = in, − = out
+    referenceType: text('reference_type'),
+    referenceId: text('reference_id'),
+    notes: text('notes'),
+    recordedByUserId: text('recorded_by_user_id'),
+    recordedAt: text('recorded_at').notNull(),
+    createdAt: text('created_at').notNull().default(nowIso),
+    updatedAt: text('updated_at').notNull().default(nowIso),
+    hlc: text('hlc'),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [
+    index('stock_movements_tenant_vessel_part_location_idx').on(
+      t.tenantId,
+      t.vesselId,
+      t.partId,
+      t.locationId,
+    ),
+    index('stock_movements_tenant_vessel_type_recorded_idx').on(
+      t.tenantId,
+      t.vesselId,
+      t.movementType,
+      t.recordedAt,
+    ),
+  ],
+);
+
+export const barcodeBindings = sqliteTable(
+  'barcode_bindings',
+  {
+    id: text('id').primaryKey(),
+    tenantId: text('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    partId: text('part_id')
+      .notNull()
+      .references(() => parts.id),
+    barcode: text('barcode').notNull(),
+    createdByUserId: text('created_by_user_id'),
+    createdAt: text('created_at').notNull().default(nowIso),
+    updatedAt: text('updated_at').notNull().default(nowIso),
+    hlc: text('hlc'),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [
+    unique('barcode_bindings_tenant_barcode_uniq').on(t.tenantId, t.barcode),
+    index('barcode_bindings_tenant_part_idx').on(t.tenantId, t.partId),
+  ],
+);
+
 // Sync engine outbox. Pending entries have sent_at = null.
 export const outbox = sqliteTable(
   'outbox',

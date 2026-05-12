@@ -8,6 +8,24 @@
 
 > Most-recent first. Format: `### YYYY-MM-DD — <task> — <summary>` then bullets.
 
+### 2026-05-12 — P1-5 — Inventory schema
+
+| Item | Detail |
+|---|---|
+| `apps/api-shore/prisma/schema.prisma` | `StockMovementType` enum + 6 new models: `PartCategory`, `Part`, `StockLocation`, `StockLevel`, `StockMovement`, `BarcodeBinding`; relations added to `Tenant` + `Vessel` |
+| `apps/api-shore/prisma/migrations/20260512173641_add_inventory_schema/` | Auto-generated Prisma migration (tables, indexes, FKs) + hand-appended RLS policies for all 6 tables (same shape as maintenance migration) |
+| `apps/api-vessel/src/db/schema.ts` | Same 6 tables in Drizzle/SQLite; `STOCK_MOVEMENT_TYPES` as TS const array; `PartCategory.parentId` is a soft FK (no SQLite circular FK) |
+| `apps/api-vessel/drizzle/0003_small_ultron.sql` | Drizzle-generated migration; applied via `drizzle-kit migrate` |
+| `apps/api-shore/test/inventory-schema.e2e.ts` | 7 e2e tests: category hierarchy, part CRUD, StockLevel unique constraint, ROB-by-SUM, barcode uniqueness, RLS policy verification |
+| `apps/api-vessel/test/inventory-schema.e2e.ts` | 6 e2e tests: same coverage on SQLite |
+| CI | `pnpm run ci:full` → 139 ✓ unit tests; shore e2e → 65 ✓; vessel e2e → 53 ✓; lint/typecheck/format clean |
+
+**Key design decisions:**
+- `quantity` in `StockMovement` is **signed** (+ = stock in, − = stock out). ROB = `SUM(quantity)` per (vessel, part, location). No snapshot column.
+- `PartCategory` and `Part` are **tenant-scoped only** (no `vessel_id`) — fleet-wide catalog replicated shore→vessel.
+- `BarcodeBinding` has a unique constraint on `(tenant_id, barcode)` — one barcode maps to one part per fleet.
+- `StockLevel` unique on `(tenant_id, vessel_id, part_id, location_id)` — one config row per part×location.
+
 ### 2026-05-12 — P1-4 — Running-hour scheduling logic
 
 | Item                                                 | Detail                                                                                                                                      |
@@ -105,7 +123,7 @@
 
 > Single, unambiguous next task for any fresh Claude Code session. Update this immediately when a task completes.
 
-**P1-4 done.** Next: **P1-5 — Inventory schema** — `Part`, `PartCategory`, `StockLocation`, `StockLevel`, `StockMovement`, `BarcodeBinding` on both shore (Prisma/Postgres) and vessel (Drizzle/SQLite), sync-enabled. ROB derived from replaying `StockMovement` only (no snapshot column). RLS policies on shore. Migrations idempotent.
+**P1-5 done.** Next: **P1-6 — Inventory API + UI** — REST endpoints for `PartCategory`, `Part`, `StockLocation`, `StockLevel`, `StockMovement`, `BarcodeBinding` on both `api-shore` and `api-vessel` (CRUD + stock-movement post). Web-shore UI: parts list with color-status chips (green/amber/red/purple based on ROB vs. reorder/min), stock-view per location, min/max config form.
 
 **Outstanding follow-up tickets (deferred, not blocking P1-4):**
 
