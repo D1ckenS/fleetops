@@ -87,9 +87,8 @@ Pin to these versions. When you bump, update this section in the same commit.
 ```
 marad-clone/
   CLAUDE.md                  ← Entry point. Read first every session.
-  docs/claude/
-    REFERENCE.md             ← THIS FILE. Stable reference.
-    PROGRESS.md              ← Progress log + next action (volatile).
+  REFERENCE.md               ← THIS FILE. Stable reference.
+  PROGRESS.md                ← Progress log + next action (volatile).
   README.md
   pnpm-workspace.yaml
   turbo.json

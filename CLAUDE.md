@@ -9,8 +9,8 @@
 Do these steps **in order**. Do not skip any.
 
 1. **Read this entire file.**
-2. **Read `docs/claude/REFERENCE.md`** — stable reference (tech stack, conventions, module specs, build phases).
-3. **Read `docs/claude/PROGRESS.md`** — progress log (§15) and next action (§16).
+2. **Read `REFERENCE.md`** — stable reference (tech stack, conventions, module specs, build phases).
+3. **Read `PROGRESS.md`** — progress log (§15) and next action (§16).
 4. **Run `git status` and `git log --oneline -20`.** Confirm repo state matches the last entry in PROGRESS.md §15. If it does not, treat the repo as truth and update PROGRESS.md §15 before doing anything else.
 5. **Restate the next action** (PROGRESS.md §16) in one sentence so the human can correct you if it is stale.
 
@@ -29,8 +29,8 @@ If uncertain, **stop and ask** rather than guess.
 | File | Purpose | Read order |
 |---|---|---|
 | `CLAUDE.md` | Entry point + resume protocol | 1st |
-| `docs/claude/REFERENCE.md` | Tech stack, conventions, module specs, build phases | 2nd |
-| `docs/claude/PROGRESS.md` | Progress log + next action | 3rd |
+| `REFERENCE.md` | Tech stack, conventions, module specs, build phases | 2nd |
+| `PROGRESS.md` | Progress log + next action | 3rd |
 
 ---
 
