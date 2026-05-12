@@ -10,15 +10,15 @@
 
 ### 2026-05-12 — P1-3a — ui-kit + web-shore (commit `3a9ef1e`)
 
-| Item | Detail |
-|---|---|
+| Item              | Detail                                                                                                    |
+| ----------------- | --------------------------------------------------------------------------------------------------------- |
 | `packages/ui-kit` | Button, Badge, BadgeColor, Modal, Spinner, Input, TextArea, AppShell — source-only React+Tailwind package |
-| `apps/web-shore` | Vite 5 + React 18 SPA: login → component tree → job list → sign-off modal with photo upload |
-| API client | Thin fetch wrapper with JWT injection + 401 redirect |
-| AuthContext | JWT decode → tenantId/vesselId/email in localStorage |
-| Root tsconfig | Excludes `packages/ui-kit` (JSX handled by package tsconfig + `typecheck:all -r`) |
-| New deps | `react-router-dom@6.x`, `@vitejs/plugin-react@4.x` (added to REFERENCE.md §3) |
-| CI | `pnpm run ci:full` → 120 ✓ tests, lint clean, format clean |
+| `apps/web-shore`  | Vite 5 + React 18 SPA: login → component tree → job list → sign-off modal with photo upload               |
+| API client        | Thin fetch wrapper with JWT injection + 401 redirect                                                      |
+| AuthContext       | JWT decode → tenantId/vesselId/email in localStorage                                                      |
+| Root tsconfig     | Excludes `packages/ui-kit` (JSX handled by package tsconfig + `typecheck:all -r`)                         |
+| New deps          | `react-router-dom@6.x`, `@vitejs/plugin-react@4.x` (added to REFERENCE.md §3)                             |
+| CI                | `pnpm run ci:full` → 120 ✓ tests, lint clean, format clean                                                |
 
 **Pending (P1-3b):** `apps/desktop-vessel` — Electron 30 shell embedding the web-shore build + spawning `api-vessel` as a child process.
 

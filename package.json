@@ -12,6 +12,8 @@
   "packageManager": "pnpm@10.33.2",
   "scripts": {
     "build": "turbo run build",
+    "dev:shore": "turbo run dev --filter=@marad-clone/api-shore --filter=@marad-clone/web-shore",
+    "dev:vessel": "turbo run dev --filter=@marad-clone/api-vessel --filter=@marad-clone/web-shore",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
