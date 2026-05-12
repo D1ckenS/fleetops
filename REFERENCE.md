@@ -48,11 +48,13 @@ Pin to these versions. When you bump, update this section in the same commit.
 | Package mgr      | pnpm                                                           | `10.x (≥10.33)`                                                        |
 | Monorepo         | Turborepo                                                      | `2.x`                                                                  |
 | Backend          | NestJS                                                         | `11.x (11.1.19)`                                                       |
+| Backend config   | @nestjs/config                                                 | `4.x (4.0.4)`                                                          |
 | Backend lang     | TypeScript                                                     | `5.9+`                                                                 |
 | Lint             | ESLint + typescript-eslint                                     | `eslint 10.x` + `typescript-eslint 8.59+` (flat config)                |
 | Format           | Prettier                                                       | `3.x`                                                                  |
 | ID generation    | ulidx                                                          | `2.4.1+`                                                               |
 | Web framework    | React                                                          | `18.x`                                                                 |
+| Web routing      | react-router-dom                                               | `6.x`                                                                  |
 | Web bundler      | Vite                                                           | `5.x`                                                                  |
 | Web styling      | Tailwind CSS                                                   | `3.x`                                                                  |
 | Web table        | TanStack Table                                                 | `8.x`                                                                  |
@@ -67,6 +69,7 @@ Pin to these versions. When you bump, update this section in the same commit.
 | SQLite           | SQLite                                                         | `3.45+`                                                                |
 | Search (shore)   | Meilisearch                                                    | `1.8+`                                                                 |
 | Object store     | S3-compatible (MinIO for local dev)                            | latest                                                                 |
+| S3 SDK           | @aws-sdk/client-s3                                             | `3.x (^3.1044.0)`                                                      |
 | Auth             | OIDC via `openid-client`                                       | `5.x`                                                                  |
 | Logging          | pino + pino-http + nestjs-pino                                 | `10.3.1` / `11.0.0` / `4.6.1`                                          |
 | Postgres client  | pg + `@prisma/adapter-pg`                                      | `8.20.0` / `7.8.0`                                                     |

@@ -1,4 +1,4 @@
-﻿import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';

@@ -1,4 +1,4 @@
-﻿import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
 import * as bcrypt from 'bcrypt';
 import { newId } from '@fleetops/domain';

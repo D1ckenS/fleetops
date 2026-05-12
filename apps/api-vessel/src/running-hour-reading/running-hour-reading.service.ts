@@ -1,4 +1,4 @@
-﻿import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { newId } from '@fleetops/domain';
 import { and, desc, eq, isNull } from 'drizzle-orm';
 import type { AuthContext } from '../auth/auth-context';

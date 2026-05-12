@@ -1,4 +1,4 @@
-﻿import { newId } from '@fleetops/domain';
+import { newId } from '@fleetops/domain';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';

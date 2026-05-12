@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Sync engine soak test — P0-6 baseline + P0-9 wire-protocol verification.
  *
  * Phase 1 (P0-6): in-process bidirectional convergence using direct

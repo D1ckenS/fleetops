@@ -1,4 +1,4 @@
-﻿import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { newId } from '@fleetops/domain';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';

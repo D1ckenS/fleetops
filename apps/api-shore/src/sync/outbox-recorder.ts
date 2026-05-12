@@ -1,4 +1,4 @@
-﻿import { Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { encodeHlc, newId } from '@fleetops/domain';
 import { mergeFields, type LwwRecord } from '@fleetops/sync-engine';
 import { Prisma } from '@prisma/client';

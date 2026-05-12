@@ -1,4 +1,4 @@
-﻿import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { newId } from '@fleetops/domain';
 import { Prisma } from '@prisma/client';
 import type { AuthContext } from '../auth/auth-context';

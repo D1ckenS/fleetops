@@ -1,4 +1,4 @@
-﻿import { HlcClock, encodeHlc } from '@fleetops/domain';
+import { HlcClock, encodeHlc } from '@fleetops/domain';
 import { SyncEngine, createOutboxEntry, type SyncDelta } from '@fleetops/sync-engine';
 import Database from 'better-sqlite3';
 import { drizzle, type BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';

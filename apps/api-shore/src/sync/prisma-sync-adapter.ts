@@ -1,4 +1,4 @@
-﻿import {
+import {
   compareEncodedHlc,
   mergeFields,
   type ApplyResult,

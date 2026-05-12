@@ -1,4 +1,4 @@
-﻿import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { newId } from '@fleetops/domain';
 import { PrismaService } from '../prisma/prisma.service';
 import type { CreateVesselDto } from './dto/create-vessel.dto';

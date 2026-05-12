@@ -1,4 +1,4 @@
-﻿import { INestApplication } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { ulid } from 'ulidx';
