@@ -8,19 +8,35 @@
 
 > Most-recent first. Format: `### YYYY-MM-DD — <task> — <summary>` then bullets.
 
-### 2026-05-12 — P1-5 — Inventory schema
+### 2026-05-12 — P1-6 — Inventory API + UI
 
 | Item | Detail |
 |---|---|
-| `apps/api-shore/prisma/schema.prisma` | `StockMovementType` enum + 6 new models: `PartCategory`, `Part`, `StockLocation`, `StockLevel`, `StockMovement`, `BarcodeBinding`; relations added to `Tenant` + `Vessel` |
-| `apps/api-shore/prisma/migrations/20260512173641_add_inventory_schema/` | Auto-generated Prisma migration (tables, indexes, FKs) + hand-appended RLS policies for all 6 tables (same shape as maintenance migration) |
-| `apps/api-vessel/src/db/schema.ts` | Same 6 tables in Drizzle/SQLite; `STOCK_MOVEMENT_TYPES` as TS const array; `PartCategory.parentId` is a soft FK (no SQLite circular FK) |
-| `apps/api-vessel/drizzle/0003_small_ultron.sql` | Drizzle-generated migration; applied via `drizzle-kit migrate` |
-| `apps/api-shore/test/inventory-schema.e2e.ts` | 7 e2e tests: category hierarchy, part CRUD, StockLevel unique constraint, ROB-by-SUM, barcode uniqueness, RLS policy verification |
-| `apps/api-vessel/test/inventory-schema.e2e.ts` | 6 e2e tests: same coverage on SQLite |
-| CI | `pnpm run ci:full` → 139 ✓ unit tests; shore e2e → 65 ✓; vessel e2e → 53 ✓; lint/typecheck/format clean |
+| `apps/api-shore/src/{part-category,part,stock-location,stock-level,stock-movement,barcode-binding}/` | 6 NestJS modules (controller + service + DTOs + module) for all inventory entities; tenant-scoped entities skip OutboxRecorder (same pattern as MasterComponent) |
+| `apps/api-vessel/src/` | Mirror of all 6 modules using Drizzle/SQLite patterns |
+| `GET /parts/inventory-summary` | Single-call endpoint returning all parts enriched with per-location ROB (computed via `SUM(quantity)`) and color status (`green/amber/red/purple`); available on both apps |
+| `GET /stock-movements/rob` | Raw ROB aggregation endpoint per `(partId, locationId)` |
+| `GET /barcode-bindings/lookup/:barcode` | Resolves barcode → part (for mobile scan) |
+| `apps/web-shore/src/pages/InventoryPage.tsx` | Parts list with color-status chips, filter buttons (All / Low+Reorder / Out), per-location ROB |
+| `apps/web-shore/src/App.tsx` | Added `📦 Inventory` nav link at `/inventory` |
+| `apps/api-shore/test/inventory-api.e2e.ts` | 14 e2e tests: full CRUD chain + ROB verification + color status + barcode lookup |
+| `apps/api-vessel/test/inventory-api.e2e.ts` | 11 e2e tests: same coverage on vessel |
+| CI | `pnpm run ci:full` → 139 ✓ unit tests; shore e2e → 79 ✓ (8 files); vessel e2e → 65 ✓ (7 files); lint/typecheck/format clean |
+
+### 2026-05-12 — P1-5 — Inventory schema
+
+| Item                                                                    | Detail                                                                                                                                                                    |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/api-shore/prisma/schema.prisma`                                   | `StockMovementType` enum + 6 new models: `PartCategory`, `Part`, `StockLocation`, `StockLevel`, `StockMovement`, `BarcodeBinding`; relations added to `Tenant` + `Vessel` |
+| `apps/api-shore/prisma/migrations/20260512173641_add_inventory_schema/` | Auto-generated Prisma migration (tables, indexes, FKs) + hand-appended RLS policies for all 6 tables (same shape as maintenance migration)                                |
+| `apps/api-vessel/src/db/schema.ts`                                      | Same 6 tables in Drizzle/SQLite; `STOCK_MOVEMENT_TYPES` as TS const array; `PartCategory.parentId` is a soft FK (no SQLite circular FK)                                   |
+| `apps/api-vessel/drizzle/0003_small_ultron.sql`                         | Drizzle-generated migration; applied via `drizzle-kit migrate`                                                                                                            |
+| `apps/api-shore/test/inventory-schema.e2e.ts`                           | 7 e2e tests: category hierarchy, part CRUD, StockLevel unique constraint, ROB-by-SUM, barcode uniqueness, RLS policy verification                                         |
+| `apps/api-vessel/test/inventory-schema.e2e.ts`                          | 6 e2e tests: same coverage on SQLite                                                                                                                                      |
+| CI                                                                      | `pnpm run ci:full` → 139 ✓ unit tests; shore e2e → 65 ✓; vessel e2e → 53 ✓; lint/typecheck/format clean                                                                   |
 
 **Key design decisions:**
+
 - `quantity` in `StockMovement` is **signed** (+ = stock in, − = stock out). ROB = `SUM(quantity)` per (vessel, part, location). No snapshot column.
 - `PartCategory` and `Part` are **tenant-scoped only** (no `vessel_id`) — fleet-wide catalog replicated shore→vessel.
 - `BarcodeBinding` has a unique constraint on `(tenant_id, barcode)` — one barcode maps to one part per fleet.
@@ -123,7 +139,7 @@
 
 > Single, unambiguous next task for any fresh Claude Code session. Update this immediately when a task completes.
 
-**P1-5 done.** Next: **P1-6 — Inventory API + UI** — REST endpoints for `PartCategory`, `Part`, `StockLocation`, `StockLevel`, `StockMovement`, `BarcodeBinding` on both `api-shore` and `api-vessel` (CRUD + stock-movement post). Web-shore UI: parts list with color-status chips (green/amber/red/purple based on ROB vs. reorder/min), stock-view per location, min/max config form.
+**P1-6 done.** Next: **P1-7 — Purchase schema** — `Requisition`, `RequisitionLine`, `RFQ`, `Quote`, `PurchaseOrder`, `POLine`, `GoodsReceipt`, `Supplier`, `ApprovalFlow`, `ApprovalStep` on both shore (Prisma/Postgres) and vessel (Drizzle/SQLite), sync-enabled with RLS. Single-step approval flow enforcement at the schema level.
 
 **Outstanding follow-up tickets (deferred, not blocking P1-4):**
 

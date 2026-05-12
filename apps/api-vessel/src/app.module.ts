@@ -2,13 +2,19 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from 'nestjs-pino';
 import { AuthModule } from './auth/auth.module';
+import { BarcodeBindingModule } from './barcode-binding/barcode-binding.module';
 import { ComponentModule } from './component/component.module';
 import { DrizzleModule } from './db/drizzle.module';
 import { JobHistoryModule } from './job-history/job-history.module';
 import { JobInstanceModule } from './job-instance/job-instance.module';
 import { JobModule } from './job/job.module';
 import { MasterComponentModule } from './master-component/master-component.module';
+import { PartCategoryModule } from './part-category/part-category.module';
+import { PartModule } from './part/part.module';
 import { RunningHourReadingModule } from './running-hour-reading/running-hour-reading.module';
+import { StockLevelModule } from './stock-level/stock-level.module';
+import { StockLocationModule } from './stock-location/stock-location.module';
+import { StockMovementModule } from './stock-movement/stock-movement.module';
 import { StorageModule } from './storage/storage.module';
 import { SyncModule } from './sync/sync.module';
 import { TenantModule } from './tenant/tenant.module';
@@ -37,6 +43,12 @@ import { VesselModule } from './vessel/vessel.module';
     JobInstanceModule,
     JobHistoryModule,
     RunningHourReadingModule,
+    PartCategoryModule,
+    PartModule,
+    StockLocationModule,
+    StockLevelModule,
+    StockMovementModule,
+    BarcodeBindingModule,
   ],
 })
 export class AppModule {}
