@@ -8,20 +8,41 @@
 
 > Most-recent first. Format: `### YYYY-MM-DD — <task> — <summary>` then bullets.
 
-### 2026-05-12 — P1-6 — Inventory API + UI
+### 2026-05-13 — P1-7 — Purchase schema (Requisition → GoodsReceipt)
 
 | Item | Detail |
 |---|---|
-| `apps/api-shore/src/{part-category,part,stock-location,stock-level,stock-movement,barcode-binding}/` | 6 NestJS modules (controller + service + DTOs + module) for all inventory entities; tenant-scoped entities skip OutboxRecorder (same pattern as MasterComponent) |
-| `apps/api-vessel/src/` | Mirror of all 6 modules using Drizzle/SQLite patterns |
-| `GET /parts/inventory-summary` | Single-call endpoint returning all parts enriched with per-location ROB (computed via `SUM(quantity)`) and color status (`green/amber/red/purple`); available on both apps |
-| `GET /stock-movements/rob` | Raw ROB aggregation endpoint per `(partId, locationId)` |
-| `GET /barcode-bindings/lookup/:barcode` | Resolves barcode → part (for mobile scan) |
-| `apps/web-shore/src/pages/InventoryPage.tsx` | Parts list with color-status chips, filter buttons (All / Low+Reorder / Out), per-location ROB |
-| `apps/web-shore/src/App.tsx` | Added `📦 Inventory` nav link at `/inventory` |
-| `apps/api-shore/test/inventory-api.e2e.ts` | 14 e2e tests: full CRUD chain + ROB verification + color status + barcode lookup |
-| `apps/api-vessel/test/inventory-api.e2e.ts` | 11 e2e tests: same coverage on vessel |
-| CI | `pnpm run ci:full` → 139 ✓ unit tests; shore e2e → 79 ✓ (8 files); vessel e2e → 65 ✓ (7 files); lint/typecheck/format clean |
+| `apps/api-shore/prisma/schema.prisma` | 4 new enums (`RequisitionStatus`, `PurchaseOrderStatus`, `RfqStatus`, `QuoteStatus`) + 12 new models: `Supplier`, `ApprovalFlow`, `ApprovalStep`, `Requisition`, `RequisitionLine`, `Rfq`, `Quote`, `QuoteLine`, `PurchaseOrder`, `POLine`, `GoodsReceipt`, `GoodsReceiptLine`; relations added to `Tenant` + `Vessel` + `Part` |
+| `apps/api-shore/prisma/migrations/20260512205903_add_purchase_schema/` | Prisma-generated migration; hand-appended CHECK constraints (`requisitions_approved_requires_approver_chk`, `purchase_orders_non_draft_requires_supplier_chk`) + RLS tenant-isolation policies on all 12 tables |
+| `apps/api-vessel/src/db/schema.ts` | Mirror of all 12 purchase tables in Drizzle/SQLite; 4 new status const arrays; same CHECK constraints via Drizzle `check()` |
+| `apps/api-vessel/drizzle/0004_wise_venus.sql` | Drizzle-generated migration; applied via `drizzle-kit migrate` |
+| `apps/api-shore/test/purchase-schema.e2e.ts` | 8 e2e tests: Supplier round-trip, ApprovalFlow+Step, duplicate step constraint, Requisition+Lines, CHECK approved_requires_approver, CHECK PO non-draft requires supplier, full procurement chain, RLS policy presence |
+| `apps/api-vessel/test/purchase-schema.e2e.ts` | 6 e2e tests: same coverage on SQLite |
+| CI | `pnpm run ci:full` → 139 ✓ unit; shore e2e → 87 ✓ (9 files); vessel e2e → 71 ✓ (8 files); lint/typecheck/format clean |
+
+**Key design decisions:**
+
+- `Supplier`, `ApprovalFlow`, `ApprovalStep` are **tenant-scoped only** (no `vessel_id`) — fleet-wide catalogs replicated shore→vessel
+- `ApprovalStep.limitAmount` = max amount the role can approve; `null` = no limit
+- Requisition CHECK: `status != 'APPROVED' OR approved_by_user_id IS NOT NULL` (Postgres + SQLite)
+- PurchaseOrder CHECK: `status = 'DRAFT' OR supplier_id IS NOT NULL` — supplier required before leaving DRAFT
+- `GoodsReceiptLine` enables partial GRN receipts (`quantityOrdered` vs `quantityReceived`)
+- `POLine.quoteLineId` is a soft FK (traceability only)
+
+### 2026-05-12 — P1-6 — Inventory API + UI
+
+| Item                                                                                                 | Detail                                                                                                                                                                     |
+| ---------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/api-shore/src/{part-category,part,stock-location,stock-level,stock-movement,barcode-binding}/` | 6 NestJS modules (controller + service + DTOs + module) for all inventory entities; tenant-scoped entities skip OutboxRecorder (same pattern as MasterComponent)           |
+| `apps/api-vessel/src/`                                                                               | Mirror of all 6 modules using Drizzle/SQLite patterns                                                                                                                      |
+| `GET /parts/inventory-summary`                                                                       | Single-call endpoint returning all parts enriched with per-location ROB (computed via `SUM(quantity)`) and color status (`green/amber/red/purple`); available on both apps |
+| `GET /stock-movements/rob`                                                                           | Raw ROB aggregation endpoint per `(partId, locationId)`                                                                                                                    |
+| `GET /barcode-bindings/lookup/:barcode`                                                              | Resolves barcode → part (for mobile scan)                                                                                                                                  |
+| `apps/web-shore/src/pages/InventoryPage.tsx`                                                         | Parts list with color-status chips, filter buttons (All / Low+Reorder / Out), per-location ROB                                                                             |
+| `apps/web-shore/src/App.tsx`                                                                         | Added `📦 Inventory` nav link at `/inventory`                                                                                                                              |
+| `apps/api-shore/test/inventory-api.e2e.ts`                                                           | 14 e2e tests: full CRUD chain + ROB verification + color status + barcode lookup                                                                                           |
+| `apps/api-vessel/test/inventory-api.e2e.ts`                                                          | 11 e2e tests: same coverage on vessel                                                                                                                                      |
+| CI                                                                                                   | `pnpm run ci:full` → 139 ✓ unit tests; shore e2e → 79 ✓ (8 files); vessel e2e → 65 ✓ (7 files); lint/typecheck/format clean                                                |
 
 ### 2026-05-12 — P1-5 — Inventory schema
 
@@ -139,7 +160,7 @@
 
 > Single, unambiguous next task for any fresh Claude Code session. Update this immediately when a task completes.
 
-**P1-6 done.** Next: **P1-7 — Purchase schema** — `Requisition`, `RequisitionLine`, `RFQ`, `Quote`, `PurchaseOrder`, `POLine`, `GoodsReceipt`, `Supplier`, `ApprovalFlow`, `ApprovalStep` on both shore (Prisma/Postgres) and vessel (Drizzle/SQLite), sync-enabled with RLS. Single-step approval flow enforcement at the schema level.
+**P1-7 done.** Next: **P1-8 — Purchase API** — `Requisition` CRUD + `POST /requisitions/:id/submit` + single-step approval (`POST /requisitions/:id/approve` / `reject`); `PurchaseOrder` lifecycle `draft→sent`; `POST /purchase-orders/:id/receive` (GRN with partial-receipt support, PO status → `PARTIALLY_RECEIVED` | `RECEIVED`); all on both shore and vessel.
 
 **Outstanding follow-up tickets (deferred, not blocking P1-4):**
 
