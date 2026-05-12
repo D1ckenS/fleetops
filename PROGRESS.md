@@ -10,23 +10,25 @@
 
 ### 2026-05-12 — P1-3b — desktop-vessel Electron shell
 
-| Item | Detail |
-|---|---|
-| `apps/desktop-vessel/` | Electron 30 shell: `src/main/index.ts` (BrowserWindow + lifecycle), `child.ts` (spawns api-vessel via `ELECTRON_RUN_AS_NODE`), `server.ts` (local HTTP server: serves SPA + proxies `/api/*` to api-vessel) |
-| Dev mode | `!app.isPackaged` → loads Vite dev URL (`http://localhost:5173`); assumes api-vessel + web-shore running externally via `pnpm dev:vessel` |
-| Prod mode | Spawns api-vessel from `resources/api-vessel/dist/main.js`; creates local HTTP server on random port; BrowserWindow loads `http://127.0.0.1:<port>` |
-| electron-builder | `electron-builder.yml` — Windows NSIS + Linux AppImage + macOS DMG; bundles api-vessel dist + web-shore dist as extraResources |
-| `electron@30.5.1` / `electron-builder@24.13.3` | Added to `apps/desktop-vessel/devDependencies`; `"electron"` added to root `pnpm.onlyBuiltDependencies` |
-| `.gitignore` | Uncommented `release/`, `*.exe`, `*.msi`, `*.dmg`, `*.AppImage` |
-| Root scripts | Added `dev:desktop` |
-| **Pre-existing fix** | `apps/web-shore`: react-router-dom v6 + TypeScript 5.9 JSX type incompatibility — fixed via `src/react-router-compat.d.ts` module augmentation + pinned `@types/react ~18.2.79` / `@types/react-dom ~18.2.25` |
-| CI | `pnpm run ci:full` → 120 ✓ tests, lint clean, typecheck clean, format clean |
+| Item                                           | Detail                                                                                                                                                                                                        |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/desktop-vessel/`                         | Electron 30 shell: `src/main/index.ts` (BrowserWindow + lifecycle), `child.ts` (spawns api-vessel via `ELECTRON_RUN_AS_NODE`), `server.ts` (local HTTP server: serves SPA + proxies `/api/*` to api-vessel)   |
+| Dev mode                                       | `!app.isPackaged` → loads Vite dev URL (`http://localhost:5173`); assumes api-vessel + web-shore running externally via `pnpm dev:vessel`                                                                     |
+| Prod mode                                      | Spawns api-vessel from `resources/api-vessel/dist/main.js`; creates local HTTP server on random port; BrowserWindow loads `http://127.0.0.1:<port>`                                                           |
+| electron-builder                               | `electron-builder.yml` — Windows NSIS + Linux AppImage + macOS DMG; bundles api-vessel dist + web-shore dist as extraResources                                                                                |
+| `electron@30.5.1` / `electron-builder@24.13.3` | Added to `apps/desktop-vessel/devDependencies`; `"electron"` added to root `pnpm.onlyBuiltDependencies`                                                                                                       |
+| `.gitignore`                                   | Uncommented `release/`, `*.exe`, `*.msi`, `*.dmg`, `*.AppImage`                                                                                                                                               |
+| Root scripts                                   | Added `dev:desktop`                                                                                                                                                                                           |
+| **Pre-existing fix**                           | `apps/web-shore`: react-router-dom v6 + TypeScript 5.9 JSX type incompatibility — fixed via `src/react-router-compat.d.ts` module augmentation + pinned `@types/react ~18.2.79` / `@types/react-dom ~18.2.25` |
+| CI                                             | `pnpm run ci:full` → 120 ✓ tests, lint clean, typecheck clean, format clean                                                                                                                                   |
 
 **Dev workflow:**
+
 1. Terminal 1: `pnpm run dev:vessel` (starts api-vessel on :3001 + web-shore Vite on :5173)
 2. Terminal 2: `pnpm run dev:desktop` (compiles TS + opens Electron window loading :5173)
 
 **Follow-ups (not blocking P1-4):**
+
 - `api-vessel`: add `app.enableShutdownHooks()` + WAL checkpoint `OnApplicationShutdown`
 - CI: add `ELECTRON_SKIP_BINARY_DOWNLOAD=1` env var to GitHub Actions if binary download causes CI slowness
 - Production packaging: api-vessel has deep NestJS deps — consider `pkg` or `node-sea` bundling
