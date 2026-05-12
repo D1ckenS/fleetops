@@ -1,8 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from 'nestjs-pino';
+import { ApprovalFlowModule } from './approval-flow/approval-flow.module';
 import { AuthModule } from './auth/auth.module';
 import { BarcodeBindingModule } from './barcode-binding/barcode-binding.module';
+import { PurchaseOrderModule } from './purchase-order/purchase-order.module';
+import { QuoteModule } from './quote/quote.module';
+import { RequisitionModule } from './requisition/requisition.module';
+import { RfqModule } from './rfq/rfq.module';
+import { SupplierModule } from './supplier/supplier.module';
 import { ComponentModule } from './component/component.module';
 import { DrizzleModule } from './db/drizzle.module';
 import { JobHistoryModule } from './job-history/job-history.module';
@@ -49,6 +55,12 @@ import { VesselModule } from './vessel/vessel.module';
     StockLevelModule,
     StockMovementModule,
     BarcodeBindingModule,
+    SupplierModule,
+    ApprovalFlowModule,
+    RequisitionModule,
+    RfqModule,
+    QuoteModule,
+    PurchaseOrderModule,
   ],
 })
 export class AppModule {}

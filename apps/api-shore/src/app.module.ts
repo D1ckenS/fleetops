@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from 'nestjs-pino';
+import { ApprovalFlowModule } from './approval-flow/approval-flow.module';
 import { AuthModule } from './auth/auth.module';
 import { BarcodeBindingModule } from './barcode-binding/barcode-binding.module';
 import { ComponentModule } from './component/component.module';
@@ -11,11 +12,16 @@ import { MasterComponentModule } from './master-component/master-component.modul
 import { PartCategoryModule } from './part-category/part-category.module';
 import { PartModule } from './part/part.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { PurchaseOrderModule } from './purchase-order/purchase-order.module';
+import { QuoteModule } from './quote/quote.module';
+import { RequisitionModule } from './requisition/requisition.module';
+import { RfqModule } from './rfq/rfq.module';
 import { RunningHourReadingModule } from './running-hour-reading/running-hour-reading.module';
 import { StockLevelModule } from './stock-level/stock-level.module';
 import { StockLocationModule } from './stock-location/stock-location.module';
 import { StockMovementModule } from './stock-movement/stock-movement.module';
 import { StorageModule } from './storage/storage.module';
+import { SupplierModule } from './supplier/supplier.module';
 import { SyncModule } from './sync/sync.module';
 import { TenantModule } from './tenant/tenant.module';
 import { UserModule } from './user/user.module';
@@ -49,6 +55,12 @@ import { VesselModule } from './vessel/vessel.module';
     StockLevelModule,
     StockMovementModule,
     BarcodeBindingModule,
+    SupplierModule,
+    ApprovalFlowModule,
+    RequisitionModule,
+    RfqModule,
+    QuoteModule,
+    PurchaseOrderModule,
   ],
 })
 export class AppModule {}

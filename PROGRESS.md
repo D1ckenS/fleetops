@@ -8,17 +8,39 @@
 
 > Most-recent first. Format: `### YYYY-MM-DD — <task> — <summary>` then bullets.
 
-### 2026-05-13 — P1-7 — Purchase schema (Requisition → GoodsReceipt)
+### 2026-05-13 — P1-8 — Purchase API (Requisition + approval + PO + GRN)
 
 | Item | Detail |
 |---|---|
-| `apps/api-shore/prisma/schema.prisma` | 4 new enums (`RequisitionStatus`, `PurchaseOrderStatus`, `RfqStatus`, `QuoteStatus`) + 12 new models: `Supplier`, `ApprovalFlow`, `ApprovalStep`, `Requisition`, `RequisitionLine`, `Rfq`, `Quote`, `QuoteLine`, `PurchaseOrder`, `POLine`, `GoodsReceipt`, `GoodsReceiptLine`; relations added to `Tenant` + `Vessel` + `Part` |
-| `apps/api-shore/prisma/migrations/20260512205903_add_purchase_schema/` | Prisma-generated migration; hand-appended CHECK constraints (`requisitions_approved_requires_approver_chk`, `purchase_orders_non_draft_requires_supplier_chk`) + RLS tenant-isolation policies on all 12 tables |
-| `apps/api-vessel/src/db/schema.ts` | Mirror of all 12 purchase tables in Drizzle/SQLite; 4 new status const arrays; same CHECK constraints via Drizzle `check()` |
-| `apps/api-vessel/drizzle/0004_wise_venus.sql` | Drizzle-generated migration; applied via `drizzle-kit migrate` |
-| `apps/api-shore/test/purchase-schema.e2e.ts` | 8 e2e tests: Supplier round-trip, ApprovalFlow+Step, duplicate step constraint, Requisition+Lines, CHECK approved_requires_approver, CHECK PO non-draft requires supplier, full procurement chain, RLS policy presence |
-| `apps/api-vessel/test/purchase-schema.e2e.ts` | 6 e2e tests: same coverage on SQLite |
-| CI | `pnpm run ci:full` → 139 ✓ unit; shore e2e → 87 ✓ (9 files); vessel e2e → 71 ✓ (8 files); lint/typecheck/format clean |
+| `apps/api-shore/src/{supplier,approval-flow,requisition,rfq,quote,purchase-order}/` | 6 NestJS modules (controller + service + DTOs + module) for all purchase entities; tenant-scoped modules skip OutboxRecorder; vessel-scoped modules use OutboxRecorder |
+| `apps/api-vessel/src/` | Mirror of all 6 modules using Drizzle/SQLite patterns |
+| `POST /requisitions/:id/submit` | DRAFT → SUBMITTED |
+| `POST /requisitions/:id/approve` | SUBMITTED → APPROVED; enforces `ApprovalStep.limitAmount` per role (403 if over limit) |
+| `POST /requisitions/:id/reject` | SUBMITTED → REJECTED with optional reason |
+| `POST /purchase-orders/:id/send` | DRAFT → SENT; requires `supplierId` (400 otherwise) |
+| `POST /purchase-orders/:id/receive` | Creates `GoodsReceipt` + `GoodsReceiptLine` records; sets PO → `PARTIALLY_RECEIVED` or `RECEIVED` based on totals across all receipts |
+| `apps/api-shore/test/purchase-api.e2e.ts` | 8 HTTP e2e tests covering all key acceptance criteria |
+| `apps/api-vessel/test/purchase-api.e2e.ts` | 5 HTTP e2e tests covering same on SQLite |
+| CI | `pnpm run ci:full` → 139 ✓ unit; shore e2e → 95 ✓ (10 files); vessel e2e → 76 ✓ (9 files); lint/typecheck/format clean |
+
+**Key design decisions:**
+
+- `Supplier`, `ApprovalFlow`, `ApprovalStep` services have no OutboxRecorder (tenant-scoped only)
+- Approval limit comparison uses `Prisma.Decimal.greaterThan` (shore) and `parseFloat` (vessel)
+- GRN partial check: sums all receipts across all `GoodsReceiptLine` rows matching each PO line
+- PO `send` validates supplierId presence at application layer (mirrors the DB CHECK constraint)
+
+### 2026-05-13 — P1-7 — Purchase schema (Requisition → GoodsReceipt)
+
+| Item                                                                   | Detail                                                                                                                                                                                                                                                                                                                          |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/api-shore/prisma/schema.prisma`                                  | 4 new enums (`RequisitionStatus`, `PurchaseOrderStatus`, `RfqStatus`, `QuoteStatus`) + 12 new models: `Supplier`, `ApprovalFlow`, `ApprovalStep`, `Requisition`, `RequisitionLine`, `Rfq`, `Quote`, `QuoteLine`, `PurchaseOrder`, `POLine`, `GoodsReceipt`, `GoodsReceiptLine`; relations added to `Tenant` + `Vessel` + `Part` |
+| `apps/api-shore/prisma/migrations/20260512205903_add_purchase_schema/` | Prisma-generated migration; hand-appended CHECK constraints (`requisitions_approved_requires_approver_chk`, `purchase_orders_non_draft_requires_supplier_chk`) + RLS tenant-isolation policies on all 12 tables                                                                                                                 |
+| `apps/api-vessel/src/db/schema.ts`                                     | Mirror of all 12 purchase tables in Drizzle/SQLite; 4 new status const arrays; same CHECK constraints via Drizzle `check()`                                                                                                                                                                                                     |
+| `apps/api-vessel/drizzle/0004_wise_venus.sql`                          | Drizzle-generated migration; applied via `drizzle-kit migrate`                                                                                                                                                                                                                                                                  |
+| `apps/api-shore/test/purchase-schema.e2e.ts`                           | 8 e2e tests: Supplier round-trip, ApprovalFlow+Step, duplicate step constraint, Requisition+Lines, CHECK approved_requires_approver, CHECK PO non-draft requires supplier, full procurement chain, RLS policy presence                                                                                                          |
+| `apps/api-vessel/test/purchase-schema.e2e.ts`                          | 6 e2e tests: same coverage on SQLite                                                                                                                                                                                                                                                                                            |
+| CI                                                                     | `pnpm run ci:full` → 139 ✓ unit; shore e2e → 87 ✓ (9 files); vessel e2e → 71 ✓ (8 files); lint/typecheck/format clean                                                                                                                                                                                                           |
 
 **Key design decisions:**
 
@@ -160,7 +182,7 @@
 
 > Single, unambiguous next task for any fresh Claude Code session. Update this immediately when a task completes.
 
-**P1-7 done.** Next: **P1-8 — Purchase API** — `Requisition` CRUD + `POST /requisitions/:id/submit` + single-step approval (`POST /requisitions/:id/approve` / `reject`); `PurchaseOrder` lifecycle `draft→sent`; `POST /purchase-orders/:id/receive` (GRN with partial-receipt support, PO status → `PARTIALLY_RECEIVED` | `RECEIVED`); all on both shore and vessel.
+**P1-8 done.** Next: **P1-9 — Purchase UI** — `web-shore` pages for requisition list (with status filter), approval queue, PO detail with lines, and GRN entry modal. Reuse `ui-kit` components. Add `📋 Purchase` nav link.
 
 **Outstanding follow-up tickets (deferred, not blocking P1-4):**
 
