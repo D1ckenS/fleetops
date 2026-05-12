@@ -10,13 +10,13 @@
 
 ### 2026-05-12 — Phase 1 — P1-1 + P1-2 (Maintenance schema → API)
 
-| Task | PR | Key output |
-|---|---|---|
-| P1-1 PMS schema | PR #12 | 6 models on both apps (Component/MasterComponent/Job/JobInstance/JobHistory/RunningHourReading) + 3 enums; sync-aware (`hlc/deletedAt`). Shore RLS `*_tenant_isolation` policies + CHECK `jobs_interval_required_chk` + plpgsql trigger `job_histories_immutable`. Vessel mirrors with SQLite `RAISE(ABORT)` trigger. `parent_id` soft FK on vessel only. +10 e2e |
-| P1-2a sync recorder | PR #13 | `HlcClockRegistry` + `OutboxRecorder` — tx-aware writer: mints HLC, appends outbox row, merges sync_records via per-field LWW inside the caller's tx. Shared HLC state between gateway/client and recorder. **Closes the P0-9 follow-up.** +12 e2e |
-| P1-2b shore CRUD + auth | PR #14 | `JwtAuthGuard` (RS256, `type=access`) + `@AuthCtx()` decorator + `requireVesselId`. AuthModule `@Global`. Migrated `/tenants/:tenantId/{vessels,users}` → `/{vessels,users}`. `POST /tenants` atomically creates tenant + initial `TENANT_ADMIN`. Six maintenance modules; full CRUD via OutboxRecorder; MasterComponent shore-only; JobHistory read-only. RunningHourReading enforces monotonic value + bumps Component counter. +14 e2e |
-| P1-2c vessel CRUD + auth | PR #15 | Mirror on Drizzle/SQLite. Vessel guard accepts both shore RS256 AND vessel-local HS256 (`iss=marad-vessel`). MasterComponent + JobHistory read-only. Decimal comparison via `Number()` (SQLite TEXT). +13 e2e |
-| P1-2d sign-off + photos | PR #16 | `POST /job-instances/:id/sign-off` on both apps (multipart `photos[]` + form fields). `StorageService` wraps `@aws-sdk/client-s3` (`@Global`; tests `.overrideProvider`). Flow: photos → S3, then atomic tx INSERT JobHistory + UPDATE JobInstance.status=DONE via OutboxRecorder. Vessel service deserializes TEXT-stored JSON cols. +10 e2e |
+| Task                     | PR     | Key output                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| ------------------------ | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| P1-1 PMS schema          | PR #12 | 6 models on both apps (Component/MasterComponent/Job/JobInstance/JobHistory/RunningHourReading) + 3 enums; sync-aware (`hlc/deletedAt`). Shore RLS `*_tenant_isolation` policies + CHECK `jobs_interval_required_chk` + plpgsql trigger `job_histories_immutable`. Vessel mirrors with SQLite `RAISE(ABORT)` trigger. `parent_id` soft FK on vessel only. +10 e2e                                                                         |
+| P1-2a sync recorder      | PR #13 | `HlcClockRegistry` + `OutboxRecorder` — tx-aware writer: mints HLC, appends outbox row, merges sync_records via per-field LWW inside the caller's tx. Shared HLC state between gateway/client and recorder. **Closes the P0-9 follow-up.** +12 e2e                                                                                                                                                                                        |
+| P1-2b shore CRUD + auth  | PR #14 | `JwtAuthGuard` (RS256, `type=access`) + `@AuthCtx()` decorator + `requireVesselId`. AuthModule `@Global`. Migrated `/tenants/:tenantId/{vessels,users}` → `/{vessels,users}`. `POST /tenants` atomically creates tenant + initial `TENANT_ADMIN`. Six maintenance modules; full CRUD via OutboxRecorder; MasterComponent shore-only; JobHistory read-only. RunningHourReading enforces monotonic value + bumps Component counter. +14 e2e |
+| P1-2c vessel CRUD + auth | PR #15 | Mirror on Drizzle/SQLite. Vessel guard accepts both shore RS256 AND vessel-local HS256 (`iss=marad-vessel`). MasterComponent + JobHistory read-only. Decimal comparison via `Number()` (SQLite TEXT). +13 e2e                                                                                                                                                                                                                             |
+| P1-2d sign-off + photos  | PR #16 | `POST /job-instances/:id/sign-off` on both apps (multipart `photos[]` + form fields). `StorageService` wraps `@aws-sdk/client-s3` (`@Global`; tests `.overrideProvider`). Flow: photos → S3, then atomic tx INSERT JobHistory + UPDATE JobInstance.status=DONE via OutboxRecorder. Vessel service deserializes TEXT-stored JSON cols. +10 e2e                                                                                             |
 
 **New deps:** `@aws-sdk/client-s3@^3.1044` + `@types/multer` (both apps); `ulidx@2.4.1` on api-vessel.
 
@@ -26,25 +26,25 @@
 
 ### 2026-05-05 / 2026-05-06 — Phase 0 — P0-6 through P0-10
 
-| Task | PR | Key output |
-|---|---|---|
-| P0-6 sync-engine | PR #4 | `packages/sync-engine/` (engine, in-memory adapter, outbox, LWW, PN-Counter); ADR 0001; `scripts/sync-soak-test.ts`; `tsx`, `fast-check` |
-| P0-7 api-shore | PR #6 | NestJS 11 + Prisma 7 + Postgres 16 (Docker **5433**); `Tenant/Vessel/User` with RLS; `withTenant()`; bcrypt 12-round |
-| P0-8 api-vessel | PR #7 | NestJS + Drizzle + better-sqlite3; surface mirrored to SQLite; `MIGRATIONS_DIR` for Electron; dual-mode `packages/domain` |
-| P0-9 sync wire | PR #8+#10 | Bidi gRPC stream; HLC/outbox/sync_records on both sides; `SyncGatewayService` + `SyncClientService`; ADR 0002; soak Phase 2 PASS |
-| P0-10 RS256 JWT + OIDC | PR #11 | RS256 keypair; shore signs access (24h) + refresh (30d); vessel offline-verifies; tests reject HS256 confusion/replay/expiry; `typecheck:all` added to `ci:full` |
+| Task                   | PR        | Key output                                                                                                                                                       |
+| ---------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| P0-6 sync-engine       | PR #4     | `packages/sync-engine/` (engine, in-memory adapter, outbox, LWW, PN-Counter); ADR 0001; `scripts/sync-soak-test.ts`; `tsx`, `fast-check`                         |
+| P0-7 api-shore         | PR #6     | NestJS 11 + Prisma 7 + Postgres 16 (Docker **5433**); `Tenant/Vessel/User` with RLS; `withTenant()`; bcrypt 12-round                                             |
+| P0-8 api-vessel        | PR #7     | NestJS + Drizzle + better-sqlite3; surface mirrored to SQLite; `MIGRATIONS_DIR` for Electron; dual-mode `packages/domain`                                        |
+| P0-9 sync wire         | PR #8+#10 | Bidi gRPC stream; HLC/outbox/sync_records on both sides; `SyncGatewayService` + `SyncClientService`; ADR 0002; soak Phase 2 PASS                                 |
+| P0-10 RS256 JWT + OIDC | PR #11    | RS256 keypair; shore signs access (24h) + refresh (30d); vessel offline-verifies; tests reject HS256 confusion/replay/expiry; `typecheck:all` added to `ci:full` |
 
 ---
 
 ### 2026-05-01 — Phase 0 — P0-1 through P0-5
 
-| Task | PR | Key output |
-|---|---|---|
-| P0-1 init monorepo | `d02edee` | `pnpm-workspace.yaml`, `turbo.json`, `.nvmrc`, `.gitattributes` |
-| P0-2 tooling | `5381cdb` | `tsconfig.base.json`, `eslint.config.mjs`, `.prettierrc.json`, `vitest.config.ts` |
-| P0-3 CI | `a62635f`+`91c4015` | `.github/workflows/ci.yml`; branch ruleset on main |
-| P0-4 shared-types + proto | PR #2 | `packages/shared-types/`, `packages/proto/sync.proto`, `packages/flutter-shared/`, `scripts/proto-gen.mjs` |
-| P0-5 domain skeleton | PR #3 | `packages/domain/` — errors, ULID, HLC, quantity; 52 tests ≥95% coverage; ESLint domain-purity rule |
+| Task                      | PR                  | Key output                                                                                                 |
+| ------------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------- |
+| P0-1 init monorepo        | `d02edee`           | `pnpm-workspace.yaml`, `turbo.json`, `.nvmrc`, `.gitattributes`                                            |
+| P0-2 tooling              | `5381cdb`           | `tsconfig.base.json`, `eslint.config.mjs`, `.prettierrc.json`, `vitest.config.ts`                          |
+| P0-3 CI                   | `a62635f`+`91c4015` | `.github/workflows/ci.yml`; branch ruleset on main                                                         |
+| P0-4 shared-types + proto | PR #2               | `packages/shared-types/`, `packages/proto/sync.proto`, `packages/flutter-shared/`, `scripts/proto-gen.mjs` |
+| P0-5 domain skeleton      | PR #3               | `packages/domain/` — errors, ULID, HLC, quantity; 52 tests ≥95% coverage; ESLint domain-purity rule        |
 
 **Local tooling (Windows):** Node 24.15.0, pnpm 10.33.2, gh 2.92.0, protoc 34.1, Dart 3.11.5, Docker Desktop.
 

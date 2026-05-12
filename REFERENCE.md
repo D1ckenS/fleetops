@@ -6,14 +6,14 @@
 
 ## 1. Project Identity
 
-| Field | Value |
-|---|---|
-| **Project name** | `marad-clone` (working title; replace before launch — see §17 of CLAUDE.md) |
-| **What** | Hybrid maritime fleet management system: planned maintenance, spare parts inventory, procurement, certificates, crewing, fuel/tank logistics, safety, QHSE. Functional parity with Marad by MaraSoft B.V. (marad.com). |
-| **Surfaces** | Onboard desktop (Electron), shoreside web (React), companion mobile (Flutter). |
-| **Offline-first** | Vessel installs run with **full feature parity** offline. Sync to shore when connectivity is available. |
-| **Compliance targets** | DNV type-approval (PMS), ISO 27001, IMO DCS, EU MRV, MLC 2006. |
-| **Success criteria** | (1) Pilot vessel operating exclusively on the system for 90 days with zero data-loss incidents. (2) DNV type-approval certificate issued for the PMS module. (3) Single tenant with 5 vessels in production. |
+| Field                  | Value                                                                                                                                                                                                                  |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Project name**       | `marad-clone` (working title; replace before launch — see §17 of CLAUDE.md)                                                                                                                                            |
+| **What**               | Hybrid maritime fleet management system: planned maintenance, spare parts inventory, procurement, certificates, crewing, fuel/tank logistics, safety, QHSE. Functional parity with Marad by MaraSoft B.V. (marad.com). |
+| **Surfaces**           | Onboard desktop (Electron), shoreside web (React), companion mobile (Flutter).                                                                                                                                         |
+| **Offline-first**      | Vessel installs run with **full feature parity** offline. Sync to shore when connectivity is available.                                                                                                                |
+| **Compliance targets** | DNV type-approval (PMS), ISO 27001, IMO DCS, EU MRV, MLC 2006.                                                                                                                                                         |
+| **Success criteria**   | (1) Pilot vessel operating exclusively on the system for 90 days with zero data-loss incidents. (2) DNV type-approval certificate issued for the PMS module. (3) Single tenant with 5 vessels in production.           |
 
 ---
 
@@ -42,41 +42,41 @@ Pin to these versions. When you bump, update this section in the same commit.
 
 > **Note (2026-05-01):** Versions below are re-verified against upstream at the time each tool is first installed — do not blindly trust an entry until the row's `Installed` column has been confirmed.
 
-| Layer | Tech | Version |
-|---|---|---|
-| Node | Node.js | `24.x LTS (Krypton, ≥24.15)` |
-| Package mgr | pnpm | `10.x (≥10.33)` |
-| Monorepo | Turborepo | `2.x` |
-| Backend | NestJS | `11.x (11.1.19)` |
-| Backend lang | TypeScript | `5.9+` |
-| Lint | ESLint + typescript-eslint | `eslint 10.x` + `typescript-eslint 8.59+` (flat config) |
-| Format | Prettier | `3.x` |
-| ID generation | ulidx | `2.4.1+` |
-| Web framework | React | `18.x` |
-| Web bundler | Vite | `5.x` |
-| Web styling | Tailwind CSS | `3.x` |
-| Web table | TanStack Table | `8.x` |
-| Desktop shell | Electron | `30.x` |
-| Desktop builder | electron-builder | `24.x` |
-| Mobile | Flutter | `3.22+` (Dart `3.11+`) |
-| ORM (shore) | Prisma + `@prisma/client` + `@prisma/adapter-pg` | `7.x (7.8.0)` |
-| ORM (vessel) | Drizzle ORM + drizzle-kit + better-sqlite3 | `drizzle-orm 0.45.2` / `drizzle-kit 0.31.10` / `better-sqlite3 12.9.0` |
-| Sync RPC | gRPC | `@grpc/grpc-js 1.10+` |
-| Sync proto | Protobuf (`protoc 34+`, `ts-proto 2.11+`, `protoc_plugin 25+`) | `proto3` |
-| Postgres | PostgreSQL | `16.x` |
-| SQLite | SQLite | `3.45+` |
-| Search (shore) | Meilisearch | `1.8+` |
-| Object store | S3-compatible (MinIO for local dev) | latest |
-| Auth | OIDC via `openid-client` | `5.x` |
-| Logging | pino + pino-http + nestjs-pino | `10.3.1` / `11.0.0` / `4.6.1` |
-| Postgres client | pg + `@prisma/adapter-pg` | `8.20.0` / `7.8.0` |
-| Auth (local) | bcrypt + `@nestjs/jwt` + `@nestjs/passport` + passport-local | `6.0.0` / `11.0.2` / `11.0.5` / `1.0.0` |
-| Validation | class-validator + class-transformer | `0.15.1` / `0.5.1` |
-| HTTP testing | supertest | `7.2.2` |
-| Testing | Vitest, Playwright (e2e), flutter_test | `vitest 4.x`, Playwright/flutter_test latest stable |
-| Property testing | fast-check | `4.7.0` |
-| Script runner | tsx | `4.21.0` |
-| BI / dashboards | Apache Superset (later phase) | `4.x` |
+| Layer            | Tech                                                           | Version                                                                |
+| ---------------- | -------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| Node             | Node.js                                                        | `24.x LTS (Krypton, ≥24.15)`                                           |
+| Package mgr      | pnpm                                                           | `10.x (≥10.33)`                                                        |
+| Monorepo         | Turborepo                                                      | `2.x`                                                                  |
+| Backend          | NestJS                                                         | `11.x (11.1.19)`                                                       |
+| Backend lang     | TypeScript                                                     | `5.9+`                                                                 |
+| Lint             | ESLint + typescript-eslint                                     | `eslint 10.x` + `typescript-eslint 8.59+` (flat config)                |
+| Format           | Prettier                                                       | `3.x`                                                                  |
+| ID generation    | ulidx                                                          | `2.4.1+`                                                               |
+| Web framework    | React                                                          | `18.x`                                                                 |
+| Web bundler      | Vite                                                           | `5.x`                                                                  |
+| Web styling      | Tailwind CSS                                                   | `3.x`                                                                  |
+| Web table        | TanStack Table                                                 | `8.x`                                                                  |
+| Desktop shell    | Electron                                                       | `30.x`                                                                 |
+| Desktop builder  | electron-builder                                               | `24.x`                                                                 |
+| Mobile           | Flutter                                                        | `3.22+` (Dart `3.11+`)                                                 |
+| ORM (shore)      | Prisma + `@prisma/client` + `@prisma/adapter-pg`               | `7.x (7.8.0)`                                                          |
+| ORM (vessel)     | Drizzle ORM + drizzle-kit + better-sqlite3                     | `drizzle-orm 0.45.2` / `drizzle-kit 0.31.10` / `better-sqlite3 12.9.0` |
+| Sync RPC         | gRPC                                                           | `@grpc/grpc-js 1.10+`                                                  |
+| Sync proto       | Protobuf (`protoc 34+`, `ts-proto 2.11+`, `protoc_plugin 25+`) | `proto3`                                                               |
+| Postgres         | PostgreSQL                                                     | `16.x`                                                                 |
+| SQLite           | SQLite                                                         | `3.45+`                                                                |
+| Search (shore)   | Meilisearch                                                    | `1.8+`                                                                 |
+| Object store     | S3-compatible (MinIO for local dev)                            | latest                                                                 |
+| Auth             | OIDC via `openid-client`                                       | `5.x`                                                                  |
+| Logging          | pino + pino-http + nestjs-pino                                 | `10.3.1` / `11.0.0` / `4.6.1`                                          |
+| Postgres client  | pg + `@prisma/adapter-pg`                                      | `8.20.0` / `7.8.0`                                                     |
+| Auth (local)     | bcrypt + `@nestjs/jwt` + `@nestjs/passport` + passport-local   | `6.0.0` / `11.0.2` / `11.0.5` / `1.0.0`                                |
+| Validation       | class-validator + class-transformer                            | `0.15.1` / `0.5.1`                                                     |
+| HTTP testing     | supertest                                                      | `7.2.2`                                                                |
+| Testing          | Vitest, Playwright (e2e), flutter_test                         | `vitest 4.x`, Playwright/flutter_test latest stable                    |
+| Property testing | fast-check                                                     | `4.7.0`                                                                |
+| Script runner    | tsx                                                            | `4.21.0`                                                               |
+| BI / dashboards  | Apache Superset (later phase)                                  | `4.x`                                                                  |
 
 **Rule:** If a package is not listed, justify the addition in the commit message and add it here.
 
@@ -152,24 +152,24 @@ pnpm run lint && pnpm run typecheck && pnpm run test
 
 ## 6. Build / Test / Run Commands (canonical)
 
-| Action | Command |
-|---|---|
-| Install everything | `pnpm install && flutter pub get -C apps/mobile` |
-| Lint | `pnpm run lint` |
-| Type-check | `pnpm run typecheck` |
-| Unit tests | `pnpm run test` |
-| E2E tests (web) | `pnpm --filter web-shore run test:e2e` |
-| Mobile tests | `flutter test -C apps/mobile` |
-| Sync soak test | `pnpm run soak:sync` |
-| Run shore stack (dev) | `pnpm run dev:shore` |
-| Run vessel stack (dev) | `pnpm run dev:vessel` |
-| Run desktop in dev | `pnpm --filter desktop-vessel run dev` |
-| Run mobile (sim) | `flutter run -C apps/mobile` |
-| Build desktop installer | `pnpm --filter desktop-vessel run dist` |
-| Generate proto | `pnpm run proto:gen` |
-| New migration (shore) | `pnpm --filter api-shore prisma migrate dev --name <name>` |
-| New migration (vessel) | `pnpm --filter api-vessel run db:gen && pnpm --filter api-vessel run db:migrate` |
-| Format | `pnpm run format && dart format apps/mobile` |
+| Action                  | Command                                                                          |
+| ----------------------- | -------------------------------------------------------------------------------- |
+| Install everything      | `pnpm install && flutter pub get -C apps/mobile`                                 |
+| Lint                    | `pnpm run lint`                                                                  |
+| Type-check              | `pnpm run typecheck`                                                             |
+| Unit tests              | `pnpm run test`                                                                  |
+| E2E tests (web)         | `pnpm --filter web-shore run test:e2e`                                           |
+| Mobile tests            | `flutter test -C apps/mobile`                                                    |
+| Sync soak test          | `pnpm run soak:sync`                                                             |
+| Run shore stack (dev)   | `pnpm run dev:shore`                                                             |
+| Run vessel stack (dev)  | `pnpm run dev:vessel`                                                            |
+| Run desktop in dev      | `pnpm --filter desktop-vessel run dev`                                           |
+| Run mobile (sim)        | `flutter run -C apps/mobile`                                                     |
+| Build desktop installer | `pnpm --filter desktop-vessel run dist`                                          |
+| Generate proto          | `pnpm run proto:gen`                                                             |
+| New migration (shore)   | `pnpm --filter api-shore prisma migrate dev --name <name>`                       |
+| New migration (vessel)  | `pnpm --filter api-vessel run db:gen && pnpm --filter api-vessel run db:migrate` |
+| Format                  | `pnpm run format && dart format apps/mobile`                                     |
 
 ---
 
@@ -188,39 +188,39 @@ pnpm run lint && pnpm run typecheck && pnpm run test
 - **No floating string keys.** All status/type fields are TS string-literal unions or Postgres enums.
 - **Errors** use `DomainError` from `packages/domain/errors`. HTTP layer maps to status codes.
 - **Logging:** `pino`. Never `console.log` outside scripts. Include `tenant_id`, `vessel_id`, `correlation_id`.
-- **Comments** explain *why*, not *what*.
+- **Comments** explain _why_, not _what_.
 
 ---
 
 ## 8. Domain Glossary
 
-| Term | Meaning |
-|---|---|
-| **PMS** | Planned Maintenance System. |
-| **SFI** | SFI Coding & Classification System. Six-digit hierarchical equipment codes. |
-| **Component** | A piece of shipboard equipment. Hierarchical. |
-| **Job** | A maintenance task on a Component. |
-| **Running hours** | Operating-hour counter on a Component. Drives interval-based jobs. |
-| **ROB** | Remaining On Board. Stock or fuel quantity currently on the vessel. |
-| **BDN** | Bunker Delivery Note. Document accompanying a fuel delivery. |
-| **FLGO** | Fuel / Liquids / Gas / Oil — Marad's tank-management module name. |
-| **QHSE** | Quality, Health, Safety, Environment. |
-| **CAPA** | Corrective Action / Preventive Action. |
-| **ISM** | International Safety Management Code. |
-| **SMS** | Safety Management System. |
-| **MLC 2006** | Maritime Labour Convention. Governs crew rest hours. |
-| **Class society** | Organisation that certifies vessels (DNV, ABS, Lloyd's Register, BV, RINA, NK). |
-| **Type-approval** | Class-society approval for a vessel's PMS of record. |
-| **IMO DCS** | IMO Data Collection System (fuel-oil consumption reporting). |
-| **EU MRV** | EU Monitoring, Reporting, Verification of CO2 emissions. |
-| **CII** | Carbon Intensity Indicator. Annual rating per vessel. |
-| **Master / Chief Eng** | Captain / Chief Engineer. Common approver roles. |
-| **Requisition** | A request to procure a part. Pre-PO. |
-| **PO** | Purchase Order. |
-| **RFQ** | Request For Quote. |
-| **GRN** | Goods Receipt Note. |
-| **2BA / Nareto** | Third-party technical product databases. Integrate via API only. |
-| **OCIMF** | Oil Companies International Marine Forum. |
+| Term                   | Meaning                                                                         |
+| ---------------------- | ------------------------------------------------------------------------------- |
+| **PMS**                | Planned Maintenance System.                                                     |
+| **SFI**                | SFI Coding & Classification System. Six-digit hierarchical equipment codes.     |
+| **Component**          | A piece of shipboard equipment. Hierarchical.                                   |
+| **Job**                | A maintenance task on a Component.                                              |
+| **Running hours**      | Operating-hour counter on a Component. Drives interval-based jobs.              |
+| **ROB**                | Remaining On Board. Stock or fuel quantity currently on the vessel.             |
+| **BDN**                | Bunker Delivery Note. Document accompanying a fuel delivery.                    |
+| **FLGO**               | Fuel / Liquids / Gas / Oil — Marad's tank-management module name.               |
+| **QHSE**               | Quality, Health, Safety, Environment.                                           |
+| **CAPA**               | Corrective Action / Preventive Action.                                          |
+| **ISM**                | International Safety Management Code.                                           |
+| **SMS**                | Safety Management System.                                                       |
+| **MLC 2006**           | Maritime Labour Convention. Governs crew rest hours.                            |
+| **Class society**      | Organisation that certifies vessels (DNV, ABS, Lloyd's Register, BV, RINA, NK). |
+| **Type-approval**      | Class-society approval for a vessel's PMS of record.                            |
+| **IMO DCS**            | IMO Data Collection System (fuel-oil consumption reporting).                    |
+| **EU MRV**             | EU Monitoring, Reporting, Verification of CO2 emissions.                        |
+| **CII**                | Carbon Intensity Indicator. Annual rating per vessel.                           |
+| **Master / Chief Eng** | Captain / Chief Engineer. Common approver roles.                                |
+| **Requisition**        | A request to procure a part. Pre-PO.                                            |
+| **PO**                 | Purchase Order.                                                                 |
+| **RFQ**                | Request For Quote.                                                              |
+| **GRN**                | Goods Receipt Note.                                                             |
+| **2BA / Nareto**       | Third-party technical product databases. Integrate via API only.                |
+| **OCIMF**              | Oil Companies International Marine Forum.                                       |
 
 ---
 
@@ -360,6 +360,7 @@ P0-1 through P0-10 all merged. See PROGRESS.md for details.
 ## 12. Definition of Done (universal)
 
 A task is done only if **all** are true:
+
 - Code merged to `main` via PR.
 - All checks green (lint, typecheck, unit, e2e where applicable, soak where applicable).
 - Migrations idempotent and reversible.
