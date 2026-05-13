@@ -1,8 +1,9 @@
-﻿import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Badge, Button, Spinner } from '@fleetops/ui-kit';
 import type { BadgeColor } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
 import { SignOffModal } from '../components/SignOffModal.js';
+import { CreateJobInstanceModal } from '../components/CreateJobInstanceModal.js';
 
 interface JobInstance {
   id: string;
@@ -35,6 +36,7 @@ export function JobInstancesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [signOffId, setSignOffId] = useState<string | null>(null);
+  const [scheduleOpen, setScheduleOpen] = useState(false);
 
   const load = useCallback(() => {
     setLoading(true);
@@ -45,43 +47,37 @@ export function JobInstancesPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  useEffect(() => {
-    load();
-  }, [load]);
+  useEffect(() => { load(); }, [load]);
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-xl font-bold text-slate-900">Job Instances</h1>
-        <p className="text-sm text-slate-500 mt-0.5">Scheduled maintenance tasks for this vessel</p>
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-bold text-slate-900">Job Instances</h1>
+          <p className="text-sm text-slate-500 mt-0.5">Scheduled maintenance tasks for this vessel</p>
+        </div>
+        <Button onClick={() => setScheduleOpen(true)}>+ Schedule Job</Button>
       </div>
 
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        {loading && (
-          <div className="p-8">
-            <Spinner />
-          </div>
-        )}
+        {loading && <div className="p-8"><Spinner /></div>}
         {error && <div className="p-6 text-sm text-red-600">{error}</div>}
         {!loading && !error && instances.length === 0 && (
-          <div className="p-8 text-center text-slate-500 text-sm">No job instances found.</div>
+          <div className="p-8 text-center text-slate-500 text-sm">
+            No job instances found.{' '}
+            <button className="text-blue-600 hover:underline" onClick={() => setScheduleOpen(true)}>
+              Schedule the first one.
+            </button>
+          </div>
         )}
         {!loading && !error && instances.length > 0 && (
           <table className="w-full text-sm">
             <thead className="bg-slate-50 border-b border-slate-200">
               <tr>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">
-                  Status
-                </th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">
-                  Due date
-                </th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">
-                  Due hours
-                </th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">
-                  Job ID
-                </th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Status</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Due date</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Due hours</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Job ID</th>
                 <th className="px-4 py-3" />
               </tr>
             </thead>
@@ -117,10 +113,12 @@ export function JobInstancesPage() {
       <SignOffModal
         jobInstanceId={signOffId}
         onClose={() => setSignOffId(null)}
-        onSuccess={() => {
-          setSignOffId(null);
-          load();
-        }}
+        onSuccess={() => { setSignOffId(null); load(); }}
+      />
+      <CreateJobInstanceModal
+        open={scheduleOpen}
+        onClose={() => setScheduleOpen(false)}
+        onCreated={() => { setScheduleOpen(false); load(); }}
       />
     </div>
   );
