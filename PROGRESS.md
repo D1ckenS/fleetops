@@ -8,6 +8,38 @@
 
 > Most-recent first. Format: `### YYYY-MM-DD — <task> — <summary>` then bullets.
 
+### 2026-05-13 — P1-11 — Mobile app (Flutter)
+
+| Item | Detail |
+|---|---|
+| `apps/mobile/pubspec.yaml` | Flutter 3.22+ app; deps: `http ^1.2.1`, `flutter_secure_storage ^9.0.0`, `mobile_scanner ^5.2.3`, `image_picker ^1.1.2`, `provider ^6.1.2` |
+| `apps/mobile/lib/utils/jwt.dart` | `decodeJwtPayload()` — base64url-decodes JWT payload without signature verification (client-side claim read only) |
+| `apps/mobile/lib/services/api_client.dart` | `ApiClient` — `get`, `post`, `postMultipart`; throws `ApiException` on non-2xx; token injection via `setToken()` |
+| `apps/mobile/lib/providers/auth_provider.dart` | `AuthProvider` (`ChangeNotifier`) — `login()` → `POST /auth/login` → token stored in `flutter_secure_storage`; `init()` restores token + base URL on startup; JWT claims extracted client-side |
+| `apps/mobile/lib/models/job_instance.dart` | `JobModel.fromJson`, `JobInstance.fromJson` with `isDone / isPending / isInProgress` helpers |
+| `apps/mobile/lib/models/inventory_item.dart` | `InventoryItem.fromJson` (maps `stockLevels[]` from inventory-summary API); `overallStatus` propagates worst status (red > amber > purple > green) |
+| `apps/mobile/lib/screens/login_screen.dart` | Login form: tenantId, email, password, expandable vessel API URL field |
+| `apps/mobile/lib/screens/home_screen.dart` | `IndexedStack` TabBar — Jobs + Inventory; sign-out with confirmation dialog |
+| `apps/mobile/lib/screens/jobs_screen.dart` | Fetches `GET /job-instances` + `GET /jobs` in parallel; joined client-side; tap → `SignOffScreen` |
+| `apps/mobile/lib/screens/sign_off_screen.dart` | `POST /job-instances/:id/sign-off` multipart; camera + gallery photo picker; hoursWorked / notes / signatureHash fields |
+| `apps/mobile/lib/screens/inventory_screen.dart` | `GET /parts/inventory-summary`; ROB chips per location; FAB → barcode scan; tap → `AdjustStockScreen` |
+| `apps/mobile/lib/screens/barcode_scan_screen.dart` | `MobileScanner` widget; on detect → `GET /barcode-bindings/lookup/:barcode`; returns `BarcodeScanResult` to caller |
+| `apps/mobile/lib/screens/adjust_stock_screen.dart` | `POST /stock-movements` (ADJUSTMENT / RECEIPT / CONSUMPTION); fetches `GET /stock-locations` for dropdown when no locationId pre-supplied |
+| `apps/mobile/lib/widgets/job_status_badge.dart` | Colored badge for PENDING / IN_PROGRESS / DONE |
+| `apps/mobile/lib/widgets/rob_status_chip.dart` | Icon-based chip for green / amber / red / purple ROB status |
+| `apps/mobile/test/models_test.dart` | 12 unit tests: `JobInstance`, `JobModel`, `InventoryItem`, `StockLevelEntry` fromJson parsing and business logic |
+| `apps/mobile/test/jwt_decode_test.dart` | 5 unit tests: claim extraction, missing claims, format errors |
+| CI | Flutter SDK not installed in this environment — `flutter test` must be run locally. Dart SDK 3.11.5 present. |
+
+**Key design decisions:**
+
+- `AuthProvider.init()` is called before `runApp` so the first frame shows the correct screen (no login flash)
+- Token + base URL both persisted in `flutter_secure_storage` — survives app restart without re-login
+- Barcode lookup returns flat `{ partId, partName, partNumber }` — used directly in `AdjustStockScreen`
+- `AdjustStockScreen` fetches `GET /stock-locations` lazily when no locationId is pre-supplied (barcode scan flow); pre-supplied locationId (from inventory list tap) skips the fetch
+- `ADJUSTMENT` quantity is signed (positive = add, negative = remove) — labelled in the form helper text
+- `IndexedStack` keeps both tabs alive so their scroll position is preserved across tab switches
+
 ### 2026-05-13 — P1-10 — Cross-module: job sign-off → StockMovement → reorder Requisition
 
 | Item | Detail |
@@ -218,7 +250,7 @@
 
 > Single, unambiguous next task for any fresh Claude Code session. Update this immediately when a task completes.
 
-**P1-10 done.** Next: **P1-11 — Mobile app (Flutter)** — login screen, view assigned jobs, sign-off with photo, barcode scan, adjust stock. Covers `apps/mobile/` (Flutter 3.22, Dart 3.11). Needs: login → JWT stored in secure storage; job list filtered by logged-in vessel; sign-off multipart POST; barcode scan → `GET /barcode-bindings/lookup/:barcode`; stock adjustment via `POST /stock-movements`.
+**P1-11 done.** Next: **P1-12 — Pilot deployment runbook** — `apps/docs/runbooks/pilot-deploy.md`: step-by-step guide for deploying FleetOps to a pilot vessel (Docker, Postgres, api-shore on shore server; Electron installer + SQLite on vessel; initial sync; smoke-test checklist).
 
 **Outstanding follow-up tickets (deferred, not blocking P1-4):**
 
