@@ -40,6 +40,20 @@
 - `ADJUSTMENT` quantity is signed (positive = add, negative = remove) — labelled in the form helper text
 - `IndexedStack` keeps both tabs alive so their scroll position is preserved across tab switches
 
+### 2026-05-13 — P1-12 — Pilot deployment runbook + Phase 1 checklist
+
+| Item | Detail |
+|---|---|
+| `apps/docs/runbooks/pilot-deploy.md` | 13-section runbook covering: prerequisites (shore server + vessel workstation specs), Docker Compose infra, MinIO bucket creation, JWT keypair generation, shore .env config, Prisma migrate deploy, systemd service, seed script, Electron installer build + distribution, vessel .env config, SQLite migration, gRPC sync enable + verify, 6-section smoke-test checklist (auth / PMS / inventory / purchase / barcode / sync), day-2 ops (logs, backups, upgrade, photo lifecycle), adding a second vessel, rollback procedure |
+| `apps/docs/checklists/phase1.md` | Phase 1 verification checklist with 10 sections (A–J): CI, auth, PMS, inventory, purchase, cross-module P1-10, Electron, mobile, sync, runbook sign-off; sign-off table for lead engineer + QA + IT officer |
+
+**Key design decisions:**
+
+- Runbook targets a systemd service for shore (not Docker for api-shore itself) — keeps the production setup simpler and avoids nested Docker complexity
+- `VESSEL_LOCAL_JWT_SECRET` explicitly called out as per-vessel (not shared across fleet)
+- Smoke tests written as step-by-step with concrete values (e.g. exact ROB thresholds) so a non-developer can execute them
+- Backup commands are copy-paste-ready (cron syntax for shore Postgres, PowerShell for vessel SQLite)
+
 ### 2026-05-13 — P1-10 — Cross-module: job sign-off → StockMovement → reorder Requisition
 
 | Item | Detail |
@@ -250,7 +264,7 @@
 
 > Single, unambiguous next task for any fresh Claude Code session. Update this immediately when a task completes.
 
-**P1-11 done.** Next: **P1-12 — Pilot deployment runbook** — `apps/docs/runbooks/pilot-deploy.md`: step-by-step guide for deploying FleetOps to a pilot vessel (Docker, Postgres, api-shore on shore server; Electron installer + SQLite on vessel; initial sync; smoke-test checklist).
+**P1-12 done. Phase 1 complete.** Next: **Phase 1 verification** — run the full Phase 1 verification command and work through `apps/docs/checklists/phase1.md`. Command: `pnpm run ci:full && pnpm run e2e:phase1 && pnpm run soak:sync`. After all checklist items are green, begin **P2-1 — Certificates** (expiry alerts, email/in-app notifications).
 
 **Outstanding follow-up tickets (deferred, not blocking P1-4):**
 
