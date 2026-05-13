@@ -251,6 +251,8 @@ model Job {
   intervalRunningHours Decimal?    @map("interval_running_hours") @db.Decimal(12, 2)
   estimatedHours       Decimal?    @map("estimated_hours") @db.Decimal(8, 2)
   priority             JobPriority @default(NORMAL)
+  /// JSON array: [{ partId, partName, typicalQuantity, unit }]
+  typicalPartsJson     String?     @map("typical_parts_json")
 
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")

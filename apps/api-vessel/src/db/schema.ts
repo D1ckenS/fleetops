@@ -137,6 +137,7 @@ export const jobs = sqliteTable(
     intervalRunningHours: numeric('interval_running_hours'),
     estimatedHours: numeric('estimated_hours'),
     priority: text('priority', { enum: JOB_PRIORITIES }).notNull().default('NORMAL'),
+    typicalPartsJson: text('typical_parts_json'),
     createdAt: text('created_at').notNull().default(nowIso),
     updatedAt: text('updated_at').notNull().default(nowIso),
     hlc: text('hlc'),

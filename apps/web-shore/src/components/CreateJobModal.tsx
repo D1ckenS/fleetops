@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button, Input, Modal, TextArea } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
+import { TypicalPartsList, partsToJson, type TypicalPart } from './TypicalPartsList.js';
 
 interface Props {
   open: boolean;
@@ -15,9 +16,11 @@ type IntervalMode = 'days' | 'hours';
 const PRIORITIES = ['LOW', 'NORMAL', 'HIGH', 'CRITICAL'] as const;
 const EMPTY = { title: '', description: '', intervalDays: '', intervalHours: '', estimatedHours: '', priority: 'NORMAL' as string };
 
+
 export function CreateJobModal({ open, componentId, componentName, onClose, onCreated }: Props) {
   const [form, setForm] = useState(EMPTY);
   const [mode, setMode] = useState<IntervalMode>('days');
+  const [typicalParts, setTypicalParts] = useState<TypicalPart[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -29,6 +32,7 @@ export function CreateJobModal({ open, componentId, componentName, onClose, onCr
   const handleClose = () => {
     setForm(EMPTY);
     setMode('days');
+    setTypicalParts([]);
     setError(null);
     onClose();
   };
@@ -50,6 +54,7 @@ export function CreateJobModal({ open, componentId, componentName, onClose, onCr
         description: form.description.trim() || undefined,
         priority: form.priority,
         estimatedHours: form.estimatedHours || undefined,
+        typicalPartsJson: partsToJson(typicalParts),
       };
       if (mode === 'days') body.intervalDays = Number(form.intervalDays);
       else body.intervalRunningHours = form.intervalHours;
@@ -126,6 +131,10 @@ export function CreateJobModal({ open, componentId, componentName, onClose, onCr
             <Input id="job-est" label="Est. hours" type="number" min="0" step="0.5"
               value={form.estimatedHours} onChange={set('estimatedHours')} placeholder="2" />
           </div>
+        </div>
+
+        <div className="border-t border-slate-100 pt-4">
+          <TypicalPartsList value={typicalParts} onChange={setTypicalParts} />
         </div>
       </div>
     </Modal>

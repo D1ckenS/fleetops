@@ -32,17 +32,24 @@ const statusLabel: Record<JobInstance['status'], string> = {
 };
 
 export function JobInstancesPage() {
+  interface JobMeta { id: string; typicalPartsJson?: string | null; }
   const [instances, setInstances] = useState<JobInstance[]>([]);
+  const [jobsById, setJobsById] = useState<Map<string, JobMeta>>(new Map());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [signOffId, setSignOffId] = useState<string | null>(null);
+  const [signOffTarget, setSignOffTarget] = useState<{ instanceId: string; typicalPartsJson?: string | null | undefined } | null>(null);
   const [scheduleOpen, setScheduleOpen] = useState(false);
 
   const load = useCallback(() => {
     setLoading(true);
-    api
-      .get<JobInstance[]>('/job-instances')
-      .then(setInstances)
+    Promise.all([
+      api.get<JobInstance[]>('/job-instances'),
+      api.get<JobMeta[]>('/jobs'),
+    ])
+      .then(([insts, jobs]) => {
+        setInstances(insts);
+        setJobsById(new Map(jobs.map((j) => [j.id, j])));
+      })
       .catch((e: unknown) => setError(e instanceof Error ? e.message : 'Failed to load'))
       .finally(() => setLoading(false));
   }, []);
@@ -98,7 +105,10 @@ export function JobInstancesPage() {
                   </td>
                   <td className="px-4 py-3 text-right">
                     {ji.status !== 'DONE' && (
-                      <Button variant="secondary" size="sm" onClick={() => setSignOffId(ji.id)}>
+                      <Button variant="secondary" size="sm" onClick={() => setSignOffTarget({
+                        instanceId: ji.id,
+                        typicalPartsJson: jobsById.get(ji.jobId)?.typicalPartsJson,
+                      })}>
                         Sign Off
                       </Button>
                     )}
@@ -111,9 +121,10 @@ export function JobInstancesPage() {
       </div>
 
       <SignOffModal
-        jobInstanceId={signOffId}
-        onClose={() => setSignOffId(null)}
-        onSuccess={() => { setSignOffId(null); load(); }}
+        jobInstanceId={signOffTarget?.instanceId ?? null}
+        typicalPartsJson={signOffTarget?.typicalPartsJson}
+        onClose={() => setSignOffTarget(null)}
+        onSuccess={() => { setSignOffTarget(null); load(); }}
       />
       <CreateJobInstanceModal
         open={scheduleOpen}

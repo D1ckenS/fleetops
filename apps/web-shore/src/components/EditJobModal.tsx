@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button, Input, Modal, TextArea } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
+import { TypicalPartsList, partsToJson, partsFromJson, type TypicalPart } from './TypicalPartsList.js';
 
 export interface Job {
   id: string;
@@ -11,6 +12,7 @@ export interface Job {
   intervalRunningHours: string | null;
   estimatedHours: string | null;
   priority: string;
+  typicalPartsJson?: string | null;
 }
 
 interface Props {
@@ -32,6 +34,7 @@ export function EditJobModal({ open, job, componentName, onClose, onSaved }: Pro
   const [intervalHours, setIntervalHours] = useState('');
   const [estimatedHours, setEstimatedHours] = useState('');
   const [priority, setPriority] = useState('NORMAL');
+  const [typicalParts, setTypicalParts] = useState<TypicalPart[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -45,6 +48,7 @@ export function EditJobModal({ open, job, componentName, onClose, onSaved }: Pro
     setIntervalHours(job.intervalRunningHours ?? '');
     setEstimatedHours(job.estimatedHours ?? '');
     setPriority(job.priority);
+    setTypicalParts(partsFromJson(job.typicalPartsJson));
     setError(null);
   }, [job]);
 
@@ -65,6 +69,7 @@ export function EditJobModal({ open, job, componentName, onClose, onSaved }: Pro
         description: description.trim() || undefined,
         priority,
         estimatedHours: estimatedHours || undefined,
+        typicalPartsJson: partsToJson(typicalParts),
       };
       if (mode === 'days') { body.intervalDays = Number(intervalDays); body.intervalRunningHours = null; }
       else { body.intervalRunningHours = intervalHours; body.intervalDays = null; }
@@ -119,6 +124,10 @@ export function EditJobModal({ open, job, componentName, onClose, onSaved }: Pro
           <div className="w-40">
             <Input id="ej-est" label="Est. hours" type="number" min="0" step="0.5" value={estimatedHours} onChange={(e) => setEstimatedHours(e.target.value)} />
           </div>
+        </div>
+
+        <div className="border-t border-slate-100 pt-4">
+          <TypicalPartsList value={typicalParts} onChange={setTypicalParts} />
         </div>
       </div>
     </Modal>
