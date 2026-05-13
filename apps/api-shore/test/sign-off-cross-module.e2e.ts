@@ -63,7 +63,14 @@ beforeAll(async () => {
   await prisma.tenant.create({ data: { id: tenantId, name: 'cross-module-shore-test' } });
   await prisma.vessel.create({ data: { id: vesselId, tenantId, name: 'MV CrossMod' } });
   await prisma.user.create({
-    data: { id: userId, tenantId, vesselId, email: 'chief@xmod.test', passwordHash: hash, role: 'CHIEF_ENGINEER' },
+    data: {
+      id: userId,
+      tenantId,
+      vesselId,
+      email: 'chief@xmod.test',
+      passwordHash: hash,
+      role: 'CHIEF_ENGINEER',
+    },
   });
 
   const loginRes = await request(app.getHttpServer())
@@ -178,7 +185,9 @@ describe('P1-10 cross-module — shore', () => {
       .set('Authorization', auth())
       .field(
         'partsConsumedJson',
-        JSON.stringify([{ partId: ids.partId, locationId: ids.locationId, quantity: String(consumeQty) }]),
+        JSON.stringify([
+          { partId: ids.partId, locationId: ids.locationId, quantity: String(consumeQty) },
+        ]),
       )
       .expect(201);
 
@@ -223,7 +232,9 @@ describe('P1-10 cross-module — shore', () => {
       .set('Authorization', auth())
       .field(
         'partsConsumedJson',
-        JSON.stringify([{ partId: ids.partId, locationId: ids.locationId, quantity: String(consumeQty) }]),
+        JSON.stringify([
+          { partId: ids.partId, locationId: ids.locationId, quantity: String(consumeQty) },
+        ]),
       )
       .expect(201);
 
@@ -236,7 +247,9 @@ describe('P1-10 cross-module — shore', () => {
       .expect(200);
     expect((reqs.body as unknown[]).length).toBe(1);
 
-    const req = (reqs.body as Array<{ id: string; title: string; status: string; lines: unknown[] }>)[0]!;
+    const req = (
+      reqs.body as Array<{ id: string; title: string; status: string; lines: unknown[] }>
+    )[0]!;
     expect(req.status).toBe('DRAFT');
     expect(req.title).toContain('Restock');
     expect(req.lines).toHaveLength(1);

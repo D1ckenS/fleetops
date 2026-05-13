@@ -208,7 +208,16 @@ export class JobHistoryService {
             { tenantId: auth.tenantId, vesselId },
             'StockMovement',
             movId,
-            { vesselId, partId: item.partId, locationId: item.locationId, movementType: 'CONSUMPTION', quantity: negQty.toString(), referenceType: 'JobHistory', referenceId: historyId, recordedAt: nowIso },
+            {
+              vesselId,
+              partId: item.partId,
+              locationId: item.locationId,
+              movementType: 'CONSUMPTION',
+              quantity: negQty.toString(),
+              referenceType: 'JobHistory',
+              referenceId: historyId,
+              recordedAt: nowIso,
+            },
           );
           await tx.stockMovement.create({
             data: {
@@ -304,7 +313,13 @@ export class JobHistoryService {
               { tenantId: auth.tenantId, vesselId },
               'RequisitionLine',
               lineId,
-              { vesselId, requisitionId: reqId, partId: trigger.partId, description, quantity: trigger.qty.toString() },
+              {
+                vesselId,
+                requisitionId: reqId,
+                partId: trigger.partId,
+                description,
+                quantity: trigger.qty.toString(),
+              },
             );
             await tx.requisitionLine.create({
               data: {

@@ -268,10 +268,7 @@ export function PODetailModal({ po, onClose, onGrnPosted }: Props) {
           <h3 className="text-sm font-semibold text-slate-700 mb-2">Goods Receipts</h3>
           <div className="space-y-2">
             {po.receipts.map((r) => (
-              <div
-                key={r.id}
-                className="border border-slate-200 rounded-lg px-4 py-3 text-sm"
-              >
+              <div key={r.id} className="border border-slate-200 rounded-lg px-4 py-3 text-sm">
                 <div className="flex items-center justify-between mb-1">
                   <span className="font-medium text-slate-700">GRN — {fmtDate(r.receivedAt)}</span>
                   {r.notes && <span className="text-slate-500 text-xs">{r.notes}</span>}

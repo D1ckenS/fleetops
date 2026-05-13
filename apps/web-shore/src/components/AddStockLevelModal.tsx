@@ -2,7 +2,10 @@ import { useEffect, useState } from 'react';
 import { Button, Input, Modal, Spinner } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
 
-interface Location { id: string; name: string; }
+interface Location {
+  id: string;
+  name: string;
+}
 
 interface Props {
   open: boolean;
@@ -34,17 +37,27 @@ export function AddStockLevelModal({ open, partId, partName, onClose, onSaved }:
     setMaxStock('');
     setError(null);
     setLoadingLocs(true);
-    api.get<Location[]>('/stock-locations')
+    api
+      .get<Location[]>('/stock-locations')
       .then(setLocations)
       .catch(() => setError('Could not load locations.'))
       .finally(() => setLoadingLocs(false));
   }, [open]);
 
-  const handleClose = () => { setError(null); onClose(); };
+  const handleClose = () => {
+    setError(null);
+    onClose();
+  };
 
   const handleSubmit = async () => {
-    if (!locationId) { setError('Select or create a location.'); return; }
-    if (locationId === NEW_LOC && !newLocName.trim()) { setError('Enter a location name.'); return; }
+    if (!locationId) {
+      setError('Select or create a location.');
+      return;
+    }
+    if (locationId === NEW_LOC && !newLocName.trim()) {
+      setError('Enter a location name.');
+      return;
+    }
     setSaving(true);
     setError(null);
     try {
@@ -75,44 +88,99 @@ export function AddStockLevelModal({ open, partId, partName, onClose, onSaved }:
       onClose={handleClose}
       footer={
         <>
-          <Button variant="secondary" onClick={handleClose} disabled={saving}>Cancel</Button>
-          <Button loading={saving} onClick={handleSubmit}>Save</Button>
+          <Button variant="secondary" onClick={handleClose} disabled={saving}>
+            Cancel
+          </Button>
+          <Button loading={saving} onClick={handleSubmit}>
+            Save
+          </Button>
         </>
       }
     >
       <div className="space-y-4">
-        {error && <div className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-md">{error}</div>}
+        {error && (
+          <div className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-md">{error}</div>
+        )}
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="sl-loc">Location *</label>
-          {loadingLocs ? <Spinner /> : (
-            <select id="sl-loc" value={locationId} onChange={(e) => setLocationId(e.target.value)}
-              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="sl-loc">
+            Location *
+          </label>
+          {loadingLocs ? (
+            <Spinner />
+          ) : (
+            <select
+              id="sl-loc"
+              value={locationId}
+              onChange={(e) => setLocationId(e.target.value)}
+              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
               <option value="">— Select —</option>
-              {locations.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
+              {locations.map((l) => (
+                <option key={l.id} value={l.id}>
+                  {l.name}
+                </option>
+              ))}
               <option value={NEW_LOC}>+ Create new location…</option>
             </select>
           )}
         </div>
 
         {locationId === NEW_LOC && (
-          <Input id="sl-locname" label="New location name *" value={newLocName}
-            onChange={(e) => setNewLocName(e.target.value)} placeholder="Engine Room Store" autoFocus />
+          <Input
+            id="sl-locname"
+            label="New location name *"
+            value={newLocName}
+            onChange={(e) => setNewLocName(e.target.value)}
+            placeholder="Engine Room Store"
+            autoFocus
+          />
         )}
 
         <div className="grid grid-cols-3 gap-3">
-          <Input id="sl-min" label="Min stock" type="number" min="0" step="0.1"
-            value={minStock} onChange={(e) => setMinStock(e.target.value)} placeholder="20" />
-          <Input id="sl-reorder" label="Reorder point" type="number" min="0" step="0.1"
-            value={reorderPoint} onChange={(e) => setReorderPoint(e.target.value)} placeholder="40" />
-          <Input id="sl-max" label="Max stock" type="number" min="0" step="0.1"
-            value={maxStock} onChange={(e) => setMaxStock(e.target.value)} placeholder="200" />
+          <Input
+            id="sl-min"
+            label="Min stock"
+            type="number"
+            min="0"
+            step="0.1"
+            value={minStock}
+            onChange={(e) => setMinStock(e.target.value)}
+            placeholder="20"
+          />
+          <Input
+            id="sl-reorder"
+            label="Reorder point"
+            type="number"
+            min="0"
+            step="0.1"
+            value={reorderPoint}
+            onChange={(e) => setReorderPoint(e.target.value)}
+            placeholder="40"
+          />
+          <Input
+            id="sl-max"
+            label="Max stock"
+            type="number"
+            min="0"
+            step="0.1"
+            value={maxStock}
+            onChange={(e) => setMaxStock(e.target.value)}
+            placeholder="200"
+          />
         </div>
 
         <div className="text-xs text-slate-500 bg-slate-50 px-3 py-2 rounded-md space-y-1">
-          <p><span className="font-medium">Min:</span> chip turns red below this level.</p>
-          <p><span className="font-medium">Reorder:</span> chip turns amber; auto-requisition created on sign-off.</p>
-          <p><span className="font-medium">Max:</span> informational upper limit.</p>
+          <p>
+            <span className="font-medium">Min:</span> chip turns red below this level.
+          </p>
+          <p>
+            <span className="font-medium">Reorder:</span> chip turns amber; auto-requisition created
+            on sign-off.
+          </p>
+          <p>
+            <span className="font-medium">Max:</span> informational upper limit.
+          </p>
         </div>
       </div>
     </Modal>

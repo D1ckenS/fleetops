@@ -46,7 +46,10 @@ beforeAll(async () => {
   // Tenant + vessel via API
   const tRes = await request(app.getHttpServer())
     .post('/api/v1/tenants')
-    .send({ name: 'cross-module-vessel-test', admin: { email: 'admin@xmod.vessel', password: 'AdminP@ss1' } });
+    .send({
+      name: 'cross-module-vessel-test',
+      admin: { email: 'admin@xmod.vessel', password: 'AdminP@ss1' },
+    });
   tenantId = (tRes.body as { tenant: { id: string } }).tenant.id;
 
   const adminLogin = await request(app.getHttpServer())
@@ -105,7 +108,13 @@ beforeAll(async () => {
   await request(app.getHttpServer())
     .post('/api/v1/stock-movements')
     .set('Authorization', auth())
-    .send({ partId: ids.partId, locationId: ids.locationId, movementType: 'RECEIPT', quantity: '20', recordedAt: new Date().toISOString() });
+    .send({
+      partId: ids.partId,
+      locationId: ids.locationId,
+      movementType: 'RECEIPT',
+      quantity: '20',
+      recordedAt: new Date().toISOString(),
+    });
 });
 
 afterAll(async () => {
@@ -144,7 +153,9 @@ describe('P1-10 cross-module — vessel', () => {
       .set('Authorization', auth())
       .field(
         'partsConsumedJson',
-        JSON.stringify([{ partId: ids.partId, locationId: ids.locationId, quantity: String(consumeQty) }]),
+        JSON.stringify([
+          { partId: ids.partId, locationId: ids.locationId, quantity: String(consumeQty) },
+        ]),
       )
       .expect(201);
 
@@ -185,7 +196,9 @@ describe('P1-10 cross-module — vessel', () => {
       .set('Authorization', auth())
       .field(
         'partsConsumedJson',
-        JSON.stringify([{ partId: ids.partId, locationId: ids.locationId, quantity: String(consumeQty) }]),
+        JSON.stringify([
+          { partId: ids.partId, locationId: ids.locationId, quantity: String(consumeQty) },
+        ]),
       )
       .expect(201);
 

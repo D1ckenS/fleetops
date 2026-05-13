@@ -120,10 +120,10 @@
 
 ## Sign-Off
 
-| Role | Name | Date | Signature |
-|---|---|---|---|
-| Lead engineer | | | |
-| QA / reviewer | | | |
-| IT officer (pilot vessel) | | | |
+| Role                      | Name | Date | Signature |
+| ------------------------- | ---- | ---- | --------- |
+| Lead engineer             |      |      |           |
+| QA / reviewer             |      |      |           |
+| IT officer (pilot vessel) |      |      |           |
 
 Phase 1 is complete when **all items above are checked** and this table is signed.

@@ -14,8 +14,14 @@ interface Props {
 
 type IntervalMode = 'days' | 'hours';
 const PRIORITIES = ['LOW', 'NORMAL', 'HIGH', 'CRITICAL'] as const;
-const EMPTY = { title: '', description: '', intervalDays: '', intervalHours: '', estimatedHours: '', priority: 'NORMAL' as string };
-
+const EMPTY = {
+  title: '',
+  description: '',
+  intervalDays: '',
+  intervalHours: '',
+  estimatedHours: '',
+  priority: 'NORMAL' as string,
+};
 
 export function CreateJobModal({ open, componentId, componentName, onClose, onCreated }: Props) {
   const [form, setForm] = useState(EMPTY);
@@ -38,7 +44,10 @@ export function CreateJobModal({ open, componentId, componentName, onClose, onCr
   };
 
   const handleSubmit = async () => {
-    if (!form.title.trim()) { setError('Title is required.'); return; }
+    if (!form.title.trim()) {
+      setError('Title is required.');
+      return;
+    }
     const hasDays = mode === 'days' && !!form.intervalDays;
     const hasHours = mode === 'hours' && !!form.intervalHours;
     if (!hasDays && !hasHours) {
@@ -76,17 +85,35 @@ export function CreateJobModal({ open, componentId, componentName, onClose, onCr
       onClose={handleClose}
       footer={
         <>
-          <Button variant="secondary" onClick={handleClose} disabled={saving}>Cancel</Button>
-          <Button loading={saving} onClick={handleSubmit}>Create Job</Button>
+          <Button variant="secondary" onClick={handleClose} disabled={saving}>
+            Cancel
+          </Button>
+          <Button loading={saving} onClick={handleSubmit}>
+            Create Job
+          </Button>
         </>
       }
     >
       <div className="space-y-4">
-        {error && <div className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-md">{error}</div>}
-        <Input id="job-title" label="Title *" value={form.title} onChange={set('title')}
-          placeholder="Oil Change" autoFocus />
-        <TextArea id="job-desc" label="Description" rows={2} value={form.description}
-          onChange={set('description')} placeholder="Optional details..." />
+        {error && (
+          <div className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-md">{error}</div>
+        )}
+        <Input
+          id="job-title"
+          label="Title *"
+          value={form.title}
+          onChange={set('title')}
+          placeholder="Oil Change"
+          autoFocus
+        />
+        <TextArea
+          id="job-desc"
+          label="Description"
+          rows={2}
+          value={form.description}
+          onChange={set('description')}
+          placeholder="Optional details..."
+        />
 
         {/* Interval type toggle */}
         <div>
@@ -97,7 +124,9 @@ export function CreateJobModal({ open, componentId, componentName, onClose, onCr
                 key={m}
                 onClick={() => setMode(m)}
                 className={`flex-1 py-1.5 px-3 transition-colors ${
-                  mode === m ? 'bg-blue-600 text-white font-medium' : 'bg-white text-slate-600 hover:bg-slate-50'
+                  mode === m
+                    ? 'bg-blue-600 text-white font-medium'
+                    : 'bg-white text-slate-600 hover:bg-slate-50'
                 }`}
               >
                 {m === 'days' ? 'Calendar days' : 'Running hours'}
@@ -105,11 +134,27 @@ export function CreateJobModal({ open, componentId, componentName, onClose, onCr
             ))}
           </div>
           {mode === 'days' ? (
-            <Input id="job-days" label="Every N days" type="number" min="1" step="1"
-              value={form.intervalDays} onChange={set('intervalDays')} placeholder="90" />
+            <Input
+              id="job-days"
+              label="Every N days"
+              type="number"
+              min="1"
+              step="1"
+              value={form.intervalDays}
+              onChange={set('intervalDays')}
+              placeholder="90"
+            />
           ) : (
-            <Input id="job-hours" label="Every N running hours" type="number" min="1" step="1"
-              value={form.intervalHours} onChange={set('intervalHours')} placeholder="250" />
+            <Input
+              id="job-hours"
+              label="Every N running hours"
+              type="number"
+              min="1"
+              step="1"
+              value={form.intervalHours}
+              onChange={set('intervalHours')}
+              placeholder="250"
+            />
           )}
         </div>
 
@@ -124,12 +169,24 @@ export function CreateJobModal({ open, componentId, componentName, onClose, onCr
               onChange={set('priority')}
               className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              {PRIORITIES.map((p) => <option key={p} value={p}>{p}</option>)}
+              {PRIORITIES.map((p) => (
+                <option key={p} value={p}>
+                  {p}
+                </option>
+              ))}
             </select>
           </div>
           <div className="w-40">
-            <Input id="job-est" label="Est. hours" type="number" min="0" step="0.5"
-              value={form.estimatedHours} onChange={set('estimatedHours')} placeholder="2" />
+            <Input
+              id="job-est"
+              label="Est. hours"
+              type="number"
+              min="0"
+              step="0.5"
+              value={form.estimatedHours}
+              onChange={set('estimatedHours')}
+              placeholder="2"
+            />
           </div>
         </div>
 

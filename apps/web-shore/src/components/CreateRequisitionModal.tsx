@@ -8,7 +8,11 @@ interface Props {
   onCreated: () => void;
 }
 
-interface Part { id: string; name: string; unit: string; }
+interface Part {
+  id: string;
+  name: string;
+  unit: string;
+}
 
 interface ReqLine {
   partId?: string;
@@ -20,7 +24,13 @@ interface ReqLine {
 }
 
 const EMPTY_HEADER = { title: '', notes: '', currency: 'USD' };
-const EMPTY_LINE: ReqLine = { partId: '', description: '', quantity: '1', unit: 'pcs', estimatedUnitPrice: '' };
+const EMPTY_LINE: ReqLine = {
+  partId: '',
+  description: '',
+  quantity: '1',
+  unit: 'pcs',
+  estimatedUnitPrice: '',
+};
 
 export function CreateRequisitionModal({ open, onClose, onCreated }: Props) {
   const [header, setHeader] = useState(EMPTY_HEADER);
@@ -32,10 +42,15 @@ export function CreateRequisitionModal({ open, onClose, onCreated }: Props) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (open) api.get<Part[]>('/parts').then(setParts).catch(() => undefined);
+    if (open)
+      api
+        .get<Part[]>('/parts')
+        .then(setParts)
+        .catch(() => undefined);
   }, [open]);
 
-  const setH = (field: keyof typeof EMPTY_HEADER) =>
+  const setH =
+    (field: keyof typeof EMPTY_HEADER) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
       setHeader((h) => ({ ...h, [field]: e.target.value }));
 
@@ -53,13 +68,18 @@ export function CreateRequisitionModal({ open, onClose, onCreated }: Props) {
   const addLine = () => {
     if (!newLine.description.trim() && !newLine.partId) return;
     const desc = newLine.description.trim() || selectedPart?.name || '';
-    if (!desc) { return; }
-    setLines((prev) => [...prev, {
-      ...newLine,
-      description: desc,
-      partName: selectedPart?.name,
-      unit: newLine.unit || selectedPart?.unit || 'pcs',
-    }]);
+    if (!desc) {
+      return;
+    }
+    setLines((prev) => [
+      ...prev,
+      {
+        ...newLine,
+        description: desc,
+        partName: selectedPart?.name,
+        unit: newLine.unit || selectedPart?.unit || 'pcs',
+      },
+    ]);
     setNewLine(EMPTY_LINE);
     setShowAddLine(false);
   };
@@ -73,7 +93,10 @@ export function CreateRequisitionModal({ open, onClose, onCreated }: Props) {
   }, 0);
 
   const handleSubmit = async () => {
-    if (!header.title.trim()) { setError('Title is required.'); return; }
+    if (!header.title.trim()) {
+      setError('Title is required.');
+      return;
+    }
     setSaving(true);
     setError(null);
     try {
@@ -114,21 +137,45 @@ export function CreateRequisitionModal({ open, onClose, onCreated }: Props) {
       onClose={handleClose}
       footer={
         <>
-          <Button variant="secondary" onClick={handleClose} disabled={saving}>Cancel</Button>
-          <Button loading={saving} onClick={handleSubmit}>Create Requisition</Button>
+          <Button variant="secondary" onClick={handleClose} disabled={saving}>
+            Cancel
+          </Button>
+          <Button loading={saving} onClick={handleSubmit}>
+            Create Requisition
+          </Button>
         </>
       }
     >
       <div className="space-y-4">
-        {error && <div className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-md">{error}</div>}
+        {error && (
+          <div className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-md">{error}</div>
+        )}
 
-        <Input id="req-title" label="Title *" value={header.title} onChange={setH('title')}
-          placeholder="Engine room spares Q3" autoFocus />
-        <TextArea id="req-notes" label="Notes" rows={2} value={header.notes}
-          onChange={setH('notes')} placeholder="Additional details…" />
+        <Input
+          id="req-title"
+          label="Title *"
+          value={header.title}
+          onChange={setH('title')}
+          placeholder="Engine room spares Q3"
+          autoFocus
+        />
+        <TextArea
+          id="req-notes"
+          label="Notes"
+          rows={2}
+          value={header.notes}
+          onChange={setH('notes')}
+          placeholder="Additional details…"
+        />
         <div className="w-28">
-          <Input id="req-currency" label="Currency" value={header.currency}
-            onChange={setH('currency')} placeholder="USD" maxLength={3} />
+          <Input
+            id="req-currency"
+            label="Currency"
+            value={header.currency}
+            onChange={setH('currency')}
+            placeholder="USD"
+            maxLength={3}
+          />
         </div>
 
         {/* ── Line items ─────────────────────────────────────────── */}
@@ -137,27 +184,42 @@ export function CreateRequisitionModal({ open, onClose, onCreated }: Props) {
             <span className="text-sm font-medium text-slate-700">
               Line items{lines.length > 0 && ` (${lines.length})`}
             </span>
-            <button type="button" onClick={() => setShowAddLine((v) => !v)}
-              className="text-xs text-blue-600 hover:underline">
+            <button
+              type="button"
+              onClick={() => setShowAddLine((v) => !v)}
+              className="text-xs text-blue-600 hover:underline"
+            >
               {showAddLine ? 'Cancel' : '+ Add line'}
             </button>
           </div>
 
           {lines.length === 0 && !showAddLine && (
-            <p className="text-xs text-slate-400 italic">No lines yet. Add parts or free-text lines.</p>
+            <p className="text-xs text-slate-400 italic">
+              No lines yet. Add parts or free-text lines.
+            </p>
           )}
 
           {lines.map((line, idx) => (
-            <div key={idx} className="flex items-center gap-2 py-1.5 border-b border-slate-100 last:border-0 text-sm">
+            <div
+              key={idx}
+              className="flex items-center gap-2 py-1.5 border-b border-slate-100 last:border-0 text-sm"
+            >
               <span className="flex-1 text-slate-700">{line.description}</span>
-              <span className="text-slate-500 tabular-nums">{line.quantity} {line.unit}</span>
+              <span className="text-slate-500 tabular-nums">
+                {line.quantity} {line.unit}
+              </span>
               {line.estimatedUnitPrice && (
                 <span className="text-slate-400 tabular-nums">
                   @ {line.estimatedUnitPrice} {header.currency}
                 </span>
               )}
-              <button type="button" onClick={() => removeLine(idx)}
-                className="text-slate-300 hover:text-red-500 text-xs">✕</button>
+              <button
+                type="button"
+                onClick={() => removeLine(idx)}
+                className="text-slate-300 hover:text-red-500 text-xs"
+              >
+                ✕
+              </button>
             </div>
           ))}
 
@@ -166,50 +228,78 @@ export function CreateRequisitionModal({ open, onClose, onCreated }: Props) {
               <div className="flex gap-2">
                 <div className="flex-1">
                   <label className="block text-xs text-slate-500 mb-1">Part (optional)</label>
-                  <select value={newLine.partId}
+                  <select
+                    value={newLine.partId}
                     onChange={(e) => {
                       const p = parts.find((pt) => pt.id === e.target.value);
                       setNewLine((l) => ({
-                        ...l, partId: e.target.value,
+                        ...l,
+                        partId: e.target.value,
                         description: p?.name ?? l.description,
                         unit: p?.unit ?? l.unit,
                       }));
                     }}
-                    className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                    className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  >
                     <option value="">— Select or type free text —</option>
-                    {parts.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+                    {parts.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.name}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
               <div className="flex gap-2">
                 <div className="flex-1">
                   <label className="block text-xs text-slate-500 mb-1">Description *</label>
-                  <input value={newLine.description} onChange={(e) => setNewLine((l) => ({ ...l, description: e.target.value }))}
+                  <input
+                    value={newLine.description}
+                    onChange={(e) => setNewLine((l) => ({ ...l, description: e.target.value }))}
                     placeholder="What is being requested?"
-                    className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                    className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  />
                 </div>
                 <div className="w-16">
                   <label className="block text-xs text-slate-500 mb-1">Qty</label>
-                  <input type="number" min="1" step="1" value={newLine.quantity}
+                  <input
+                    type="number"
+                    min="1"
+                    step="1"
+                    value={newLine.quantity}
                     onChange={(e) => setNewLine((l) => ({ ...l, quantity: e.target.value }))}
-                    className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                    className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  />
                 </div>
                 <div className="w-16">
                   <label className="block text-xs text-slate-500 mb-1">Unit</label>
-                  <input value={newLine.unit} onChange={(e) => setNewLine((l) => ({ ...l, unit: e.target.value }))}
+                  <input
+                    value={newLine.unit}
+                    onChange={(e) => setNewLine((l) => ({ ...l, unit: e.target.value }))}
                     placeholder="pcs"
-                    className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                    className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  />
                 </div>
                 <div className="w-24">
                   <label className="block text-xs text-slate-500 mb-1">Unit price</label>
-                  <input type="number" min="0" step="0.01" value={newLine.estimatedUnitPrice}
-                    onChange={(e) => setNewLine((l) => ({ ...l, estimatedUnitPrice: e.target.value }))}
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={newLine.estimatedUnitPrice}
+                    onChange={(e) =>
+                      setNewLine((l) => ({ ...l, estimatedUnitPrice: e.target.value }))
+                    }
                     placeholder="0.00"
-                    className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                    className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  />
                 </div>
               </div>
-              <Button size="sm" onClick={addLine}
-                disabled={!newLine.description.trim() && !newLine.partId}>
+              <Button
+                size="sm"
+                onClick={addLine}
+                disabled={!newLine.description.trim() && !newLine.partId}
+              >
                 Add line
               </Button>
             </div>

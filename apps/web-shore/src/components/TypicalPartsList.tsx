@@ -14,7 +14,11 @@ export interface TypicalPart {
   unit: string;
 }
 
-interface PartOption { id: string; name: string; unit: string; }
+interface PartOption {
+  id: string;
+  name: string;
+  unit: string;
+}
 
 interface Props {
   value: TypicalPart[];
@@ -28,7 +32,10 @@ export function TypicalPartsList({ value, onChange }: Props) {
   const [showAdd, setShowAdd] = useState(false);
 
   useEffect(() => {
-    api.get<PartOption[]>('/parts').then(setParts).catch(() => undefined);
+    api
+      .get<PartOption[]>('/parts')
+      .then(setParts)
+      .catch(() => undefined);
   }, []);
 
   const selectedPart = parts.find((p) => p.id === addingPartId);
@@ -66,15 +73,24 @@ export function TypicalPartsList({ value, onChange }: Props) {
       </div>
 
       {value.length === 0 && !showAdd && (
-        <p className="text-xs text-slate-400 italic">No parts defined. These pre-fill the sign-off form.</p>
+        <p className="text-xs text-slate-400 italic">
+          No parts defined. These pre-fill the sign-off form.
+        </p>
       )}
 
       {value.map((p) => (
         <div key={p.partId} className="flex items-center gap-2 py-1 text-sm">
           <span className="flex-1 text-slate-700">{p.partName}</span>
-          <span className="text-slate-500 tabular-nums">{p.typicalQuantity} {p.unit}</span>
-          <button type="button" onClick={() => remove(p.partId)}
-            className="text-slate-300 hover:text-red-500 transition-colors text-xs">✕</button>
+          <span className="text-slate-500 tabular-nums">
+            {p.typicalQuantity} {p.unit}
+          </span>
+          <button
+            type="button"
+            onClick={() => remove(p.partId)}
+            className="text-slate-300 hover:text-red-500 transition-colors text-xs"
+          >
+            ✕
+          </button>
         </div>
       ))}
 
@@ -82,18 +98,31 @@ export function TypicalPartsList({ value, onChange }: Props) {
         <div className="mt-2 flex items-end gap-2 bg-slate-50 p-2 rounded-md">
           <div className="flex-1">
             <label className="block text-xs text-slate-500 mb-1">Part</label>
-            <select value={addingPartId} onChange={(e) => setAddingPartId(e.target.value)}
-              className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+            <select
+              value={addingPartId}
+              onChange={(e) => setAddingPartId(e.target.value)}
+              className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+            >
               <option value="">— Select —</option>
-              {parts.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+              {parts.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
             </select>
           </div>
           <div className="w-24">
             <label className="block text-xs text-slate-500 mb-1">
               Qty {selectedPart?.unit ? `(${selectedPart.unit})` : ''}
             </label>
-            <Input id="tpl-qty" value={addingQty} type="number" min="0.01" step="0.01"
-              onChange={(e) => setAddingQty(e.target.value)} />
+            <Input
+              id="tpl-qty"
+              value={addingQty}
+              type="number"
+              min="0.01"
+              step="0.01"
+              onChange={(e) => setAddingQty(e.target.value)}
+            />
           </div>
           <Button size="sm" onClick={handleAdd} disabled={!addingPartId || !addingQty}>
             Add
@@ -110,6 +139,9 @@ export function partsToJson(parts: TypicalPart[]): string | undefined {
 
 export function partsFromJson(json: string | null | undefined): TypicalPart[] {
   if (!json) return [];
-  try { return JSON.parse(json) as TypicalPart[]; }
-  catch { return []; }
+  try {
+    return JSON.parse(json) as TypicalPart[];
+  } catch {
+    return [];
+  }
 }

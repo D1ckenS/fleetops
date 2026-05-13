@@ -2,7 +2,10 @@ import { useEffect, useState } from 'react';
 import { Button, Input, Modal, Spinner } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
 
-interface Location { id: string; name: string; }
+interface Location {
+  id: string;
+  name: string;
+}
 
 interface Props {
   open: boolean;
@@ -39,18 +42,28 @@ export function PostStockMovementModal({ open, partId, partName, onClose, onPost
     setNotes('');
     setError(null);
     setLoadingLocs(true);
-    api.get<Location[]>('/stock-locations')
+    api
+      .get<Location[]>('/stock-locations')
       .then(setLocations)
       .catch(() => setError('Could not load locations.'))
       .finally(() => setLoadingLocs(false));
   }, [open]);
 
-  const handleClose = () => { setError(null); onClose(); };
+  const handleClose = () => {
+    setError(null);
+    onClose();
+  };
 
   const handleSubmit = async () => {
-    if (!locationId) { setError('Select a location.'); return; }
+    if (!locationId) {
+      setError('Select a location.');
+      return;
+    }
     const qty = parseFloat(quantity);
-    if (!quantity || isNaN(qty) || qty === 0) { setError('Enter a non-zero quantity.'); return; }
+    if (!quantity || isNaN(qty) || qty === 0) {
+      setError('Enter a non-zero quantity.');
+      return;
+    }
 
     // CONSUMPTION is entered as a positive number but stored as negative.
     const signedQty = movementType === 'CONSUMPTION' ? (-Math.abs(qty)).toString() : qty.toString();
@@ -81,20 +94,29 @@ export function PostStockMovementModal({ open, partId, partName, onClose, onPost
       onClose={handleClose}
       footer={
         <>
-          <Button variant="secondary" onClick={handleClose} disabled={saving}>Cancel</Button>
-          <Button loading={saving} onClick={handleSubmit}>Post</Button>
+          <Button variant="secondary" onClick={handleClose} disabled={saving}>
+            Cancel
+          </Button>
+          <Button loading={saving} onClick={handleSubmit}>
+            Post
+          </Button>
         </>
       }
     >
       <div className="space-y-4">
-        {error && <div className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-md">{error}</div>}
+        {error && (
+          <div className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-md">{error}</div>
+        )}
 
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-1">Movement type *</label>
           <div className="flex rounded-md border border-slate-200 overflow-hidden text-sm">
             {MOVEMENT_TYPES.map((t) => (
-              <button key={t} onClick={() => setMovementType(t)}
-                className={`flex-1 py-1.5 px-2 transition-colors ${movementType === t ? 'bg-blue-600 text-white font-medium' : 'bg-white text-slate-600 hover:bg-slate-50'}`}>
+              <button
+                key={t}
+                onClick={() => setMovementType(t)}
+                className={`flex-1 py-1.5 px-2 transition-colors ${movementType === t ? 'bg-blue-600 text-white font-medium' : 'bg-white text-slate-600 hover:bg-slate-50'}`}
+              >
                 {t.charAt(0) + t.slice(1).toLowerCase()}
               </button>
             ))}
@@ -103,22 +125,45 @@ export function PostStockMovementModal({ open, partId, partName, onClose, onPost
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="sm-loc">Location *</label>
-          {loadingLocs ? <Spinner /> : (
-            <select id="sm-loc" value={locationId} onChange={(e) => setLocationId(e.target.value)}
-              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="sm-loc">
+            Location *
+          </label>
+          {loadingLocs ? (
+            <Spinner />
+          ) : (
+            <select
+              id="sm-loc"
+              value={locationId}
+              onChange={(e) => setLocationId(e.target.value)}
+              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
               <option value="">— Select location —</option>
-              {locations.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
+              {locations.map((l) => (
+                <option key={l.id} value={l.id}>
+                  {l.name}
+                </option>
+              ))}
             </select>
           )}
         </div>
 
-        <Input id="sm-qty" label={movementType === 'ADJUSTMENT' ? 'Quantity (signed)' : 'Quantity *'}
-          type="number" step="0.01" value={quantity} onChange={(e) => setQuantity(e.target.value)}
-          placeholder={movementType === 'ADJUSTMENT' ? '-5 or +10' : '50'} />
+        <Input
+          id="sm-qty"
+          label={movementType === 'ADJUSTMENT' ? 'Quantity (signed)' : 'Quantity *'}
+          type="number"
+          step="0.01"
+          value={quantity}
+          onChange={(e) => setQuantity(e.target.value)}
+          placeholder={movementType === 'ADJUSTMENT' ? '-5 or +10' : '50'}
+        />
 
-        <Input id="sm-notes" label="Notes" value={notes} onChange={(e) => setNotes(e.target.value)}
-          placeholder="Optional reference or reason" />
+        <Input
+          id="sm-notes"
+          label="Notes"
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          placeholder="Optional reference or reason"
+        />
       </div>
     </Modal>
   );

@@ -25,10 +25,16 @@ interface PartSummary {
 }
 
 const STATUS_COLOR: Record<StockLevelSummary['status'], BadgeColor> = {
-  green: 'green', amber: 'amber', red: 'red', purple: 'purple',
+  green: 'green',
+  amber: 'amber',
+  red: 'red',
+  purple: 'purple',
 };
 const STATUS_LABEL: Record<StockLevelSummary['status'], string> = {
-  green: 'OK', amber: 'Reorder', red: 'Low', purple: 'Out',
+  green: 'OK',
+  amber: 'Reorder',
+  red: 'Low',
+  purple: 'Out',
 };
 
 type ActiveModal =
@@ -47,7 +53,9 @@ function StockChip({ level }: { level: StockLevelSummary }) {
 }
 
 function PartRow({
-  part, onStockLevel, onMovement,
+  part,
+  onStockLevel,
+  onMovement,
 }: {
   part: PartSummary;
   onStockLevel: (partId: string, partName: string) => void;
@@ -76,12 +84,16 @@ function PartRow({
           </button>
         ) : (
           <div className="space-y-1">
-            {part.stockLevels.map((l) => <StockChip key={l.id} level={l} />)}
+            {part.stockLevels.map((l) => (
+              <StockChip key={l.id} level={l} />
+            ))}
           </div>
         )}
       </td>
       <td className="py-3 px-4">
-        {worstStatus && <Badge color={STATUS_COLOR[worstStatus]}>{STATUS_LABEL[worstStatus]}</Badge>}
+        {worstStatus && (
+          <Badge color={STATUS_COLOR[worstStatus]}>{STATUS_LABEL[worstStatus]}</Badge>
+        )}
       </td>
       <td className="py-3 px-4 text-right">
         <div className="hidden group-hover:flex justify-end gap-1">
@@ -122,13 +134,16 @@ export function InventoryPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
   const closeModal = () => setModal({ kind: 'none' });
 
   const visible = parts.filter((p) => {
     if (filter === 'out') return p.stockLevels.some((l) => l.status === 'purple');
-    if (filter === 'low') return p.stockLevels.some((l) => l.status === 'red' || l.status === 'amber');
+    if (filter === 'low')
+      return p.stockLevels.some((l) => l.status === 'red' || l.status === 'amber');
     return true;
   });
 
@@ -137,16 +152,21 @@ export function InventoryPage() {
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-slate-900">Inventory</h1>
-          <p className="text-sm text-slate-500 mt-0.5">Spare parts &amp; stock levels for this vessel</p>
+          <p className="text-sm text-slate-500 mt-0.5">
+            Spare parts &amp; stock levels for this vessel
+          </p>
         </div>
         <div className="flex items-center gap-2">
           {(['all', 'low', 'out'] as const).map((f) => (
-            <button key={f} onClick={() => setFilter(f)}
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
               className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                 filter === f
                   ? 'bg-slate-800 text-white'
                   : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
-              }`}>
+              }`}
+            >
               {f === 'all' ? 'All' : f === 'low' ? 'Low / Reorder' : 'Out of stock'}
             </button>
           ))}
@@ -155,17 +175,27 @@ export function InventoryPage() {
       </div>
 
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        {loading && <div className="p-8 flex justify-center"><Spinner /></div>}
+        {loading && (
+          <div className="p-8 flex justify-center">
+            <Spinner />
+          </div>
+        )}
         {error && <div className="p-6 text-sm text-red-600">{error}</div>}
         {!loading && !error && visible.length === 0 && (
           <div className="p-8 text-center text-slate-500 text-sm">
             {parts.length === 0 ? (
-              <>No parts yet.{' '}
-                <button className="text-blue-600 hover:underline" onClick={() => setCreatePartOpen(true)}>
+              <>
+                No parts yet.{' '}
+                <button
+                  className="text-blue-600 hover:underline"
+                  onClick={() => setCreatePartOpen(true)}
+                >
                   Add the first one.
                 </button>
               </>
-            ) : 'No parts match the current filter.'}
+            ) : (
+              'No parts match the current filter.'
+            )}
           </div>
         )}
         {!loading && !error && visible.length > 0 && (
@@ -181,9 +211,15 @@ export function InventoryPage() {
             </thead>
             <tbody>
               {visible.map((p) => (
-                <PartRow key={p.id} part={p}
-                  onStockLevel={(id, name) => setModal({ kind: 'stockLevel', partId: id, partName: name })}
-                  onMovement={(id, name) => setModal({ kind: 'movement', partId: id, partName: name })}
+                <PartRow
+                  key={p.id}
+                  part={p}
+                  onStockLevel={(id, name) =>
+                    setModal({ kind: 'stockLevel', partId: id, partName: name })
+                  }
+                  onMovement={(id, name) =>
+                    setModal({ kind: 'movement', partId: id, partName: name })
+                  }
                 />
               ))}
             </tbody>
@@ -195,7 +231,14 @@ export function InventoryPage() {
         {(['green', 'amber', 'red', 'purple'] as const).map((s) => (
           <span key={s} className="flex items-center gap-1">
             <Badge color={STATUS_COLOR[s]}>{STATUS_LABEL[s]}</Badge>
-            {{ green: 'Above reorder', amber: 'Below reorder', red: 'Below minimum', purple: 'Zero / no config' }[s]}
+            {
+              {
+                green: 'Above reorder',
+                amber: 'Below reorder',
+                red: 'Below minimum',
+                purple: 'Zero / no config',
+              }[s]
+            }
           </span>
         ))}
       </div>
@@ -216,14 +259,20 @@ export function InventoryPage() {
         partId={modal.kind === 'stockLevel' ? modal.partId : ''}
         partName={modal.kind === 'stockLevel' ? modal.partName : ''}
         onClose={closeModal}
-        onSaved={() => { closeModal(); load(); }}
+        onSaved={() => {
+          closeModal();
+          load();
+        }}
       />
       <PostStockMovementModal
         open={modal.kind === 'movement'}
         partId={modal.kind === 'movement' ? modal.partId : ''}
         partName={modal.kind === 'movement' ? modal.partName : ''}
         onClose={closeModal}
-        onPosted={() => { closeModal(); load(); }}
+        onPosted={() => {
+          closeModal();
+          load();
+        }}
       />
     </div>
   );

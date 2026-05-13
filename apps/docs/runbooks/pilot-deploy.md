@@ -28,26 +28,26 @@
 
 ### Shore Server (Linux VPS / cloud VM / on-prem server)
 
-| Requirement | Minimum | Notes |
-|---|---|---|
-| OS | Ubuntu 22.04 LTS | Debian 12 also tested |
-| CPU | 2 vCPU | 4 recommended |
-| RAM | 4 GB | 8 GB for >3 vessels |
-| Disk | 40 GB SSD | Photos grow; plan for 1 GB/vessel/year |
-| Node.js | 24.x LTS | Install via `nvm` or NodeSource |
-| pnpm | 10.x | `npm install -g pnpm@latest` |
-| Docker + Compose | 24.x | For Postgres, MinIO, Meilisearch |
-| Open ports | 3000 (HTTP API), 50051 (gRPC sync) | Firewall rules must allow vessel IPs |
+| Requirement      | Minimum                            | Notes                                  |
+| ---------------- | ---------------------------------- | -------------------------------------- |
+| OS               | Ubuntu 22.04 LTS                   | Debian 12 also tested                  |
+| CPU              | 2 vCPU                             | 4 recommended                          |
+| RAM              | 4 GB                               | 8 GB for >3 vessels                    |
+| Disk             | 40 GB SSD                          | Photos grow; plan for 1 GB/vessel/year |
+| Node.js          | 24.x LTS                           | Install via `nvm` or NodeSource        |
+| pnpm             | 10.x                               | `npm install -g pnpm@latest`           |
+| Docker + Compose | 24.x                               | For Postgres, MinIO, Meilisearch       |
+| Open ports       | 3000 (HTTP API), 50051 (gRPC sync) | Firewall rules must allow vessel IPs   |
 
 ### Vessel Workstation (Windows)
 
-| Requirement | Minimum | Notes |
-|---|---|---|
-| OS | Windows 10 64-bit | Windows 11 recommended |
-| RAM | 4 GB | |
-| Disk | 10 GB free | For app + SQLite DB + logs |
-| Network | Ship Wi-Fi (LAN) to the workstation | Sync only when connectivity to shore available |
-| No Flutter / Node required | | The Electron installer bundles everything |
+| Requirement                | Minimum                             | Notes                                          |
+| -------------------------- | ----------------------------------- | ---------------------------------------------- |
+| OS                         | Windows 10 64-bit                   | Windows 11 recommended                         |
+| RAM                        | 4 GB                                |                                                |
+| Disk                       | 10 GB free                          | For app + SQLite DB + logs                     |
+| Network                    | Ship Wi-Fi (LAN) to the workstation | Sync only when connectivity to shore available |
+| No Flutter / Node required |                                     | The Electron installer bundles everything      |
 
 ### Connectivity
 
@@ -100,6 +100,7 @@ pnpm run gen:jwt-keys
 ```
 
 Output:
+
 ```
 Wrote:
   /opt/fleetops/keys/jwt-private.pem  (mode 600 — keep secret on shore)
@@ -357,6 +358,7 @@ Expected: `TcpTestSucceeded : True`.
 ### 9.2 Start the Electron app
 
 Launch FleetOps from the Start Menu or desktop shortcut. The app:
+
 1. Starts api-vessel on port 3001.
 2. Runs database migrations (first launch only).
 3. Opens a browser window pointed at `http://127.0.0.1:<random port>`.
@@ -446,16 +448,17 @@ Perform these checks in order after each new installation. Check off each item b
 
 ### Log locations
 
-| Component | Log path |
-|---|---|
-| api-shore | `journalctl -u fleetops-shore -f` (systemd) |
-| Postgres | `docker logs fleetops-postgres-1 -f` |
-| MinIO | `docker logs fleetops-minio-1 -f` |
+| Component  | Log path                                                      |
+| ---------- | ------------------------------------------------------------- |
+| api-shore  | `journalctl -u fleetops-shore -f` (systemd)                   |
+| Postgres   | `docker logs fleetops-postgres-1 -f`                          |
+| MinIO      | `docker logs fleetops-minio-1 -f`                             |
 | api-vessel | Windows Event Log → Application; or Electron DevTools console |
 
 ### Database backup
 
 **Shore (Postgres):**
+
 ```bash
 # Cron entry (daily at 02:00):
 0 2 * * * docker exec fleetops-postgres-1 pg_dump -U fleetops fleetops_shore \
@@ -463,6 +466,7 @@ Perform these checks in order after each new installation. Check off each item b
 ```
 
 **Vessel (SQLite):**
+
 ```powershell
 # Run before any upgrade or weekly via Task Scheduler:
 Copy-Item "C:\ProgramData\FleetOps\vessel.db" `
@@ -486,12 +490,14 @@ Photos accumulate over time. Set an expiration policy via the MinIO console (`ht
 ## 12. Adding a Second Vessel
 
 1. **Create the vessel** on shore:
+
    ```bash
    curl -s http://localhost:3000/api/v1/vessels \
      -X POST -H "Authorization: Bearer <ADMIN_TOKEN>" \
      -H 'Content-Type: application/json' \
      -d '{"name":"MV Second Vessel","imoNumber":"7654321"}'
    ```
+
    Note the returned `id` — this is `VESSEL_ID` for the second vessel.
 
 2. **Create crew users** bound to the new vessel (POST `/users` with `vesselId`).
@@ -531,4 +537,4 @@ systemctl restart fleetops-shore
 
 ---
 
-*Last updated: 2026-05-13 — covers FleetOps Phase 1 (P1-1 through P1-11).*
+_Last updated: 2026-05-13 — covers FleetOps Phase 1 (P1-1 through P1-11)._

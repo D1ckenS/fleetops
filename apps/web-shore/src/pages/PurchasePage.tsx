@@ -246,11 +246,7 @@ function RequisitionsTab() {
                           >
                             Approve
                           </Button>
-                          <Button
-                            size="sm"
-                            variant="danger"
-                            onClick={() => setRejectTarget(r.id)}
-                          >
+                          <Button size="sm" variant="danger" onClick={() => setRejectTarget(r.id)}>
                             Reject
                           </Button>
                         </>
@@ -309,8 +305,7 @@ function PurchaseOrdersTab() {
   const load = useCallback(() => {
     setLoading(true);
     setError(null);
-    const url =
-      filter === 'ALL' ? '/purchase-orders' : `/purchase-orders?status=${filter}`;
+    const url = filter === 'ALL' ? '/purchase-orders' : `/purchase-orders?status=${filter}`;
     api
       .get<PurchaseOrder[]>(url)
       .then(setPOs)

@@ -10,26 +10,26 @@
 
 ### 2026-05-13 — P1-11 — Mobile app (Flutter)
 
-| Item | Detail |
-|---|---|
-| `apps/mobile/pubspec.yaml` | Flutter 3.22+ app; deps: `http ^1.2.1`, `flutter_secure_storage ^9.0.0`, `mobile_scanner ^5.2.3`, `image_picker ^1.1.2`, `provider ^6.1.2` |
-| `apps/mobile/lib/utils/jwt.dart` | `decodeJwtPayload()` — base64url-decodes JWT payload without signature verification (client-side claim read only) |
-| `apps/mobile/lib/services/api_client.dart` | `ApiClient` — `get`, `post`, `postMultipart`; throws `ApiException` on non-2xx; token injection via `setToken()` |
-| `apps/mobile/lib/providers/auth_provider.dart` | `AuthProvider` (`ChangeNotifier`) — `login()` → `POST /auth/login` → token stored in `flutter_secure_storage`; `init()` restores token + base URL on startup; JWT claims extracted client-side |
-| `apps/mobile/lib/models/job_instance.dart` | `JobModel.fromJson`, `JobInstance.fromJson` with `isDone / isPending / isInProgress` helpers |
-| `apps/mobile/lib/models/inventory_item.dart` | `InventoryItem.fromJson` (maps `stockLevels[]` from inventory-summary API); `overallStatus` propagates worst status (red > amber > purple > green) |
-| `apps/mobile/lib/screens/login_screen.dart` | Login form: tenantId, email, password, expandable vessel API URL field |
-| `apps/mobile/lib/screens/home_screen.dart` | `IndexedStack` TabBar — Jobs + Inventory; sign-out with confirmation dialog |
-| `apps/mobile/lib/screens/jobs_screen.dart` | Fetches `GET /job-instances` + `GET /jobs` in parallel; joined client-side; tap → `SignOffScreen` |
-| `apps/mobile/lib/screens/sign_off_screen.dart` | `POST /job-instances/:id/sign-off` multipart; camera + gallery photo picker; hoursWorked / notes / signatureHash fields |
-| `apps/mobile/lib/screens/inventory_screen.dart` | `GET /parts/inventory-summary`; ROB chips per location; FAB → barcode scan; tap → `AdjustStockScreen` |
-| `apps/mobile/lib/screens/barcode_scan_screen.dart` | `MobileScanner` widget; on detect → `GET /barcode-bindings/lookup/:barcode`; returns `BarcodeScanResult` to caller |
-| `apps/mobile/lib/screens/adjust_stock_screen.dart` | `POST /stock-movements` (ADJUSTMENT / RECEIPT / CONSUMPTION); fetches `GET /stock-locations` for dropdown when no locationId pre-supplied |
-| `apps/mobile/lib/widgets/job_status_badge.dart` | Colored badge for PENDING / IN_PROGRESS / DONE |
-| `apps/mobile/lib/widgets/rob_status_chip.dart` | Icon-based chip for green / amber / red / purple ROB status |
-| `apps/mobile/test/models_test.dart` | 12 unit tests: `JobInstance`, `JobModel`, `InventoryItem`, `StockLevelEntry` fromJson parsing and business logic |
-| `apps/mobile/test/jwt_decode_test.dart` | 5 unit tests: claim extraction, missing claims, format errors |
-| CI | Flutter SDK not installed in this environment — `flutter test` must be run locally. Dart SDK 3.11.5 present. |
+| Item                                               | Detail                                                                                                                                                                                         |
+| -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/mobile/pubspec.yaml`                         | Flutter 3.22+ app; deps: `http ^1.2.1`, `flutter_secure_storage ^9.0.0`, `mobile_scanner ^5.2.3`, `image_picker ^1.1.2`, `provider ^6.1.2`                                                     |
+| `apps/mobile/lib/utils/jwt.dart`                   | `decodeJwtPayload()` — base64url-decodes JWT payload without signature verification (client-side claim read only)                                                                              |
+| `apps/mobile/lib/services/api_client.dart`         | `ApiClient` — `get`, `post`, `postMultipart`; throws `ApiException` on non-2xx; token injection via `setToken()`                                                                               |
+| `apps/mobile/lib/providers/auth_provider.dart`     | `AuthProvider` (`ChangeNotifier`) — `login()` → `POST /auth/login` → token stored in `flutter_secure_storage`; `init()` restores token + base URL on startup; JWT claims extracted client-side |
+| `apps/mobile/lib/models/job_instance.dart`         | `JobModel.fromJson`, `JobInstance.fromJson` with `isDone / isPending / isInProgress` helpers                                                                                                   |
+| `apps/mobile/lib/models/inventory_item.dart`       | `InventoryItem.fromJson` (maps `stockLevels[]` from inventory-summary API); `overallStatus` propagates worst status (red > amber > purple > green)                                             |
+| `apps/mobile/lib/screens/login_screen.dart`        | Login form: tenantId, email, password, expandable vessel API URL field                                                                                                                         |
+| `apps/mobile/lib/screens/home_screen.dart`         | `IndexedStack` TabBar — Jobs + Inventory; sign-out with confirmation dialog                                                                                                                    |
+| `apps/mobile/lib/screens/jobs_screen.dart`         | Fetches `GET /job-instances` + `GET /jobs` in parallel; joined client-side; tap → `SignOffScreen`                                                                                              |
+| `apps/mobile/lib/screens/sign_off_screen.dart`     | `POST /job-instances/:id/sign-off` multipart; camera + gallery photo picker; hoursWorked / notes / signatureHash fields                                                                        |
+| `apps/mobile/lib/screens/inventory_screen.dart`    | `GET /parts/inventory-summary`; ROB chips per location; FAB → barcode scan; tap → `AdjustStockScreen`                                                                                          |
+| `apps/mobile/lib/screens/barcode_scan_screen.dart` | `MobileScanner` widget; on detect → `GET /barcode-bindings/lookup/:barcode`; returns `BarcodeScanResult` to caller                                                                             |
+| `apps/mobile/lib/screens/adjust_stock_screen.dart` | `POST /stock-movements` (ADJUSTMENT / RECEIPT / CONSUMPTION); fetches `GET /stock-locations` for dropdown when no locationId pre-supplied                                                      |
+| `apps/mobile/lib/widgets/job_status_badge.dart`    | Colored badge for PENDING / IN_PROGRESS / DONE                                                                                                                                                 |
+| `apps/mobile/lib/widgets/rob_status_chip.dart`     | Icon-based chip for green / amber / red / purple ROB status                                                                                                                                    |
+| `apps/mobile/test/models_test.dart`                | 12 unit tests: `JobInstance`, `JobModel`, `InventoryItem`, `StockLevelEntry` fromJson parsing and business logic                                                                               |
+| `apps/mobile/test/jwt_decode_test.dart`            | 5 unit tests: claim extraction, missing claims, format errors                                                                                                                                  |
+| CI                                                 | Flutter SDK not installed in this environment — `flutter test` must be run locally. Dart SDK 3.11.5 present.                                                                                   |
 
 **Key design decisions:**
 
@@ -42,10 +42,10 @@
 
 ### 2026-05-13 — P1-12 — Pilot deployment runbook + Phase 1 checklist
 
-| Item | Detail |
-|---|---|
+| Item                                 | Detail                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `apps/docs/runbooks/pilot-deploy.md` | 13-section runbook covering: prerequisites (shore server + vessel workstation specs), Docker Compose infra, MinIO bucket creation, JWT keypair generation, shore .env config, Prisma migrate deploy, systemd service, seed script, Electron installer build + distribution, vessel .env config, SQLite migration, gRPC sync enable + verify, 6-section smoke-test checklist (auth / PMS / inventory / purchase / barcode / sync), day-2 ops (logs, backups, upgrade, photo lifecycle), adding a second vessel, rollback procedure |
-| `apps/docs/checklists/phase1.md` | Phase 1 verification checklist with 10 sections (A–J): CI, auth, PMS, inventory, purchase, cross-module P1-10, Electron, mobile, sync, runbook sign-off; sign-off table for lead engineer + QA + IT officer |
+| `apps/docs/checklists/phase1.md`     | Phase 1 verification checklist with 10 sections (A–J): CI, auth, PMS, inventory, purchase, cross-module P1-10, Electron, mobile, sync, runbook sign-off; sign-off table for lead engineer + QA + IT officer                                                                                                                                                                                                                                                                                                                       |
 
 **Key design decisions:**
 
@@ -56,14 +56,14 @@
 
 ### 2026-05-13 — P1-10 — Cross-module: job sign-off → StockMovement → reorder Requisition
 
-| Item | Detail |
-|---|---|
-| `apps/api-shore/src/job-history/job-history.service.ts` | Added `PartConsumed` interface + `extractValidConsumed()` helper; P1-10 block inside the `withTenant` tx: (1) creates a CONSUMPTION `StockMovement` per consumed item, referencing the JobHistory; (2) deduplicates (partId, locationId) pairs; (3) checks post-movement ROB via `$queryRaw` SUM; (4) if ROB ≤ `StockLevel.reorderPoint`, auto-creates a draft `Requisition` + `RequisitionLine`; return shape unchanged (backward compat) |
-| `apps/api-vessel/src/job-history/job-history.service.ts` | Mirror of shore but Drizzle/sync: added `stockMovements, stockLevels, requisitions, requisitionLines, parts` imports; same helper + P1-10 block inside `db.transaction()`; uses `parseFloat()` for Decimal comparison |
-| `apps/api-shore/test/sign-off-cross-module.e2e.ts` | 5 e2e tests: no partsConsumed → no movement; old-format (missing locationId/quantity) → backward-compat skip; valid format → CONSUMPTION movement with negated qty; ROB 14 > reorder 10 → no requisition; ROB 8 ≤ reorder 10 → draft Requisition with line qty=2 (deficit) |
-| `apps/api-vessel/test/sign-off-cross-module.e2e.ts` | 4 e2e tests: same coverage on SQLite |
-| `packages/domain/src/running-hour-scheduler.test.ts` | Added 15 000 ms per-test timeout to all 5 property-based tests (numRuns=500 each) that were consistently hitting the 5 000 ms default under CI load |
-| CI | `pnpm run lint` ✓; `pnpm run typecheck` ✓; 139 ✓ unit; shore e2e → 100 ✓ (11 files); vessel e2e → 80 ✓ (10 files) |
+| Item                                                     | Detail                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `apps/api-shore/src/job-history/job-history.service.ts`  | Added `PartConsumed` interface + `extractValidConsumed()` helper; P1-10 block inside the `withTenant` tx: (1) creates a CONSUMPTION `StockMovement` per consumed item, referencing the JobHistory; (2) deduplicates (partId, locationId) pairs; (3) checks post-movement ROB via `$queryRaw` SUM; (4) if ROB ≤ `StockLevel.reorderPoint`, auto-creates a draft `Requisition` + `RequisitionLine`; return shape unchanged (backward compat) |
+| `apps/api-vessel/src/job-history/job-history.service.ts` | Mirror of shore but Drizzle/sync: added `stockMovements, stockLevels, requisitions, requisitionLines, parts` imports; same helper + P1-10 block inside `db.transaction()`; uses `parseFloat()` for Decimal comparison                                                                                                                                                                                                                      |
+| `apps/api-shore/test/sign-off-cross-module.e2e.ts`       | 5 e2e tests: no partsConsumed → no movement; old-format (missing locationId/quantity) → backward-compat skip; valid format → CONSUMPTION movement with negated qty; ROB 14 > reorder 10 → no requisition; ROB 8 ≤ reorder 10 → draft Requisition with line qty=2 (deficit)                                                                                                                                                                 |
+| `apps/api-vessel/test/sign-off-cross-module.e2e.ts`      | 4 e2e tests: same coverage on SQLite                                                                                                                                                                                                                                                                                                                                                                                                       |
+| `packages/domain/src/running-hour-scheduler.test.ts`     | Added 15 000 ms per-test timeout to all 5 property-based tests (numRuns=500 each) that were consistently hitting the 5 000 ms default under CI load                                                                                                                                                                                                                                                                                        |
+| CI                                                       | `pnpm run lint` ✓; `pnpm run typecheck` ✓; 139 ✓ unit; shore e2e → 100 ✓ (11 files); vessel e2e → 80 ✓ (10 files)                                                                                                                                                                                                                                                                                                                          |
 
 **Key design decisions:**
 
@@ -74,14 +74,14 @@
 
 ### 2026-05-13 — P1-9 — Purchase UI (web-shore)
 
-| Item | Detail |
-|---|---|
-| `apps/web-shore/src/pages/PurchasePage.tsx` | Two-tab page (Requisitions / Purchase Orders); `RequisitionsTab` with ALL/DRAFT/SUBMITTED/APPROVED/REJECTED filter, inline Submit/Approve/Reject actions per row; `PurchaseOrdersTab` with ALL/DRAFT/SENT/IN_TRANSIT/PARTIALLY_RECEIVED/RECEIVED filter, inline Send action, click-row to detail |
-| `apps/web-shore/src/components/CreateRequisitionModal.tsx` | Form modal: title (required), notes, totalAmount, currency; `POST /requisitions`; resets on close |
-| `apps/web-shore/src/components/RejectRequisitionModal.tsx` | Reject modal with optional reason textarea; `POST /requisitions/:id/reject` |
-| `apps/web-shore/src/components/PODetailModal.tsx` | PO detail: header grid (status badge, supplier, total, PO#, expected delivery, notes); order lines table; receipt history; inline `GrnSection` for receivable POs with per-line qty inputs + `POST /purchase-orders/:id/receive` |
-| `apps/web-shore/src/App.tsx` | Added `🛒 Purchase` nav link at `/purchase`; changed Jobs icon to `🗂️` to free `📋`; added `<Route path="purchase">` |
-| CI | `pnpm run lint` ✓; `pnpm run typecheck` ✓; `pnpm --filter web-shore exec tsc --noEmit` ✓; 139 ✓ unit tests |
+| Item                                                       | Detail                                                                                                                                                                                                                                                                                           |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `apps/web-shore/src/pages/PurchasePage.tsx`                | Two-tab page (Requisitions / Purchase Orders); `RequisitionsTab` with ALL/DRAFT/SUBMITTED/APPROVED/REJECTED filter, inline Submit/Approve/Reject actions per row; `PurchaseOrdersTab` with ALL/DRAFT/SENT/IN_TRANSIT/PARTIALLY_RECEIVED/RECEIVED filter, inline Send action, click-row to detail |
+| `apps/web-shore/src/components/CreateRequisitionModal.tsx` | Form modal: title (required), notes, totalAmount, currency; `POST /requisitions`; resets on close                                                                                                                                                                                                |
+| `apps/web-shore/src/components/RejectRequisitionModal.tsx` | Reject modal with optional reason textarea; `POST /requisitions/:id/reject`                                                                                                                                                                                                                      |
+| `apps/web-shore/src/components/PODetailModal.tsx`          | PO detail: header grid (status badge, supplier, total, PO#, expected delivery, notes); order lines table; receipt history; inline `GrnSection` for receivable POs with per-line qty inputs + `POST /purchase-orders/:id/receive`                                                                 |
+| `apps/web-shore/src/App.tsx`                               | Added `🛒 Purchase` nav link at `/purchase`; changed Jobs icon to `🗂️` to free `📋`; added `<Route path="purchase">`                                                                                                                                                                             |
+| CI                                                         | `pnpm run lint` ✓; `pnpm run typecheck` ✓; `pnpm --filter web-shore exec tsc --noEmit` ✓; 139 ✓ unit tests                                                                                                                                                                                       |
 
 **Key design decisions:**
 
@@ -92,18 +92,18 @@
 
 ### 2026-05-13 — P1-8 — Purchase API (Requisition + approval + PO + GRN)
 
-| Item | Detail |
-|---|---|
+| Item                                                                                | Detail                                                                                                                                                                 |
+| ----------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `apps/api-shore/src/{supplier,approval-flow,requisition,rfq,quote,purchase-order}/` | 6 NestJS modules (controller + service + DTOs + module) for all purchase entities; tenant-scoped modules skip OutboxRecorder; vessel-scoped modules use OutboxRecorder |
-| `apps/api-vessel/src/` | Mirror of all 6 modules using Drizzle/SQLite patterns |
-| `POST /requisitions/:id/submit` | DRAFT → SUBMITTED |
-| `POST /requisitions/:id/approve` | SUBMITTED → APPROVED; enforces `ApprovalStep.limitAmount` per role (403 if over limit) |
-| `POST /requisitions/:id/reject` | SUBMITTED → REJECTED with optional reason |
-| `POST /purchase-orders/:id/send` | DRAFT → SENT; requires `supplierId` (400 otherwise) |
-| `POST /purchase-orders/:id/receive` | Creates `GoodsReceipt` + `GoodsReceiptLine` records; sets PO → `PARTIALLY_RECEIVED` or `RECEIVED` based on totals across all receipts |
-| `apps/api-shore/test/purchase-api.e2e.ts` | 8 HTTP e2e tests covering all key acceptance criteria |
-| `apps/api-vessel/test/purchase-api.e2e.ts` | 5 HTTP e2e tests covering same on SQLite |
-| CI | `pnpm run ci:full` → 139 ✓ unit; shore e2e → 95 ✓ (10 files); vessel e2e → 76 ✓ (9 files); lint/typecheck/format clean |
+| `apps/api-vessel/src/`                                                              | Mirror of all 6 modules using Drizzle/SQLite patterns                                                                                                                  |
+| `POST /requisitions/:id/submit`                                                     | DRAFT → SUBMITTED                                                                                                                                                      |
+| `POST /requisitions/:id/approve`                                                    | SUBMITTED → APPROVED; enforces `ApprovalStep.limitAmount` per role (403 if over limit)                                                                                 |
+| `POST /requisitions/:id/reject`                                                     | SUBMITTED → REJECTED with optional reason                                                                                                                              |
+| `POST /purchase-orders/:id/send`                                                    | DRAFT → SENT; requires `supplierId` (400 otherwise)                                                                                                                    |
+| `POST /purchase-orders/:id/receive`                                                 | Creates `GoodsReceipt` + `GoodsReceiptLine` records; sets PO → `PARTIALLY_RECEIVED` or `RECEIVED` based on totals across all receipts                                  |
+| `apps/api-shore/test/purchase-api.e2e.ts`                                           | 8 HTTP e2e tests covering all key acceptance criteria                                                                                                                  |
+| `apps/api-vessel/test/purchase-api.e2e.ts`                                          | 5 HTTP e2e tests covering same on SQLite                                                                                                                               |
+| CI                                                                                  | `pnpm run ci:full` → 139 ✓ unit; shore e2e → 95 ✓ (10 files); vessel e2e → 76 ✓ (9 files); lint/typecheck/format clean                                                 |
 
 **Key design decisions:**
 

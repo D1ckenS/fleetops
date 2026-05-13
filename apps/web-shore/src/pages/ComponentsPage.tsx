@@ -15,7 +15,9 @@ interface Component {
   runningHours: string;
 }
 
-interface TreeNode extends Component { children: TreeNode[]; }
+interface TreeNode extends Component {
+  children: TreeNode[];
+}
 
 function buildTree(items: Component[]): TreeNode[] {
   const byId = new Map(items.map((c) => [c.id, { ...c, children: [] as TreeNode[] }]));
@@ -50,16 +52,22 @@ function JobRow({ job, actions }: { job: Job; actions: NodeActions }) {
       <span className="text-slate-400">└</span>
       <span className="flex-1 font-medium text-slate-700">{job.title}</span>
       <span className="text-slate-400">{intervalLabel}</span>
-      <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${PRIORITY_COLOR[job.priority] ?? PRIORITY_COLOR.NORMAL}`}>
+      <span
+        className={`px-1.5 py-0.5 rounded text-xs font-medium ${PRIORITY_COLOR[job.priority] ?? PRIORITY_COLOR.NORMAL}`}
+      >
         {job.priority}
       </span>
       <div className="hidden group-hover:flex gap-1">
-        <button onClick={() => actions.onScheduleJob(job.id, job.componentId)}
-          className="px-2 py-0.5 rounded border border-slate-300 text-slate-600 hover:border-blue-400 hover:text-blue-600 transition-colors">
+        <button
+          onClick={() => actions.onScheduleJob(job.id, job.componentId)}
+          className="px-2 py-0.5 rounded border border-slate-300 text-slate-600 hover:border-blue-400 hover:text-blue-600 transition-colors"
+        >
           + Instance
         </button>
-        <button onClick={() => actions.onEditJob(job, '')}
-          className="px-2 py-0.5 rounded border border-slate-300 text-slate-600 hover:border-slate-500 hover:text-slate-800 transition-colors">
+        <button
+          onClick={() => actions.onEditJob(job, '')}
+          className="px-2 py-0.5 rounded border border-slate-300 text-slate-600 hover:border-slate-500 hover:text-slate-800 transition-colors"
+        >
           Edit
         </button>
       </div>
@@ -68,7 +76,10 @@ function JobRow({ job, actions }: { job: Job; actions: NodeActions }) {
 }
 
 function ComponentNode({
-  node, depth, actions, jobsByComponentId,
+  node,
+  depth,
+  actions,
+  jobsByComponentId,
 }: {
   node: TreeNode;
   depth: number;
@@ -81,14 +92,20 @@ function ComponentNode({
 
   return (
     <div>
-      <div className="flex items-center gap-2 py-2 px-3 rounded-md hover:bg-slate-100 group"
-        style={{ paddingLeft: `${depth * 20 + 12}px` }}>
+      <div
+        className="flex items-center gap-2 py-2 px-3 rounded-md hover:bg-slate-100 group"
+        style={{ paddingLeft: `${depth * 20 + 12}px` }}
+      >
         {hasContent ? (
-          <button onClick={() => setExpanded((v) => !v)}
-            className="text-slate-400 hover:text-slate-700 w-4 text-xs leading-none">
+          <button
+            onClick={() => setExpanded((v) => !v)}
+            className="text-slate-400 hover:text-slate-700 w-4 text-xs leading-none"
+          >
             {expanded ? '▾' : '▸'}
           </button>
-        ) : <span className="w-4" />}
+        ) : (
+          <span className="w-4" />
+        )}
         <span className="text-sm font-medium text-slate-800 flex-1">{node.name}</span>
         {node.sfi && <Badge color="blue">{node.sfi}</Badge>}
         <span className="text-xs text-slate-400">{node.runningHours} h</span>
@@ -98,12 +115,16 @@ function ComponentNode({
           </span>
         )}
         <div className="hidden group-hover:flex items-center gap-1 ml-2">
-          <button onClick={() => actions.onAddJob(node.id, node.name)}
-            className="text-xs px-2 py-0.5 rounded border border-slate-300 text-slate-600 hover:border-blue-400 hover:text-blue-600 transition-colors">
+          <button
+            onClick={() => actions.onAddJob(node.id, node.name)}
+            className="text-xs px-2 py-0.5 rounded border border-slate-300 text-slate-600 hover:border-blue-400 hover:text-blue-600 transition-colors"
+          >
             + Job
           </button>
-          <button onClick={() => actions.onAddChild(node.id, node.name)}
-            className="text-xs px-2 py-0.5 rounded border border-slate-300 text-slate-600 hover:border-slate-500 hover:text-slate-800 transition-colors">
+          <button
+            onClick={() => actions.onAddChild(node.id, node.name)}
+            className="text-xs px-2 py-0.5 rounded border border-slate-300 text-slate-600 hover:border-slate-500 hover:text-slate-800 transition-colors"
+          >
             + Child
           </button>
         </div>
@@ -111,12 +132,20 @@ function ComponentNode({
       {expanded && (
         <div style={{ paddingLeft: `${depth * 20 + 12}px` }}>
           {jobs.map((j) => (
-            <JobRow key={j.id} job={j}
-              actions={{ ...actions, onEditJob: (job) => actions.onEditJob(job, node.name) }} />
+            <JobRow
+              key={j.id}
+              job={j}
+              actions={{ ...actions, onEditJob: (job) => actions.onEditJob(job, node.name) }}
+            />
           ))}
           {node.children.map((child) => (
-            <ComponentNode key={child.id} node={child} depth={depth + 1}
-              actions={actions} jobsByComponentId={jobsByComponentId} />
+            <ComponentNode
+              key={child.id}
+              node={child}
+              depth={depth + 1}
+              actions={actions}
+              jobsByComponentId={jobsByComponentId}
+            />
           ))}
         </div>
       )}
@@ -140,16 +169,18 @@ export function ComponentsPage() {
 
   const load = () => {
     setLoading(true);
-    Promise.all([
-      api.get<Component[]>('/components'),
-      api.get<Job[]>('/jobs'),
-    ])
-      .then(([comps, js]) => { setComponents(comps); setJobs(js); })
+    Promise.all([api.get<Component[]>('/components'), api.get<Job[]>('/jobs')])
+      .then(([comps, js]) => {
+        setComponents(comps);
+        setJobs(js);
+      })
       .catch((e: unknown) => setError(e instanceof Error ? e.message : 'Failed to load'))
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   const close = () => setModal({ kind: 'none' });
 
@@ -180,13 +211,19 @@ export function ComponentsPage() {
       </div>
 
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
-        {loading && <div className="p-8"><Spinner /></div>}
+        {loading && (
+          <div className="p-8">
+            <Spinner />
+          </div>
+        )}
         {error && <div className="p-6 text-sm text-red-600">{error}</div>}
         {!loading && !error && components.length === 0 && (
           <div className="p-8 text-center text-slate-500 text-sm">
             No components yet.{' '}
-            <button className="text-blue-600 hover:underline"
-              onClick={() => setModal({ kind: 'component' })}>
+            <button
+              className="text-blue-600 hover:underline"
+              onClick={() => setModal({ kind: 'component' })}
+            >
               Add the first one.
             </button>
           </div>
@@ -194,8 +231,13 @@ export function ComponentsPage() {
         {!loading && !error && tree.length > 0 && (
           <div className="py-2">
             {tree.map((node) => (
-              <ComponentNode key={node.id} node={node} depth={0}
-                actions={actions} jobsByComponentId={jobsByComponentId} />
+              <ComponentNode
+                key={node.id}
+                node={node}
+                depth={0}
+                actions={actions}
+                jobsByComponentId={jobsByComponentId}
+              />
             ))}
           </div>
         )}
@@ -206,7 +248,10 @@ export function ComponentsPage() {
         parentId={modal.kind === 'component' ? modal.parentId : null}
         parentName={modal.kind === 'component' ? modal.parentName : null}
         onClose={close}
-        onCreated={() => { close(); load(); }}
+        onCreated={() => {
+          close();
+          load();
+        }}
       />
       <CreateJobModal
         open={modal.kind === 'job'}
@@ -223,14 +268,20 @@ export function ComponentsPage() {
         job={modal.kind === 'editJob' ? modal.job : null}
         componentName={modal.kind === 'editJob' ? modal.componentName : ''}
         onClose={close}
-        onSaved={() => { close(); load(); }}
+        onSaved={() => {
+          close();
+          load();
+        }}
       />
       <CreateJobInstanceModal
         open={modal.kind === 'instance'}
         jobId={modal.kind === 'instance' ? modal.jobId : null}
         componentId={modal.kind === 'instance' ? modal.componentId : null}
         onClose={close}
-        onCreated={() => { close(); load(); }}
+        onCreated={() => {
+          close();
+          load();
+        }}
       />
     </div>
   );

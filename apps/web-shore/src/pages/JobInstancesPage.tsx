@@ -32,20 +32,23 @@ const statusLabel: Record<JobInstance['status'], string> = {
 };
 
 export function JobInstancesPage() {
-  interface JobMeta { id: string; typicalPartsJson?: string | null; }
+  interface JobMeta {
+    id: string;
+    typicalPartsJson?: string | null;
+  }
   const [instances, setInstances] = useState<JobInstance[]>([]);
   const [jobsById, setJobsById] = useState<Map<string, JobMeta>>(new Map());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [signOffTarget, setSignOffTarget] = useState<{ instanceId: string; typicalPartsJson?: string | null | undefined } | null>(null);
+  const [signOffTarget, setSignOffTarget] = useState<{
+    instanceId: string;
+    typicalPartsJson?: string | null | undefined;
+  } | null>(null);
   const [scheduleOpen, setScheduleOpen] = useState(false);
 
   const load = useCallback(() => {
     setLoading(true);
-    Promise.all([
-      api.get<JobInstance[]>('/job-instances'),
-      api.get<JobMeta[]>('/jobs'),
-    ])
+    Promise.all([api.get<JobInstance[]>('/job-instances'), api.get<JobMeta[]>('/jobs')])
       .then(([insts, jobs]) => {
         setInstances(insts);
         setJobsById(new Map(jobs.map((j) => [j.id, j])));
@@ -54,20 +57,28 @@ export function JobInstancesPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-slate-900">Job Instances</h1>
-          <p className="text-sm text-slate-500 mt-0.5">Scheduled maintenance tasks for this vessel</p>
+          <p className="text-sm text-slate-500 mt-0.5">
+            Scheduled maintenance tasks for this vessel
+          </p>
         </div>
         <Button onClick={() => setScheduleOpen(true)}>+ Schedule Job</Button>
       </div>
 
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        {loading && <div className="p-8"><Spinner /></div>}
+        {loading && (
+          <div className="p-8">
+            <Spinner />
+          </div>
+        )}
         {error && <div className="p-6 text-sm text-red-600">{error}</div>}
         {!loading && !error && instances.length === 0 && (
           <div className="p-8 text-center text-slate-500 text-sm">
@@ -81,10 +92,18 @@ export function JobInstancesPage() {
           <table className="w-full text-sm">
             <thead className="bg-slate-50 border-b border-slate-200">
               <tr>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Status</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Due date</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Due hours</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Job ID</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                  Status
+                </th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                  Due date
+                </th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                  Due hours
+                </th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                  Job ID
+                </th>
                 <th className="px-4 py-3" />
               </tr>
             </thead>
@@ -105,10 +124,16 @@ export function JobInstancesPage() {
                   </td>
                   <td className="px-4 py-3 text-right">
                     {ji.status !== 'DONE' && (
-                      <Button variant="secondary" size="sm" onClick={() => setSignOffTarget({
-                        instanceId: ji.id,
-                        typicalPartsJson: jobsById.get(ji.jobId)?.typicalPartsJson,
-                      })}>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() =>
+                          setSignOffTarget({
+                            instanceId: ji.id,
+                            typicalPartsJson: jobsById.get(ji.jobId)?.typicalPartsJson,
+                          })
+                        }
+                      >
                         Sign Off
                       </Button>
                     )}
@@ -124,12 +149,18 @@ export function JobInstancesPage() {
         jobInstanceId={signOffTarget?.instanceId ?? null}
         typicalPartsJson={signOffTarget?.typicalPartsJson}
         onClose={() => setSignOffTarget(null)}
-        onSuccess={() => { setSignOffTarget(null); load(); }}
+        onSuccess={() => {
+          setSignOffTarget(null);
+          load();
+        }}
       />
       <CreateJobInstanceModal
         open={scheduleOpen}
         onClose={() => setScheduleOpen(false)}
-        onCreated={() => { setScheduleOpen(false); load(); }}
+        onCreated={() => {
+          setScheduleOpen(false);
+          load();
+        }}
       />
     </div>
   );

@@ -246,21 +246,32 @@ export class JobHistoryService {
             { tenantId: auth.tenantId, vesselId },
             'StockMovement',
             movId,
-            { vesselId, partId: item.partId, locationId: item.locationId, movementType: 'CONSUMPTION', quantity: negQty, referenceType: 'JobHistory', referenceId: historyId, recordedAt: completedAtIso },
+            {
+              vesselId,
+              partId: item.partId,
+              locationId: item.locationId,
+              movementType: 'CONSUMPTION',
+              quantity: negQty,
+              referenceType: 'JobHistory',
+              referenceId: historyId,
+              recordedAt: completedAtIso,
+            },
           );
-          tx.insert(stockMovements).values({
-            id: movId,
-            tenantId: auth.tenantId,
-            vesselId,
-            partId: item.partId,
-            locationId: item.locationId,
-            movementType: 'CONSUMPTION',
-            quantity: negQty,
-            referenceType: 'JobHistory',
-            referenceId: historyId,
-            recordedAt: completedAtIso,
-            hlc: movHlc,
-          }).run();
+          tx.insert(stockMovements)
+            .values({
+              id: movId,
+              tenantId: auth.tenantId,
+              vesselId,
+              partId: item.partId,
+              locationId: item.locationId,
+              movementType: 'CONSUMPTION',
+              quantity: negQty,
+              referenceType: 'JobHistory',
+              referenceId: historyId,
+              recordedAt: completedAtIso,
+              hlc: movHlc,
+            })
+            .run();
         }
 
         const checkedKeys = new Set<string>();
@@ -325,18 +336,20 @@ export class JobHistoryService {
             reqId,
             { vesselId, title: reqTitle, status: 'DRAFT', requestedAt: completedAtIso },
           );
-          tx.insert(requisitions).values({
-            id: reqId,
-            tenantId: auth.tenantId,
-            vesselId,
-            title: reqTitle,
-            status: 'DRAFT',
-            totalAmount: '0',
-            currency: 'USD',
-            requestedByUserId: auth.userId ?? null,
-            requestedAt: completedAtIso,
-            hlc: reqHlc,
-          }).run();
+          tx.insert(requisitions)
+            .values({
+              id: reqId,
+              tenantId: auth.tenantId,
+              vesselId,
+              title: reqTitle,
+              status: 'DRAFT',
+              totalAmount: '0',
+              currency: 'USD',
+              requestedByUserId: auth.userId ?? null,
+              requestedAt: completedAtIso,
+              hlc: reqHlc,
+            })
+            .run();
 
           for (const trigger of reorderTriggers) {
             const partRow = tx
@@ -351,19 +364,27 @@ export class JobHistoryService {
               { tenantId: auth.tenantId, vesselId },
               'RequisitionLine',
               lineId,
-              { vesselId, requisitionId: reqId, partId: trigger.partId, description, quantity: trigger.qty },
+              {
+                vesselId,
+                requisitionId: reqId,
+                partId: trigger.partId,
+                description,
+                quantity: trigger.qty,
+              },
             );
-            tx.insert(requisitionLines).values({
-              id: lineId,
-              tenantId: auth.tenantId,
-              vesselId,
-              requisitionId: reqId,
-              partId: trigger.partId,
-              description,
-              quantity: trigger.qty,
-              unit: partRow?.unit ?? 'pcs',
-              hlc: lineHlc,
-            }).run();
+            tx.insert(requisitionLines)
+              .values({
+                id: lineId,
+                tenantId: auth.tenantId,
+                vesselId,
+                requisitionId: reqId,
+                partId: trigger.partId,
+                description,
+                quantity: trigger.qty,
+                unit: partRow?.unit ?? 'pcs',
+                hlc: lineHlc,
+              })
+              .run();
           }
 
           this.log.log(

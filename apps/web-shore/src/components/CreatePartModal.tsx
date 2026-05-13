@@ -16,14 +16,20 @@ export function CreatePartModal({ open, onClose, onCreated }: Props) {
   const [error, setError] = useState<string | null>(null);
 
   const set =
-    (field: keyof typeof EMPTY) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    (field: keyof typeof EMPTY) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
       setForm((f) => ({ ...f, [field]: e.target.value }));
 
-  const handleClose = () => { setForm(EMPTY); setError(null); onClose(); };
+  const handleClose = () => {
+    setForm(EMPTY);
+    setError(null);
+    onClose();
+  };
 
   const handleSubmit = async () => {
-    if (!form.name.trim()) { setError('Name is required.'); return; }
+    if (!form.name.trim()) {
+      setError('Name is required.');
+      return;
+    }
     setSaving(true);
     setError(null);
     try {
@@ -49,27 +55,55 @@ export function CreatePartModal({ open, onClose, onCreated }: Props) {
       onClose={handleClose}
       footer={
         <>
-          <Button variant="secondary" onClick={handleClose} disabled={saving}>Cancel</Button>
-          <Button loading={saving} onClick={handleSubmit}>Create Part</Button>
+          <Button variant="secondary" onClick={handleClose} disabled={saving}>
+            Cancel
+          </Button>
+          <Button loading={saving} onClick={handleSubmit}>
+            Create Part
+          </Button>
         </>
       }
     >
       <div className="space-y-4">
-        {error && <div className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-md">{error}</div>}
-        <Input id="part-name" label="Name *" value={form.name} onChange={set('name')}
-          placeholder="Engine Oil SAE 40" autoFocus />
+        {error && (
+          <div className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-md">{error}</div>
+        )}
+        <Input
+          id="part-name"
+          label="Name *"
+          value={form.name}
+          onChange={set('name')}
+          placeholder="Engine Oil SAE 40"
+          autoFocus
+        />
         <div className="flex gap-3">
           <div className="flex-1">
-            <Input id="part-num" label="Part Number" value={form.partNumber} onChange={set('partNumber')}
-              placeholder="OIL-001" />
+            <Input
+              id="part-num"
+              label="Part Number"
+              value={form.partNumber}
+              onChange={set('partNumber')}
+              placeholder="OIL-001"
+            />
           </div>
           <div className="w-32">
-            <Input id="part-unit" label="Unit" value={form.unit} onChange={set('unit')}
-              placeholder="pcs / L / kg" />
+            <Input
+              id="part-unit"
+              label="Unit"
+              value={form.unit}
+              onChange={set('unit')}
+              placeholder="pcs / L / kg"
+            />
           </div>
         </div>
-        <TextArea id="part-desc" label="Description" rows={2} value={form.description}
-          onChange={set('description')} placeholder="Optional details..." />
+        <TextArea
+          id="part-desc"
+          label="Description"
+          rows={2}
+          value={form.description}
+          onChange={set('description')}
+          placeholder="Optional details..."
+        />
         <div className="text-xs text-slate-500 bg-slate-50 px-3 py-2 rounded-md">
           After creating the part you can configure stock levels (min / reorder / max) per location.
         </div>

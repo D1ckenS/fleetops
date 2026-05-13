@@ -19,8 +19,7 @@ export function CreateComponentModal({ open, parentId, parentName, onClose, onCr
   const [error, setError] = useState<string | null>(null);
 
   const set =
-    (field: keyof typeof EMPTY) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    (field: keyof typeof EMPTY) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
       setForm((f) => ({ ...f, [field]: e.target.value }));
 
   const handleClose = () => {
@@ -30,7 +29,10 @@ export function CreateComponentModal({ open, parentId, parentName, onClose, onCr
   };
 
   const handleSubmit = async () => {
-    if (!form.name.trim()) { setError('Name is required.'); return; }
+    if (!form.name.trim()) {
+      setError('Name is required.');
+      return;
+    }
     setSaving(true);
     setError(null);
     try {
@@ -59,25 +61,55 @@ export function CreateComponentModal({ open, parentId, parentName, onClose, onCr
       onClose={handleClose}
       footer={
         <>
-          <Button variant="secondary" onClick={handleClose} disabled={saving}>Cancel</Button>
-          <Button loading={saving} onClick={handleSubmit}>Create</Button>
+          <Button variant="secondary" onClick={handleClose} disabled={saving}>
+            Cancel
+          </Button>
+          <Button loading={saving} onClick={handleSubmit}>
+            Create
+          </Button>
         </>
       }
     >
       <div className="space-y-4">
-        {error && <div className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-md">{error}</div>}
-        <Input id="comp-name" label="Name *" value={form.name} onChange={set('name')}
-          placeholder="Main Engine" autoFocus />
-        <TextArea id="comp-desc" label="Description" rows={2} value={form.description}
-          onChange={set('description')} placeholder="Optional details..." />
+        {error && (
+          <div className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-md">{error}</div>
+        )}
+        <Input
+          id="comp-name"
+          label="Name *"
+          value={form.name}
+          onChange={set('name')}
+          placeholder="Main Engine"
+          autoFocus
+        />
+        <TextArea
+          id="comp-desc"
+          label="Description"
+          rows={2}
+          value={form.description}
+          onChange={set('description')}
+          placeholder="Optional details..."
+        />
         <div className="flex gap-3">
           <div className="flex-1">
-            <Input id="comp-sfi" label="SFI Code" value={form.sfi} onChange={set('sfi')}
-              placeholder="230.01" />
+            <Input
+              id="comp-sfi"
+              label="SFI Code"
+              value={form.sfi}
+              onChange={set('sfi')}
+              placeholder="230.01"
+            />
           </div>
           <div className="w-36">
-            <Input id="comp-rh" label="Initial Running Hours" type="number" min="0" step="0.1"
-              value={form.runningHours} onChange={set('runningHours')} />
+            <Input
+              id="comp-rh"
+              label="Initial Running Hours"
+              type="number"
+              min="0"
+              step="0.1"
+              value={form.runningHours}
+              onChange={set('runningHours')}
+            />
           </div>
         </div>
       </div>

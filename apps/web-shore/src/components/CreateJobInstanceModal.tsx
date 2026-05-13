@@ -37,7 +37,8 @@ export function CreateJobInstanceModal({ open, jobId, componentId, onClose, onCr
     setError(null);
     if (!jobId) {
       setLoadingJobs(true);
-      api.get<Job[]>('/jobs')
+      api
+        .get<Job[]>('/jobs')
         .then(setJobs)
         .catch(() => setError('Could not load jobs.'))
         .finally(() => setLoadingJobs(false));
@@ -50,10 +51,16 @@ export function CreateJobInstanceModal({ open, jobId, componentId, onClose, onCr
   };
 
   const handleSubmit = async () => {
-    if (!selectedJobId) { setError('Select a job.'); return; }
+    if (!selectedJobId) {
+      setError('Select a job.');
+      return;
+    }
     const resolvedJob = jobs.find((j) => j.id === selectedJobId);
     const resolvedComponentId = componentId ?? resolvedJob?.componentId;
-    if (!resolvedComponentId) { setError('Could not determine component.'); return; }
+    if (!resolvedComponentId) {
+      setError('Could not determine component.');
+      return;
+    }
 
     setSaving(true);
     setError(null);
@@ -85,13 +92,19 @@ export function CreateJobInstanceModal({ open, jobId, componentId, onClose, onCr
       onClose={handleClose}
       footer={
         <>
-          <Button variant="secondary" onClick={handleClose} disabled={saving}>Cancel</Button>
-          <Button loading={saving} onClick={handleSubmit}>Schedule</Button>
+          <Button variant="secondary" onClick={handleClose} disabled={saving}>
+            Cancel
+          </Button>
+          <Button loading={saving} onClick={handleSubmit}>
+            Schedule
+          </Button>
         </>
       }
     >
       <div className="space-y-4">
-        {error && <div className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-md">{error}</div>}
+        {error && (
+          <div className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-md">{error}</div>
+        )}
 
         {/* Job selector — hidden when jobId is pre-supplied */}
         {!jobId && (
@@ -100,7 +113,9 @@ export function CreateJobInstanceModal({ open, jobId, componentId, onClose, onCr
               Job *
             </label>
             {loadingJobs ? (
-              <div className="py-2"><Spinner /></div>
+              <div className="py-2">
+                <Spinner />
+              </div>
             ) : (
               <select
                 id="ji-job"
@@ -110,13 +125,13 @@ export function CreateJobInstanceModal({ open, jobId, componentId, onClose, onCr
               >
                 <option value="">— Select a job —</option>
                 {jobs.map((j) => (
-                  <option key={j.id} value={j.id}>{j.title}</option>
+                  <option key={j.id} value={j.id}>
+                    {j.title}
+                  </option>
                 ))}
               </select>
             )}
-            {intervalLabel && (
-              <p className="mt-1 text-xs text-slate-500">{intervalLabel}</p>
-            )}
+            {intervalLabel && <p className="mt-1 text-xs text-slate-500">{intervalLabel}</p>}
           </div>
         )}
 
