@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react';
 
-interface NavItem {
+export interface NavItem {
   label: string;
   href: string;
-  icon?: string;
+  code: string;
 }
 
 interface AppShellProps {
@@ -15,6 +15,49 @@ interface AppShellProps {
   children: ReactNode;
 }
 
+function BearingMark({ size = 20 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" style={{ display: 'block', flexShrink: 0 }}>
+      <circle cx="12" cy="12" r="10.25" fill="none" stroke="#0A1F33" strokeWidth="1.5" />
+      <circle cx="12" cy="8.5" r="2" fill="#0A1F33" />
+      <line
+        x1="12"
+        y1="1"
+        x2="12"
+        y2="3.25"
+        stroke="#0A1F33"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function ModBadge({ code, active }: { code: string; active: boolean }) {
+  return (
+    <span
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 22,
+        height: 22,
+        borderRadius: 5,
+        flexShrink: 0,
+        background: active ? '#0A1F33' : 'transparent',
+        color: active ? '#fff' : '#8893A0',
+        fontFamily: '"Geist Mono", monospace',
+        fontSize: 9.5,
+        fontWeight: 600,
+        letterSpacing: '0.04em',
+        border: active ? 'none' : '1px solid #EEEBE2',
+      }}
+    >
+      {code}
+    </span>
+  );
+}
+
 export function AppShell({
   nav,
   currentPath,
@@ -24,37 +67,136 @@ export function AppShell({
   children,
 }: AppShellProps) {
   return (
-    <div className="flex h-screen bg-slate-50 overflow-hidden">
-      <aside className="w-56 flex-shrink-0 bg-slate-900 flex flex-col">
-        <div className="px-5 py-4 border-b border-slate-700">
-          <span className="text-white font-bold text-lg tracking-tight">⚓ FleetOps</span>
+    <div
+      style={{
+        display: 'flex',
+        height: '100vh',
+        overflow: 'hidden',
+        background: '#FAFAF7',
+        fontFamily: '"Geist", system-ui, sans-serif',
+      }}
+    >
+      {/* Sidebar */}
+      <aside
+        style={{
+          width: 220,
+          flexShrink: 0,
+          background: '#FFFFFF',
+          borderRight: '1px solid #E5E3DA',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        <div
+          style={{
+            padding: '14px 14px 12px',
+            borderBottom: '1px solid #EEEBE2',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+          }}
+        >
+          <BearingMark size={20} />
+          <span
+            style={{
+              fontFamily: '"Geist", system-ui',
+              fontWeight: 600,
+              fontSize: 14,
+              letterSpacing: '-0.01em',
+              color: '#0A1F33',
+            }}
+          >
+            FleetOps
+          </span>
         </div>
-        <nav className="flex-1 px-2 py-3 space-y-0.5 overflow-y-auto">
+        <nav
+          style={{
+            flex: 1,
+            padding: '10px 8px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 1,
+            overflowY: 'auto',
+          }}
+        >
           {nav.map((item) => {
-            const active = currentPath.startsWith(item.href);
+            const active =
+              item.href === '/' ? currentPath === '/' : currentPath.startsWith(item.href);
             return (
               <button
                 key={item.href}
                 onClick={() => onNavClick(item.href)}
-                className={`w-full text-left flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${
-                  active
-                    ? 'bg-blue-700 text-white'
-                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                }`}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 10,
+                  padding: '6px 8px',
+                  height: 32,
+                  border: 'none',
+                  borderRadius: 6,
+                  cursor: 'pointer',
+                  background: active ? '#F4F2EC' : 'transparent',
+                  color: active ? '#0A1F33' : '#41546A',
+                  fontSize: 13,
+                  fontWeight: active ? 600 : 500,
+                  fontFamily: 'inherit',
+                  textAlign: 'left',
+                  transition: 'background .1s',
+                }}
+                onMouseEnter={(e) => {
+                  if (!active) e.currentTarget.style.background = '#F4F2EC';
+                }}
+                onMouseLeave={(e) => {
+                  if (!active) e.currentTarget.style.background = 'transparent';
+                }}
               >
-                {item.icon && <span>{item.icon}</span>}
-                {item.label}
+                <ModBadge code={item.code} active={active} />
+                <span style={{ flex: 1 }}>{item.label}</span>
               </button>
             );
           })}
         </nav>
         {userEmail && (
-          <div className="px-3 py-3 border-t border-slate-700">
-            <p className="text-xs text-slate-400 truncate mb-2">{userEmail}</p>
+          <div
+            style={{
+              padding: '10px 12px',
+              borderTop: '1px solid #EEEBE2',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 4,
+            }}
+          >
+            <p
+              style={{
+                fontSize: 11.5,
+                color: '#8893A0',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                margin: 0,
+              }}
+            >
+              {userEmail}
+            </p>
             {onLogout && (
               <button
                 onClick={onLogout}
-                className="text-xs text-slate-400 hover:text-white transition-colors"
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  padding: 0,
+                  cursor: 'pointer',
+                  fontSize: 11.5,
+                  color: '#8893A0',
+                  textAlign: 'left',
+                  fontFamily: 'inherit',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = '#AB382E';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = '#8893A0';
+                }}
               >
                 Sign out
               </button>
@@ -62,8 +204,9 @@ export function AppShell({
           </div>
         )}
       </aside>
-      <main className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex-1 overflow-y-auto p-6">{children}</div>
+      {/* Main */}
+      <main style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <div style={{ flex: 1, overflowY: 'auto', padding: '24px 28px' }}>{children}</div>
       </main>
     </div>
   );
