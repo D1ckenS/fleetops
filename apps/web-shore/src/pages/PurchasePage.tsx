@@ -2,6 +2,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { Badge, type BadgeColor, Button, Spinner } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
 import { CreateRequisitionModal } from '../components/CreateRequisitionModal.js';
+import { CreatePurchaseOrderModal } from '../components/CreatePurchaseOrderModal.js';
+import { CreateSupplierModal } from '../components/CreateSupplierModal.js';
 import { PODetailModal } from '../components/PODetailModal.js';
 import { RejectRequisitionModal } from '../components/RejectRequisitionModal.js';
 
@@ -136,6 +138,7 @@ function RequisitionsTab() {
   const [filter, setFilter] = useState<ReqFilter>('ALL');
   const [creating, setCreating] = useState(false);
   const [rejectTarget, setRejectTarget] = useState<string | null>(null);
+  const [createPoTarget, setCreatePoTarget] = useState<{ id: string; title: string } | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
   const load = useCallback(() => {
@@ -251,6 +254,14 @@ function RequisitionsTab() {
                           </Button>
                         </>
                       )}
+                      {r.status === 'APPROVED' && (
+                        <Button
+                          size="sm"
+                          onClick={() => setCreatePoTarget({ id: r.id, title: r.title })}
+                        >
+                          Create PO
+                        </Button>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -273,6 +284,121 @@ function RequisitionsTab() {
         onClose={() => setRejectTarget(null)}
         onRejected={() => {
           setRejectTarget(null);
+          load();
+        }}
+      />
+      <CreatePurchaseOrderModal
+        open={createPoTarget !== null}
+        requisitionId={createPoTarget?.id ?? ''}
+        requisitionTitle={createPoTarget?.title ?? ''}
+        onClose={() => setCreatePoTarget(null)}
+        onCreated={() => {
+          setCreatePoTarget(null);
+          load();
+        }}
+      />
+    </div>
+  );
+}
+
+// --- Suppliers Tab ---
+interface SupplierFull {
+  id: string;
+  name: string;
+  contactName: string | null;
+  contactEmail: string | null;
+  contactPhone: string | null;
+  country: string | null;
+  isActive: boolean;
+}
+
+function SuppliersTab() {
+  const [suppliers, setSuppliers] = useState<SupplierFull[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [creating, setCreating] = useState(false);
+
+  const load = useCallback(() => {
+    setLoading(true);
+    api
+      .get<SupplierFull[]>('/suppliers')
+      .then(setSuppliers)
+      .catch((e: unknown) => setError(e instanceof Error ? e.message : 'Failed to load'))
+      .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Delete supplier "${name}"?`)) return;
+    try {
+      await api.delete(`/suppliers/${id}`);
+      load();
+    } catch (e: unknown) {
+      alert(e instanceof Error ? e.message : 'Delete failed');
+    }
+  };
+
+  return (
+    <div>
+      <div className="mb-4 flex items-center justify-between">
+        <p className="text-sm text-slate-500">Suppliers available for purchase orders.</p>
+        <Button onClick={() => setCreating(true)}>+ New Supplier</Button>
+      </div>
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        {loading && (
+          <div className="p-8 flex justify-center">
+            <Spinner />
+          </div>
+        )}
+        {error && <div className="p-6 text-sm text-red-600">{error}</div>}
+        {!loading && !error && suppliers.length === 0 && (
+          <div className="p-8 text-center text-slate-500 text-sm">
+            No suppliers yet.{' '}
+            <button className="text-blue-600 hover:underline" onClick={() => setCreating(true)}>
+              Add the first one.
+            </button>
+          </div>
+        )}
+        {!loading && !error && suppliers.length > 0 && (
+          <table className="w-full text-left text-sm">
+            <thead>
+              <tr className="bg-slate-50 text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                <th className="py-3 px-4">Name</th>
+                <th className="py-3 px-4">Contact</th>
+                <th className="py-3 px-4">Email</th>
+                <th className="py-3 px-4">Country</th>
+                <th className="py-3 px-4" />
+              </tr>
+            </thead>
+            <tbody>
+              {suppliers.map((s) => (
+                <tr key={s.id} className="border-t border-slate-100 hover:bg-slate-50 group">
+                  <td className="py-3 px-4 font-medium text-slate-800">{s.name}</td>
+                  <td className="py-3 px-4 text-slate-600">{s.contactName ?? '—'}</td>
+                  <td className="py-3 px-4 text-slate-500">{s.contactEmail ?? '—'}</td>
+                  <td className="py-3 px-4 text-slate-500">{s.country ?? '—'}</td>
+                  <td className="py-3 px-4 text-right">
+                    <button
+                      onClick={() => handleDelete(s.id, s.name)}
+                      className="hidden group-hover:inline text-xs text-red-400 hover:text-red-600 transition-colors"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+      <CreateSupplierModal
+        open={creating}
+        onClose={() => setCreating(false)}
+        onCreated={() => {
+          setCreating(false);
           load();
         }}
       />
@@ -459,7 +585,12 @@ function PurchaseOrdersTab() {
 }
 
 // --- Main Page ---
-type Tab = 'requisitions' | 'purchase-orders';
+type Tab = 'requisitions' | 'purchase-orders' | 'suppliers';
+const TAB_LABELS: Record<Tab, string> = {
+  requisitions: 'Requisitions',
+  'purchase-orders': 'Purchase Orders',
+  suppliers: 'Suppliers',
+};
 
 export function PurchasePage() {
   const [tab, setTab] = useState<Tab>('requisitions');
@@ -469,12 +600,12 @@ export function PurchasePage() {
       <div className="mb-6">
         <h1 className="text-xl font-bold text-slate-900">Purchase</h1>
         <p className="text-sm text-slate-500 mt-0.5">
-          Requisitions, purchase orders, and goods receipts
+          Requisitions, purchase orders, and suppliers
         </p>
       </div>
 
       <div className="flex gap-0 mb-6 border-b border-slate-200">
-        {(['requisitions', 'purchase-orders'] as Tab[]).map((t) => (
+        {(Object.keys(TAB_LABELS) as Tab[]).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
@@ -484,12 +615,14 @@ export function PurchasePage() {
                 : 'border-transparent text-slate-500 hover:text-slate-700'
             }`}
           >
-            {t === 'requisitions' ? 'Requisitions' : 'Purchase Orders'}
+            {TAB_LABELS[t]}
           </button>
         ))}
       </div>
 
-      {tab === 'requisitions' ? <RequisitionsTab /> : <PurchaseOrdersTab />}
+      {tab === 'requisitions' && <RequisitionsTab />}
+      {tab === 'purchase-orders' && <PurchaseOrdersTab />}
+      {tab === 'suppliers' && <SuppliersTab />}
     </div>
   );
 }

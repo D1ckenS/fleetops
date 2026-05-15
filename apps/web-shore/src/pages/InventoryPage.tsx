@@ -2,8 +2,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { Badge, Button, type BadgeColor, Spinner } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
 import { CreatePartModal } from '../components/CreatePartModal.js';
+import { EditPartModal, type PartItem } from '../components/EditPartModal.js';
 import { AddStockLevelModal } from '../components/AddStockLevelModal.js';
 import { PostStockMovementModal } from '../components/PostStockMovementModal.js';
+import { ManageBarcodesModal } from '../components/ManageBarcodesModal.js';
 
 interface StockLevelSummary {
   id: string;
@@ -40,7 +42,9 @@ const STATUS_LABEL: Record<StockLevelSummary['status'], string> = {
 type ActiveModal =
   | { kind: 'none' }
   | { kind: 'stockLevel'; partId: string; partName: string }
-  | { kind: 'movement'; partId: string; partName: string };
+  | { kind: 'movement'; partId: string; partName: string }
+  | { kind: 'editPart'; part: PartItem }
+  | { kind: 'barcodes'; partId: string; partName: string };
 
 function StockChip({ level }: { level: StockLevelSummary }) {
   return (
@@ -56,10 +60,16 @@ function PartRow({
   part,
   onStockLevel,
   onMovement,
+  onEdit,
+  onBarcodes,
+  onDelete,
 }: {
   part: PartSummary;
   onStockLevel: (partId: string, partName: string) => void;
   onMovement: (partId: string, partName: string) => void;
+  onEdit: (part: PartItem) => void;
+  onBarcodes: (partId: string, partName: string) => void;
+  onDelete: (partId: string, partName: string) => void;
 }) {
   const worstStatus = (['purple', 'red', 'amber', 'green'] as const).find((s) =>
     part.stockLevels.some((l) => l.status === s),
@@ -96,20 +106,38 @@ function PartRow({
         )}
       </td>
       <td className="py-3 px-4 text-right">
-        <div className="hidden group-hover:flex justify-end gap-1">
+        <div className="hidden group-hover:flex justify-end gap-1 flex-wrap">
+          <button
+            onClick={() => onMovement(part.id, part.name)}
+            className="text-xs px-2 py-0.5 rounded border border-blue-300 text-blue-600 hover:bg-blue-50 transition-colors"
+          >
+            Post movement
+          </button>
           <button
             onClick={() => onStockLevel(part.id, part.name)}
             className="text-xs px-2 py-0.5 rounded border border-slate-300 text-slate-600 hover:border-slate-500 hover:text-slate-800 transition-colors"
-            title="Add / edit stock level config"
           >
             Stock config
           </button>
           <button
-            onClick={() => onMovement(part.id, part.name)}
-            className="text-xs px-2 py-0.5 rounded border border-blue-300 text-blue-600 hover:bg-blue-50 transition-colors"
-            title="Post a receipt, consumption, or adjustment"
+            onClick={() => onBarcodes(part.id, part.name)}
+            className="text-xs px-2 py-0.5 rounded border border-slate-300 text-slate-600 hover:border-purple-400 hover:text-purple-600 transition-colors"
           >
-            Post movement
+            Barcodes
+          </button>
+          <button
+            onClick={() =>
+              onEdit({ id: part.id, name: part.name, partNumber: part.partNumber, unit: part.unit })
+            }
+            className="text-xs px-2 py-0.5 rounded border border-slate-300 text-slate-600 hover:border-slate-500 hover:text-slate-800 transition-colors"
+          >
+            Edit
+          </button>
+          <button
+            onClick={() => onDelete(part.id, part.name)}
+            className="text-xs px-2 py-0.5 rounded border border-red-200 text-red-400 hover:border-red-400 hover:text-red-600 transition-colors"
+          >
+            Delete
           </button>
         </div>
       </td>
@@ -124,6 +152,16 @@ export function InventoryPage() {
   const [filter, setFilter] = useState<'all' | 'low' | 'out'>('all');
   const [createPartOpen, setCreatePartOpen] = useState(false);
   const [modal, setModal] = useState<ActiveModal>({ kind: 'none' });
+
+  const handleDeletePart = async (partId: string, partName: string) => {
+    if (!confirm(`Delete part "${partName}"? This cannot be undone.`)) return;
+    try {
+      await api.delete(`/parts/${partId}`);
+      load();
+    } catch (e: unknown) {
+      alert(e instanceof Error ? e.message : 'Delete failed');
+    }
+  };
 
   const load = useCallback(() => {
     setLoading(true);
@@ -220,6 +258,11 @@ export function InventoryPage() {
                   onMovement={(id, name) =>
                     setModal({ kind: 'movement', partId: id, partName: name })
                   }
+                  onEdit={(part) => setModal({ kind: 'editPart', part })}
+                  onBarcodes={(id, name) =>
+                    setModal({ kind: 'barcodes', partId: id, partName: name })
+                  }
+                  onDelete={handleDeletePart}
                 />
               ))}
             </tbody>
@@ -273,6 +316,21 @@ export function InventoryPage() {
           closeModal();
           load();
         }}
+      />
+      <EditPartModal
+        open={modal.kind === 'editPart'}
+        part={modal.kind === 'editPart' ? modal.part : null}
+        onClose={closeModal}
+        onSaved={() => {
+          closeModal();
+          load();
+        }}
+      />
+      <ManageBarcodesModal
+        open={modal.kind === 'barcodes'}
+        partId={modal.kind === 'barcodes' ? modal.partId : ''}
+        partName={modal.kind === 'barcodes' ? modal.partName : ''}
+        onClose={closeModal}
       />
     </div>
   );

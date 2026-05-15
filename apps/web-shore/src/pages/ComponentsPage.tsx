@@ -2,18 +2,13 @@ import { useEffect, useState } from 'react';
 import { Badge, Button, Spinner } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
 import { CreateComponentModal } from '../components/CreateComponentModal.js';
+import { EditComponentModal, type ComponentItem } from '../components/EditComponentModal.js';
 import { CreateJobModal } from '../components/CreateJobModal.js';
 import { EditJobModal, type Job } from '../components/EditJobModal.js';
 import { CreateJobInstanceModal } from '../components/CreateJobInstanceModal.js';
+import { LogRunningHoursModal } from '../components/LogRunningHoursModal.js';
 
-interface Component {
-  id: string;
-  name: string;
-  description: string | null;
-  sfi: string | null;
-  parentId: string | null;
-  runningHours: string;
-}
+interface Component extends ComponentItem {}
 
 interface TreeNode extends Component {
   children: TreeNode[];
@@ -41,6 +36,9 @@ interface NodeActions {
   onAddJob: (componentId: string, componentName: string) => void;
   onEditJob: (job: Job, componentName: string) => void;
   onScheduleJob: (jobId: string, componentId: string) => void;
+  onLogHours: (component: Component) => void;
+  onEditComponent: (component: Component) => void;
+  onDeleteComponent: (id: string, name: string) => void;
 }
 
 function JobRow({ job, actions }: { job: Job; actions: NodeActions }) {
@@ -108,13 +106,19 @@ function ComponentNode({
         )}
         <span className="text-sm font-medium text-slate-800 flex-1">{node.name}</span>
         {node.sfi && <Badge color="blue">{node.sfi}</Badge>}
-        <span className="text-xs text-slate-400">{node.runningHours} h</span>
+        <span className="text-xs text-slate-400 tabular-nums">{node.runningHours} h</span>
         {jobs.length > 0 && (
           <span className="text-xs text-slate-400 tabular-nums">
             {jobs.length} job{jobs.length !== 1 ? 's' : ''}
           </span>
         )}
         <div className="hidden group-hover:flex items-center gap-1 ml-2">
+          <button
+            onClick={() => actions.onLogHours(node)}
+            className="text-xs px-2 py-0.5 rounded border border-slate-300 text-slate-600 hover:border-green-400 hover:text-green-700 transition-colors"
+          >
+            Log h
+          </button>
           <button
             onClick={() => actions.onAddJob(node.id, node.name)}
             className="text-xs px-2 py-0.5 rounded border border-slate-300 text-slate-600 hover:border-blue-400 hover:text-blue-600 transition-colors"
@@ -126,6 +130,18 @@ function ComponentNode({
             className="text-xs px-2 py-0.5 rounded border border-slate-300 text-slate-600 hover:border-slate-500 hover:text-slate-800 transition-colors"
           >
             + Child
+          </button>
+          <button
+            onClick={() => actions.onEditComponent(node)}
+            className="text-xs px-2 py-0.5 rounded border border-slate-300 text-slate-600 hover:border-slate-500 hover:text-slate-800 transition-colors"
+          >
+            Edit
+          </button>
+          <button
+            onClick={() => actions.onDeleteComponent(node.id, node.name)}
+            className="text-xs px-2 py-0.5 rounded border border-red-200 text-red-400 hover:border-red-400 hover:text-red-600 transition-colors"
+          >
+            Delete
           </button>
         </div>
       </div>
@@ -156,6 +172,8 @@ function ComponentNode({
 type Modal =
   | { kind: 'none' }
   | { kind: 'component'; parentId?: string; parentName?: string }
+  | { kind: 'editComponent'; component: Component }
+  | { kind: 'logHours'; component: Component }
   | { kind: 'job'; componentId: string; componentName: string }
   | { kind: 'editJob'; job: Job; componentName: string }
   | { kind: 'instance'; jobId: string; componentId: string };
@@ -184,6 +202,16 @@ export function ComponentsPage() {
 
   const close = () => setModal({ kind: 'none' });
 
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Delete component "${name}"? This cannot be undone.`)) return;
+    try {
+      await api.delete(`/components/${id}`);
+      load();
+    } catch (e: unknown) {
+      alert(e instanceof Error ? e.message : 'Delete failed');
+    }
+  };
+
   const jobsByComponentId = new Map<string, Job[]>();
   for (const j of jobs) {
     const arr = jobsByComponentId.get(j.componentId) ?? [];
@@ -196,6 +224,9 @@ export function ComponentsPage() {
     onAddJob: (componentId, componentName) => setModal({ kind: 'job', componentId, componentName }),
     onEditJob: (job, componentName) => setModal({ kind: 'editJob', job, componentName }),
     onScheduleJob: (jobId, componentId) => setModal({ kind: 'instance', jobId, componentId }),
+    onLogHours: (component) => setModal({ kind: 'logHours', component }),
+    onEditComponent: (component) => setModal({ kind: 'editComponent', component }),
+    onDeleteComponent: handleDelete,
   };
 
   const tree = buildTree(components);
@@ -249,6 +280,26 @@ export function ComponentsPage() {
         parentName={modal.kind === 'component' ? modal.parentName : null}
         onClose={close}
         onCreated={() => {
+          close();
+          load();
+        }}
+      />
+      <EditComponentModal
+        open={modal.kind === 'editComponent'}
+        component={modal.kind === 'editComponent' ? modal.component : null}
+        onClose={close}
+        onSaved={() => {
+          close();
+          load();
+        }}
+      />
+      <LogRunningHoursModal
+        open={modal.kind === 'logHours'}
+        componentId={modal.kind === 'logHours' ? modal.component.id : ''}
+        componentName={modal.kind === 'logHours' ? modal.component.name : ''}
+        currentHours={modal.kind === 'logHours' ? modal.component.runningHours : '0'}
+        onClose={close}
+        onLogged={() => {
           close();
           load();
         }}
