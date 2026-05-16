@@ -33,7 +33,19 @@ function BearingMark({ size = 20 }: { size?: number }) {
   );
 }
 
-function ModBadge({ code, active }: { code: string; active: boolean }) {
+function ModBadge({
+  code,
+  active,
+  anyActive,
+}: {
+  code: string;
+  active: boolean;
+  anyActive: boolean;
+}) {
+  // Design spec: active = navy bg + white; inactive-when-any-active = transparent + ink3; idle = surface2 + ink2 + border
+  const bg = active ? '#0A1F33' : anyActive ? 'transparent' : '#F4F2EC';
+  const color = active ? '#fff' : anyActive ? '#8893A0' : '#41546A';
+  const border = active || anyActive ? 'none' : '1px solid #EEEBE2';
   return (
     <span
       style={{
@@ -44,17 +56,53 @@ function ModBadge({ code, active }: { code: string; active: boolean }) {
         height: 22,
         borderRadius: 5,
         flexShrink: 0,
-        background: active ? '#0A1F33' : 'transparent',
-        color: active ? '#fff' : '#8893A0',
+        background: bg,
+        color,
+        border,
         fontFamily: '"Geist Mono", monospace',
         fontSize: 9.5,
         fontWeight: 600,
         letterSpacing: '0.04em',
-        border: active ? 'none' : '1px solid #EEEBE2',
       }}
     >
       {code}
     </span>
+  );
+}
+
+function Initials({ email }: { email: string }) {
+  const name = email.split('@')[0] ?? '';
+  const parts = name.split(/[._-]/);
+  const letters =
+    parts.length >= 2 && parts[0] && parts[1]
+      ? (parts[0][0] ?? '') + (parts[1][0] ?? '')
+      : name.slice(0, 2);
+  return (
+    <div
+      style={{
+        width: 26,
+        height: 26,
+        borderRadius: 6,
+        flexShrink: 0,
+        background: '#0A1F33',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <span
+        style={{
+          color: '#F4F2EC',
+          fontSize: 10,
+          fontWeight: 600,
+          fontFamily: '"Geist Mono", monospace',
+          letterSpacing: '0.02em',
+          textTransform: 'uppercase',
+        }}
+      >
+        {letters.toUpperCase()}
+      </span>
+    </div>
   );
 }
 
@@ -66,6 +114,10 @@ export function AppShell({
   onLogout,
   children,
 }: AppShellProps) {
+  const anyActive = nav.some((item) =>
+    item.href === '/' ? currentPath === '/' : currentPath.startsWith(item.href),
+  );
+
   return (
     <div
       style={{
@@ -76,7 +128,7 @@ export function AppShell({
         fontFamily: '"Geist", system-ui, sans-serif',
       }}
     >
-      {/* Sidebar */}
+      {/* ── Sidebar ─────────────────────────────────────────────────── */}
       <aside
         style={{
           width: 220,
@@ -87,6 +139,7 @@ export function AppShell({
           flexDirection: 'column',
         }}
       >
+        {/* Wordmark */}
         <div
           style={{
             padding: '14px 14px 12px',
@@ -109,6 +162,8 @@ export function AppShell({
             FleetOps
           </span>
         </div>
+
+        {/* Nav */}
         <nav
           style={{
             flex: 1,
@@ -136,7 +191,7 @@ export function AppShell({
                   borderRadius: 6,
                   cursor: 'pointer',
                   background: active ? '#F4F2EC' : 'transparent',
-                  color: active ? '#0A1F33' : '#41546A',
+                  color: active ? '#0A1F33' : anyActive ? '#8893A0' : '#41546A',
                   fontSize: 13,
                   fontWeight: active ? 600 : 500,
                   fontFamily: 'inherit',
@@ -150,61 +205,68 @@ export function AppShell({
                   if (!active) e.currentTarget.style.background = 'transparent';
                 }}
               >
-                <ModBadge code={item.code} active={active} />
+                <ModBadge code={item.code} active={active} anyActive={anyActive} />
                 <span style={{ flex: 1 }}>{item.label}</span>
               </button>
             );
           })}
         </nav>
+
+        {/* Account block */}
         {userEmail && (
           <div
             style={{
               padding: '10px 12px',
               borderTop: '1px solid #EEEBE2',
               display: 'flex',
-              flexDirection: 'column',
-              gap: 4,
+              alignItems: 'center',
+              gap: 8,
             }}
           >
-            <p
-              style={{
-                fontSize: 11.5,
-                color: '#8893A0',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                margin: 0,
-              }}
-            >
-              {userEmail}
-            </p>
-            {onLogout && (
-              <button
-                onClick={onLogout}
+            <Initials email={userEmail} />
+            <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <p
                 style={{
-                  background: 'none',
-                  border: 'none',
-                  padding: 0,
-                  cursor: 'pointer',
                   fontSize: 11.5,
-                  color: '#8893A0',
-                  textAlign: 'left',
-                  fontFamily: 'inherit',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.color = '#AB382E';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.color = '#8893A0';
+                  color: '#41546A',
+                  fontWeight: 500,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  margin: 0,
                 }}
               >
-                Sign out
-              </button>
-            )}
+                {userEmail.split('@')[0]}
+              </p>
+              {onLogout && (
+                <button
+                  onClick={onLogout}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                    cursor: 'pointer',
+                    fontSize: 11,
+                    color: '#8893A0',
+                    textAlign: 'left',
+                    fontFamily: 'inherit',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = '#AB382E';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = '#8893A0';
+                  }}
+                >
+                  Sign out
+                </button>
+              )}
+            </div>
           </div>
         )}
       </aside>
-      {/* Main */}
+
+      {/* ── Main ────────────────────────────────────────────────────── */}
       <main style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <div style={{ flex: 1, overflowY: 'auto', padding: '24px 28px' }}>{children}</div>
       </main>
