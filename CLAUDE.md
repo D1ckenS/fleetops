@@ -109,6 +109,6 @@ These settings exist for reasons. Do not alter them without explicit instruction
 
 | Setting | Location | Value | Reason |
 |---|---|---|---|
-| `ignoreDeprecations` | All tsconfig files | `"6.0"` with comment `// Do not change` | VS Code uses bundled TS which requires "6.0"; changing to "5.0" causes IDE warnings. Do NOT revert to "5.0". |
+| `ignoreDeprecations` | All tsconfig files | `"5.0"` | Project TypeScript is 5.9.3; the only valid value is `"5.0"`. Silences the `moduleResolution: Node10` deprecation warning. |
 | Vite port | `apps/web-shore/vite.config.ts` | `5342` | Port 5173 is in Windows Hyper-V excluded range 5141–5240; 5342 is the first available port after the exclusion. |
 | Proto namespace | `packages/proto/sync.proto` | `fleetops.sync.v1` | Was `marad.sync.v1`; renamed during branding to FleetOps. All generated code references this namespace. |
