@@ -8,6 +8,60 @@
 
 > Most-recent first. Format: `### YYYY-MM-DD — <task> — <summary>` then bullets.
 
+### 2026-05-16 — UI — Purchase page redesigned to match Bearing design
+
+| Item | Detail |
+|---|---|
+| `apps/web-shore/src/pages/PurchasePage.tsx` | Complete rewrite: 5 tabs (Requisitions, RFQs, Purchase Orders, Goods Receipts, Suppliers); split-pane PO view with inline detail panel; sub-header with search + New Requisition; footer stats bar (PO count, in-transit, active, open value) |
+| `apps/web-shore/src/components/EditSupplierModal.tsx` | New: PATCH /suppliers/:id; edit contact, email, phone, country, address |
+| **Requisitions tab** | Expandable rows showing line items inline; status filter chips; inline submit/approve/reject actions per row |
+| **RFQs tab** | Left rail (RFQ list, 300px) + right quote comparison grid; columns = suppliers, rows = Total / Notes / Valid Until; LOWEST auto-badge; Award & convert → POST /quotes/:id/accept |
+| **Purchase Orders tab** | Left: stage filter chips (All → Draft → Sent → Confirmed → In Transit → Partial → Received → Closed) + scrollable list; Right: 400px detail pane with 7-step lifecycle stepper (dots + connector bars, green=done/navy=current), money tiles, lines with RECEIVED/PARTIAL/OPEN pills, receipt history, inline GRN form when receivable |
+| **Goods Receipts tab** | Fetches received POs, flattens their `receipts[]` arrays; columns: GRN | Against PO | Supplier | Date | Receipt (badge) | Discrepancy |
+| **Suppliers tab** | Unchanged functionality; edit + delete on row hover |
+| Branch | `feat/phase1-ui-gaps` (PR #21 open) |
+
+### 2026-05-16 — UI — Inventory page redesigned to match Bearing 3-pane design
+
+| Item | Detail |
+|---|---|
+| `apps/web-shore/src/pages/InventoryPage.tsx` | Complete rewrite: 3-pane layout — 200px location rail (from GET /stock-locations with per-location counts + status legend) · scrollable center table (status dot, part code, description, location, ROB colored by status, unit, min, reorder, max; both-axis scroll with always-visible scrollbars) · 300px detail pane (stock bar with red/amber/green zones + ROB needle marker, per-location breakdown, movement ledger from GET /stock-movements?partId=, Post movement / Stock config / Barcodes action buttons) |
+| Branch | `feat/phase1-ui-gaps` (PR #21 open) |
+
+### 2026-05-16 — UI — Bearing design system + complete Phase 1 UI
+
+Large batch of UI work implementing the Bearing design system across all Phase 1 screens (previously in PR #20 `feat/bearing-design`).
+
+| Item | Detail |
+|---|---|
+| `packages/ui-kit/src/AppShell.tsx` | Bearing sidebar: BearingMark SVG (eccentric ring), ModBadge 3-state (active=navy/inactive=dim/idle=surface-2), Initials avatar (navy circle), anyActive dimming logic |
+| `packages/ui-kit/src/Badge.tsx` | Six signal colors: green/amber/red/purple/blue/slate with Bearing bg+fg values |
+| `packages/ui-kit/src/Button.tsx` | Navy primary, warm secondary, danger red, ghost; sm/md/lg sizes; loading spinner |
+| `packages/ui-kit/src/Modal.tsx` | Navy tint backdrop, 2px blur, hairline dividers, lg/sm sizes |
+| `packages/ui-kit/src/Input.tsx` | Navy focus ring `0 0 0 3px rgba(10,31,51,.08)` |
+| `apps/web-shore/src/globals.css` | Full Bearing CSS variable set (bg/surface/surface-2/ink/navy/signal palette) |
+| `apps/web-shore/tailwind.config.ts` | Bearing tokens as Tailwind utilities (bg-navy, text-ink-2, border-hairline, rounded-1/2/3/4, signal colors) |
+| `apps/web-shore/index.html` | Geist + Geist Mono fonts via Google Fonts |
+| `apps/web-shore/vite.config.ts` | Port moved to 5342 (5173 blocked by Windows Hyper-V exclusion range 5141–5240) |
+| `apps/web-shore/src/App.tsx` | 9 nav modules: Start, Maintenance, Inventory, Purchase, Certificates, Safety, QHSE, Crewing, FLGO; /jobs → /components?tab=jobs redirect |
+| `apps/web-shore/src/pages/DashboardPage.tsx` | Greeting by time of day, 5 KPI tiles, two-column worklist (open jobs + requisitions), live API data |
+| `apps/web-shore/src/pages/ComponentsPage.tsx` | Maintenance module with 6 tabs driven by ?tab= URL param: Components · Jobs (JobInstancesPage inline) · History · Templates · Running Hours · Projects |
+| `apps/web-shore/src/pages/MaintenanceHistoryTab.tsx` | Immutable JobHistory records; 🔒 lock badge; DNV CG-0339 footer note |
+| `apps/web-shore/src/pages/MaintenanceTemplatesTab.tsx` | Job template library; RH/CAL/RH+CAL interval badges; + Instance / Edit actions |
+| `apps/web-shore/src/pages/MaintenanceRunningHoursTab.tsx` | Running hours per component; progress bar (navy→amber@90%→red overdue); OVERDUE pill; inline LogRunningHoursModal |
+| `apps/web-shore/src/pages/ComingSoonPage.tsx` | Stub for Phase 2/3 modules |
+| **New modals** | CreateComponentModal, EditComponentModal, CreateJobModal (with TypicalPartsList BOM editor), EditJobModal, CreateJobInstanceModal, LogRunningHoursModal, CreatePartModal, EditPartModal, AddStockLevelModal, PostStockMovementModal, ManageBarcodesModal, CreateRequisitionModal (rewritten with inline line items), CreatePurchaseOrderModal, CreateSupplierModal, EditSupplierModal, SignOffModal (rewritten with parts picker + BOM pre-population) |
+| **Schema additions** | `typicalPartsJson TEXT` on jobs table (both shore Prisma + vessel Drizzle); migration applied |
+| **Barcode bindings GET** | Added `GET /barcode-bindings?partId=` on both shore + vessel controllers |
+| Branch | PR #20 merged to main |
+
+**Key design decisions:**
+
+- Tab state in URL (`?tab=`) for Maintenance and Purchase — survives refresh, linkable
+- ModBadge 3-state: active (navy), inactive-when-any-active (transparent+ink-3), all-idle (surface-2+hairline)
+- Jobs folded into Maintenance as second tab — no standalone /jobs nav item
+- TypicalPartsList shared BOM editor used in CreateJobModal + EditJobModal + SignOffModal pre-population
+
 ### 2026-05-13 — P1-11 — Mobile app (Flutter)
 
 | Item                                               | Detail                                                                                                                                                                                         |
@@ -264,7 +318,9 @@
 
 > Single, unambiguous next task for any fresh Claude Code session. Update this immediately when a task completes.
 
-**P1-12 done. Phase 1 complete.** Next: **Phase 1 verification** — run the full Phase 1 verification command and work through `apps/docs/checklists/phase1.md`. Command: `pnpm run ci:full && pnpm run e2e:phase1 && pnpm run soak:sync`. After all checklist items are green, begin **P2-1 — Certificates** (expiry alerts, email/in-app notifications).
+**Phase 1 UI complete.** PR #21 (`feat/phase1-ui-gaps`) is open with Inventory 3-pane + Purchase redesign — merge when CI is green.
+
+After merge: **Phase 1 verification** — run `pnpm run ci:full && pnpm run e2e:phase1 && pnpm run soak:sync` and work through `apps/docs/checklists/phase1.md`. After all checklist items are green, begin **P2-1 — Certificates** (expiry alerts, email/in-app notifications).
 
 **Outstanding follow-up tickets (deferred, not blocking P1-4):**
 

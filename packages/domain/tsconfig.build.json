@@ -3,7 +3,7 @@
   "compilerOptions": {
     "module": "CommonJS",
     "moduleResolution": "Node10",
-    "ignoreDeprecations": "5.0",
+    "ignoreDeprecations": "6.0", // Do not change
     "outDir": "./dist",
     "rootDir": "./src",
     "noEmit": false,
