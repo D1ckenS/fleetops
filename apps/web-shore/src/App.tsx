@@ -6,11 +6,8 @@ import { DashboardPage } from './pages/DashboardPage.js';
 import { ComponentsPage } from './pages/ComponentsPage.js';
 import { InventoryPage } from './pages/InventoryPage.js';
 import { PurchasePage } from './pages/PurchasePage.js';
-import { CertificatesPage } from './pages/CertificatesPage.js';
-import { SafetyPage } from './pages/SafetyPage.js';
-import { QHSEPage } from './pages/QHSEPage.js';
 import { CrewingPage } from './pages/CrewingPage.js';
-import { FlgoPage } from './pages/FlgoPage.js';
+import { ComingSoonPage } from './pages/ComingSoonPage.js';
 
 const NAV = [
   { label: 'Start', href: '/dashboard', code: 'ST' },
@@ -45,11 +42,14 @@ function ProtectedLayout() {
         <Route path="jobs" element={<Navigate to="/components?tab=jobs" replace />} />
         <Route path="inventory" element={<InventoryPage />} />
         <Route path="purchase" element={<PurchasePage />} />
-        <Route path="certificates" element={<CertificatesPage />} />
-        <Route path="safety" element={<SafetyPage />} />
-        <Route path="qhse" element={<QHSEPage />} />
+        <Route
+          path="certificates"
+          element={<ComingSoonPage module="Certificates" phase="Phase 2 (P2-1)" />}
+        />
+        <Route path="safety" element={<ComingSoonPage module="Safety" phase="Phase 2 (P2-2)" />} />
+        <Route path="qhse" element={<ComingSoonPage module="QHSE" phase="Phase 2 (P2-3)" />} />
         <Route path="crewing" element={<CrewingPage />} />
-        <Route path="flgo" element={<FlgoPage />} />
+        <Route path="flgo" element={<ComingSoonPage module="FLGO" phase="Phase 3 (P3-1)" />} />
         <Route path="*" element={<Navigate to="dashboard" replace />} />
       </Routes>
     </AppShell>
