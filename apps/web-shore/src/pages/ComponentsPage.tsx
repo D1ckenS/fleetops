@@ -9,12 +9,26 @@ import { EditJobModal, type Job } from '../components/EditJobModal.js';
 import { CreateJobInstanceModal } from '../components/CreateJobInstanceModal.js';
 import { LogRunningHoursModal } from '../components/LogRunningHoursModal.js';
 import { JobInstancesPage } from './JobInstancesPage.js';
+import { MaintenanceHistoryTab } from './MaintenanceHistoryTab.js';
+import { MaintenanceTemplatesTab } from './MaintenanceTemplatesTab.js';
+import { MaintenanceRunningHoursTab } from './MaintenanceRunningHoursTab.js';
+import { ComingSoonPage } from './ComingSoonPage.js';
 
-type MaintenanceTab = 'components' | 'jobs';
+type MaintenanceTab =
+  | 'components'
+  | 'jobs'
+  | 'history'
+  | 'templates'
+  | 'running-hours'
+  | 'projects';
 
 const TABS: { id: MaintenanceTab; label: string }[] = [
   { id: 'components', label: 'Components' },
   { id: 'jobs', label: 'Jobs' },
+  { id: 'history', label: 'History' },
+  { id: 'templates', label: 'Templates' },
+  { id: 'running-hours', label: 'Running Hours' },
+  { id: 'projects', label: 'Projects' },
 ];
 
 interface Component extends ComponentItem {}
@@ -284,8 +298,22 @@ export function ComponentsPage() {
         </div>
       </div>
 
-      {/* ── Jobs tab ─────────────────────────────────────────────── */}
+      {/* ── Tab content ─────────────────────────────────────────── */}
       {activeTab === 'jobs' && <JobInstancesPage />}
+      {activeTab === 'history' && <MaintenanceHistoryTab />}
+      {activeTab === 'templates' && (
+        <MaintenanceTemplatesTab
+          onCreateJob={(cId, cName) =>
+            setModal({ kind: 'job', componentId: cId, componentName: cName })
+          }
+          onEditJob={(job, cName) => setModal({ kind: 'editJob', job, componentName: cName })}
+          onScheduleJob={(jobId, cId) => setModal({ kind: 'instance', jobId, componentId: cId })}
+        />
+      )}
+      {activeTab === 'running-hours' && <MaintenanceRunningHoursTab />}
+      {activeTab === 'projects' && (
+        <ComingSoonPage module="Projects (Gantt)" phase="Phase 3 (P3-2)" />
+      )}
 
       {/* ── Components tab ───────────────────────────────────────── */}
       {activeTab === 'components' && (
