@@ -541,7 +541,7 @@ const deptOf = (rank: string): 'Deck' | 'Engine' | 'Galley' => {
 };
 
 const DEPT_COLOR: Record<string, BadgeColor> = { Deck: 'blue', Engine: 'amber', Galley: 'purple' };
-const deptColor = (dept: string): BadgeColor => deptColor(dept) ?? 'slate';
+const deptColor = (dept: string): BadgeColor => DEPT_COLOR[dept] ?? 'slate';
 
 const REST_COLOR: Record<string, BadgeColor> = { green: 'green', amber: 'amber', red: 'red' };
 const restColor = (rest: string): BadgeColor => REST_COLOR[rest] ?? 'slate';
