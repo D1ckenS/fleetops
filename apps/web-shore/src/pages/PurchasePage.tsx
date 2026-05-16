@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Badge, type BadgeColor, Button, Spinner } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
 import { CreateRequisitionModal } from '../components/CreateRequisitionModal.js';
 import { CreatePurchaseOrderModal } from '../components/CreatePurchaseOrderModal.js';
 import { CreateSupplierModal } from '../components/CreateSupplierModal.js';
+import { EditSupplierModal } from '../components/EditSupplierModal.js';
 import { PODetailModal } from '../components/PODetailModal.js';
 import { RejectRequisitionModal } from '../components/RejectRequisitionModal.js';
 
@@ -127,6 +129,35 @@ const PO_STATUS_COLOR: Record<POStatus, BadgeColor> = {
   CLOSED: 'slate',
 };
 
+// --- Chip button ---
+function Chip({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      style={
+        active
+          ? { background: 'var(--navy)', color: '#fff' }
+          : {
+              background: 'var(--surface-2)',
+              color: 'var(--ink-2)',
+              border: '1px solid var(--border)',
+            }
+      }
+      className="px-3 py-1.5 rounded-2 text-xs font-medium transition-colors"
+    >
+      {children}
+    </button>
+  );
+}
+
 // --- Requisitions Tab ---
 const REQ_FILTERS = ['ALL', 'DRAFT', 'SUBMITTED', 'APPROVED', 'REJECTED'] as const;
 type ReqFilter = (typeof REQ_FILTERS)[number];
@@ -140,6 +171,7 @@ function RequisitionsTab() {
   const [rejectTarget, setRejectTarget] = useState<string | null>(null);
   const [createPoTarget, setCreatePoTarget] = useState<{ id: string; title: string } | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<string | null>(null);
 
   const load = useCallback(() => {
     setLoading(true);
@@ -170,101 +202,196 @@ function RequisitionsTab() {
 
   return (
     <div>
+      {/* Toolbar */}
       <div className="mb-4 flex items-center justify-between flex-wrap gap-3">
         <div className="flex gap-2 flex-wrap">
           {REQ_FILTERS.map((f) => (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                filter === f
-                  ? 'bg-slate-800 text-white'
-                  : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
-              }`}
-            >
+            <Chip key={f} active={filter === f} onClick={() => setFilter(f)}>
               {f === 'ALL' ? 'All' : titleCase(f)}
-            </button>
+            </Chip>
           ))}
         </div>
-        <Button onClick={() => setCreating(true)}>+ New Requisition</Button>
+        <Button size="sm" onClick={() => setCreating(true)}>
+          + New Requisition
+        </Button>
       </div>
 
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      {/* Table card */}
+      <div
+        className="overflow-hidden"
+        style={{
+          background: 'var(--surface)',
+          border: '1px solid var(--border)',
+          borderRadius: 'var(--r-3)',
+          boxShadow: 'var(--shadow-1)',
+        }}
+      >
         {loading && (
           <div className="p-8 flex justify-center">
             <Spinner />
           </div>
         )}
-        {error && <div className="p-6 text-sm text-red-600">{error}</div>}
+        {error && (
+          <div className="p-6 text-xs" style={{ color: 'var(--sig-red)' }}>
+            {error}
+          </div>
+        )}
         {!loading && !error && reqs.length === 0 && (
-          <div className="p-8 text-center text-slate-500 text-sm">No requisitions found.</div>
+          <div className="p-10 text-center text-xs" style={{ color: 'var(--ink-3)' }}>
+            No requisitions found. Create one to get started.
+          </div>
         )}
         {!loading && !error && reqs.length > 0 && (
           <table className="w-full text-left">
             <thead>
-              <tr className="bg-slate-50 text-xs font-semibold text-slate-500 uppercase tracking-wide">
-                <th className="py-3 px-4">Title</th>
-                <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4">Amount</th>
-                <th className="py-3 px-4">Requested</th>
-                <th className="py-3 px-4">Lines</th>
-                <th className="py-3 px-4">Actions</th>
+              <tr
+                className="text-xs font-semibold uppercase tracking-wide"
+                style={{
+                  background: 'var(--surface-2)',
+                  color: 'var(--ink-3)',
+                  borderBottom: '1px solid var(--hairline)',
+                }}
+              >
+                <th className="py-2.5 px-4">Title</th>
+                <th className="py-2.5 px-4">Status</th>
+                <th className="py-2.5 px-4">Amount</th>
+                <th className="py-2.5 px-4">Requested</th>
+                <th className="py-2.5 px-4">Lines</th>
+                <th className="py-2.5 px-4" />
               </tr>
             </thead>
             <tbody>
               {reqs.map((r) => (
-                <tr key={r.id} className="border-t border-slate-100 hover:bg-slate-50">
-                  <td className="py-3 px-4">
-                    <div className="font-medium text-slate-800 text-sm">{r.title}</div>
-                    {r.rejectionReason && (
-                      <div className="text-xs text-red-500 mt-0.5">{r.rejectionReason}</div>
-                    )}
-                  </td>
-                  <td className="py-3 px-4">
-                    <Badge color={REQ_STATUS_COLOR[r.status]}>{titleCase(r.status)}</Badge>
-                  </td>
-                  <td className="py-3 px-4 text-sm font-mono text-slate-700">
-                    {fmtAmount(r.totalAmount, r.currency)}
-                  </td>
-                  <td className="py-3 px-4 text-sm text-slate-500">{fmtDate(r.requestedAt)}</td>
-                  <td className="py-3 px-4 text-sm text-slate-500">{r.lines.length}</td>
-                  <td className="py-3 px-4">
-                    <div className="flex gap-2">
-                      {r.status === 'DRAFT' && (
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          loading={actionLoading === `${r.id}-submit`}
-                          onClick={() => doAction(r.id, 'submit')}
-                        >
-                          Submit
-                        </Button>
+                <>
+                  <tr
+                    key={r.id}
+                    className="transition-colors cursor-pointer"
+                    style={{ borderTop: '1px solid var(--hairline)' }}
+                    onClick={() => setExpanded(expanded === r.id ? null : r.id)}
+                  >
+                    <td className="py-3 px-4">
+                      <div className="text-sm font-medium" style={{ color: 'var(--ink)' }}>
+                        {r.title}
+                      </div>
+                      {r.rejectionReason && (
+                        <div className="text-xs mt-0.5" style={{ color: 'var(--sig-red)' }}>
+                          {r.rejectionReason}
+                        </div>
                       )}
-                      {r.status === 'SUBMITTED' && (
-                        <>
+                    </td>
+                    <td className="py-3 px-4">
+                      <Badge color={REQ_STATUS_COLOR[r.status]}>{titleCase(r.status)}</Badge>
+                    </td>
+                    <td className="py-3 px-4 text-sm font-mono" style={{ color: 'var(--ink-2)' }}>
+                      {fmtAmount(r.totalAmount, r.currency)}
+                    </td>
+                    <td className="py-3 px-4 text-xs" style={{ color: 'var(--ink-3)' }}>
+                      {fmtDate(r.requestedAt)}
+                    </td>
+                    <td className="py-3 px-4 text-xs" style={{ color: 'var(--ink-3)' }}>
+                      {r.lines.length}
+                    </td>
+                    <td className="py-3 px-4" onClick={(e) => e.stopPropagation()}>
+                      <div className="flex gap-2 justify-end">
+                        {r.status === 'DRAFT' && (
                           <Button
                             size="sm"
-                            loading={actionLoading === `${r.id}-approve`}
-                            onClick={() => doAction(r.id, 'approve')}
+                            variant="secondary"
+                            loading={actionLoading === `${r.id}-submit`}
+                            onClick={() => doAction(r.id, 'submit')}
                           >
-                            Approve
+                            Submit
                           </Button>
-                          <Button size="sm" variant="danger" onClick={() => setRejectTarget(r.id)}>
-                            Reject
+                        )}
+                        {r.status === 'SUBMITTED' && (
+                          <>
+                            <Button
+                              size="sm"
+                              loading={actionLoading === `${r.id}-approve`}
+                              onClick={() => doAction(r.id, 'approve')}
+                            >
+                              Approve
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="danger"
+                              onClick={() => setRejectTarget(r.id)}
+                            >
+                              Reject
+                            </Button>
+                          </>
+                        )}
+                        {r.status === 'APPROVED' && (
+                          <Button
+                            size="sm"
+                            onClick={() => setCreatePoTarget({ id: r.id, title: r.title })}
+                          >
+                            Create PO
                           </Button>
-                        </>
-                      )}
-                      {r.status === 'APPROVED' && (
-                        <Button
-                          size="sm"
-                          onClick={() => setCreatePoTarget({ id: r.id, title: r.title })}
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                  {expanded === r.id && r.lines.length > 0 && (
+                    <tr
+                      key={`${r.id}-lines`}
+                      style={{
+                        background: 'var(--surface-2)',
+                        borderTop: '1px solid var(--hairline)',
+                      }}
+                    >
+                      <td colSpan={6} className="px-6 py-3">
+                        <div
+                          className="text-xs font-semibold mb-2"
+                          style={{ color: 'var(--ink-3)' }}
                         >
-                          Create PO
-                        </Button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
+                          LINE ITEMS
+                        </div>
+                        <table className="w-full text-xs">
+                          <thead>
+                            <tr style={{ color: 'var(--ink-3)' }}>
+                              <th className="text-left pb-1.5 font-medium">Description</th>
+                              <th className="text-right pb-1.5 font-medium">Qty</th>
+                              <th className="text-right pb-1.5 font-medium">Unit</th>
+                              <th className="text-right pb-1.5 font-medium">Est. Unit Price</th>
+                              <th className="text-right pb-1.5 font-medium">Est. Total</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {r.lines.map((l) => (
+                              <tr
+                                key={l.id}
+                                style={{
+                                  borderTop: '1px solid var(--hairline)',
+                                  color: 'var(--ink-2)',
+                                }}
+                              >
+                                <td className="py-1.5 pr-4">{l.description}</td>
+                                <td className="py-1.5 text-right font-mono">
+                                  {parseFloat(l.quantity).toLocaleString()}
+                                </td>
+                                <td className="py-1.5 text-right">{l.unit}</td>
+                                <td className="py-1.5 text-right font-mono">
+                                  {l.estimatedUnitPrice
+                                    ? `${parseFloat(l.estimatedUnitPrice).toLocaleString('en-US', { minimumFractionDigits: 2 })} ${l.currency ?? ''}`
+                                    : '—'}
+                                </td>
+                                <td
+                                  className="py-1.5 text-right font-mono"
+                                  style={{ color: 'var(--ink)' }}
+                                >
+                                  {l.estimatedTotalPrice
+                                    ? `${parseFloat(l.estimatedTotalPrice).toLocaleString('en-US', { minimumFractionDigits: 2 })} ${l.currency ?? ''}`
+                                    : '—'}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  )}
+                </>
               ))}
             </tbody>
           </table>
@@ -317,6 +444,7 @@ function SuppliersTab() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
+  const [editing, setEditing] = useState<SupplierFull | null>(null);
 
   const load = useCallback(() => {
     setLoading(true);
@@ -344,49 +472,105 @@ function SuppliersTab() {
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <p className="text-sm text-slate-500">Suppliers available for purchase orders.</p>
-        <Button onClick={() => setCreating(true)}>+ New Supplier</Button>
+        <p className="text-xs" style={{ color: 'var(--ink-3)' }}>
+          Vendors available when creating purchase orders.
+        </p>
+        <Button size="sm" onClick={() => setCreating(true)}>
+          + New Supplier
+        </Button>
       </div>
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+
+      <div
+        className="overflow-hidden"
+        style={{
+          background: 'var(--surface)',
+          border: '1px solid var(--border)',
+          borderRadius: 'var(--r-3)',
+          boxShadow: 'var(--shadow-1)',
+        }}
+      >
         {loading && (
           <div className="p-8 flex justify-center">
             <Spinner />
           </div>
         )}
-        {error && <div className="p-6 text-sm text-red-600">{error}</div>}
+        {error && (
+          <div className="p-6 text-xs" style={{ color: 'var(--sig-red)' }}>
+            {error}
+          </div>
+        )}
         {!loading && !error && suppliers.length === 0 && (
-          <div className="p-8 text-center text-slate-500 text-sm">
-            No suppliers yet.{' '}
-            <button className="text-blue-600 hover:underline" onClick={() => setCreating(true)}>
-              Add the first one.
+          <div className="p-10 text-center">
+            <p className="text-xs mb-2" style={{ color: 'var(--ink-3)' }}>
+              No suppliers yet.
+            </p>
+            <button
+              className="text-xs font-medium underline"
+              style={{ color: 'var(--sig-blue)' }}
+              onClick={() => setCreating(true)}
+            >
+              Add the first one
             </button>
           </div>
         )}
         {!loading && !error && suppliers.length > 0 && (
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="bg-slate-50 text-xs font-semibold text-slate-500 uppercase tracking-wide">
-                <th className="py-3 px-4">Name</th>
-                <th className="py-3 px-4">Contact</th>
-                <th className="py-3 px-4">Email</th>
-                <th className="py-3 px-4">Country</th>
-                <th className="py-3 px-4" />
+              <tr
+                className="text-xs font-semibold uppercase tracking-wide"
+                style={{
+                  background: 'var(--surface-2)',
+                  color: 'var(--ink-3)',
+                  borderBottom: '1px solid var(--hairline)',
+                }}
+              >
+                <th className="py-2.5 px-4">Name</th>
+                <th className="py-2.5 px-4">Contact</th>
+                <th className="py-2.5 px-4">Email</th>
+                <th className="py-2.5 px-4">Phone</th>
+                <th className="py-2.5 px-4">Country</th>
+                <th className="py-2.5 px-4" />
               </tr>
             </thead>
             <tbody>
               {suppliers.map((s) => (
-                <tr key={s.id} className="border-t border-slate-100 hover:bg-slate-50 group">
-                  <td className="py-3 px-4 font-medium text-slate-800">{s.name}</td>
-                  <td className="py-3 px-4 text-slate-600">{s.contactName ?? '—'}</td>
-                  <td className="py-3 px-4 text-slate-500">{s.contactEmail ?? '—'}</td>
-                  <td className="py-3 px-4 text-slate-500">{s.country ?? '—'}</td>
-                  <td className="py-3 px-4 text-right">
-                    <button
-                      onClick={() => handleDelete(s.id, s.name)}
-                      className="hidden group-hover:inline text-xs text-red-400 hover:text-red-600 transition-colors"
-                    >
-                      Delete
-                    </button>
+                <tr
+                  key={s.id}
+                  className="group transition-colors"
+                  style={{ borderTop: '1px solid var(--hairline)' }}
+                >
+                  <td className="py-3 px-4 font-medium" style={{ color: 'var(--ink)' }}>
+                    {s.name}
+                  </td>
+                  <td className="py-3 px-4 text-xs" style={{ color: 'var(--ink-2)' }}>
+                    {s.contactName ?? '—'}
+                  </td>
+                  <td className="py-3 px-4 text-xs" style={{ color: 'var(--ink-2)' }}>
+                    {s.contactEmail ?? '—'}
+                  </td>
+                  <td className="py-3 px-4 text-xs" style={{ color: 'var(--ink-2)' }}>
+                    {s.contactPhone ?? '—'}
+                  </td>
+                  <td className="py-3 px-4 text-xs" style={{ color: 'var(--ink-3)' }}>
+                    {s.country ?? '—'}
+                  </td>
+                  <td className="py-3 px-4">
+                    <div className="flex gap-3 justify-end opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        className="text-xs font-medium"
+                        style={{ color: 'var(--ink-2)' }}
+                        onClick={() => setEditing(s)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="text-xs font-medium"
+                        style={{ color: 'var(--sig-red)' }}
+                        onClick={() => handleDelete(s.id, s.name)}
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -394,6 +578,7 @@ function SuppliersTab() {
           </table>
         )}
       </div>
+
       <CreateSupplierModal
         open={creating}
         onClose={() => setCreating(false)}
@@ -402,6 +587,16 @@ function SuppliersTab() {
           load();
         }}
       />
+      {editing && (
+        <EditSupplierModal
+          supplier={editing}
+          onClose={() => setEditing(null)}
+          onSaved={() => {
+            setEditing(null);
+            load();
+          }}
+        />
+      )}
     </div>
   );
 }
@@ -473,73 +668,91 @@ function PurchaseOrdersTab() {
     <div>
       <div className="mb-4 flex gap-2 flex-wrap">
         {PO_FILTERS.map((f) => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-              filter === f
-                ? 'bg-slate-800 text-white'
-                : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
-            }`}
-          >
+          <Chip key={f} active={filter === f} onClick={() => setFilter(f)}>
             {f === 'ALL' ? 'All' : titleCase(f)}
-          </button>
+          </Chip>
         ))}
       </div>
 
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div
+        className="overflow-hidden"
+        style={{
+          background: 'var(--surface)',
+          border: '1px solid var(--border)',
+          borderRadius: 'var(--r-3)',
+          boxShadow: 'var(--shadow-1)',
+        }}
+      >
         {loading && (
           <div className="p-8 flex justify-center">
             <Spinner />
           </div>
         )}
-        {error && <div className="p-6 text-sm text-red-600">{error}</div>}
+        {error && (
+          <div className="p-6 text-xs" style={{ color: 'var(--sig-red)' }}>
+            {error}
+          </div>
+        )}
         {!loading && !error && pos.length === 0 && (
-          <div className="p-8 text-center text-slate-500 text-sm">No purchase orders found.</div>
+          <div className="p-10 text-center text-xs" style={{ color: 'var(--ink-3)' }}>
+            No purchase orders found.
+          </div>
         )}
         {!loading && !error && pos.length > 0 && (
           <table className="w-full text-left">
             <thead>
-              <tr className="bg-slate-50 text-xs font-semibold text-slate-500 uppercase tracking-wide">
-                <th className="py-3 px-4">Title / PO#</th>
-                <th className="py-3 px-4">Supplier</th>
-                <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4">Amount</th>
-                <th className="py-3 px-4">Expected</th>
-                <th className="py-3 px-4">Actions</th>
+              <tr
+                className="text-xs font-semibold uppercase tracking-wide"
+                style={{
+                  background: 'var(--surface-2)',
+                  color: 'var(--ink-3)',
+                  borderBottom: '1px solid var(--hairline)',
+                }}
+              >
+                <th className="py-2.5 px-4">Title / PO#</th>
+                <th className="py-2.5 px-4">Supplier</th>
+                <th className="py-2.5 px-4">Status</th>
+                <th className="py-2.5 px-4">Amount</th>
+                <th className="py-2.5 px-4">Expected</th>
+                <th className="py-2.5 px-4" />
               </tr>
             </thead>
             <tbody>
               {pos.map((po) => (
                 <tr
                   key={po.id}
-                  className="border-t border-slate-100 hover:bg-slate-50 cursor-pointer"
+                  className="transition-colors cursor-pointer hover:bg-surface-sunk"
+                  style={{ borderTop: '1px solid var(--hairline)' }}
                   onClick={() => openDetail(po)}
                 >
                   <td className="py-3 px-4">
-                    <div className="font-medium text-slate-800 text-sm">{po.title}</div>
+                    <div className="text-sm font-medium" style={{ color: 'var(--ink)' }}>
+                      {po.title}
+                    </div>
                     {po.poNumber && (
-                      <div className="text-xs text-slate-400 font-mono mt-0.5">{po.poNumber}</div>
+                      <div className="text-xs font-mono mt-0.5" style={{ color: 'var(--ink-4)' }}>
+                        {po.poNumber}
+                      </div>
                     )}
                   </td>
-                  <td className="py-3 px-4 text-sm text-slate-600">
+                  <td className="py-3 px-4 text-xs" style={{ color: 'var(--ink-2)' }}>
                     {po.supplier ? (
                       po.supplier.name
                     ) : (
-                      <span className="text-slate-400 italic">Not set</span>
+                      <span style={{ color: 'var(--ink-4)', fontStyle: 'italic' }}>Not set</span>
                     )}
                   </td>
                   <td className="py-3 px-4">
                     <Badge color={PO_STATUS_COLOR[po.status]}>{titleCase(po.status)}</Badge>
                   </td>
-                  <td className="py-3 px-4 text-sm font-mono text-slate-700">
+                  <td className="py-3 px-4 text-sm font-mono" style={{ color: 'var(--ink-2)' }}>
                     {fmtAmount(po.totalAmount, po.currency)}
                   </td>
-                  <td className="py-3 px-4 text-sm text-slate-500">
+                  <td className="py-3 px-4 text-xs" style={{ color: 'var(--ink-3)' }}>
                     {po.expectedDeliveryAt ? fmtDate(po.expectedDeliveryAt) : '—'}
                   </td>
                   <td className="py-3 px-4" onClick={(e) => e.stopPropagation()}>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 justify-end">
                       {po.status === 'DRAFT' && (
                         <Button
                           size="sm"
@@ -586,36 +799,54 @@ function PurchaseOrdersTab() {
 
 // --- Main Page ---
 type Tab = 'requisitions' | 'purchase-orders' | 'suppliers';
-const TAB_LABELS: Record<Tab, string> = {
-  requisitions: 'Requisitions',
-  'purchase-orders': 'Purchase Orders',
-  suppliers: 'Suppliers',
-};
+
+const TABS: { id: Tab; label: string }[] = [
+  { id: 'requisitions', label: 'Requisitions' },
+  { id: 'purchase-orders', label: 'Purchase Orders' },
+  { id: 'suppliers', label: 'Suppliers' },
+];
 
 export function PurchasePage() {
-  const [tab, setTab] = useState<Tab>('requisitions');
+  const [params, setParams] = useSearchParams();
+  const tab = (params.get('tab') as Tab | null) ?? 'requisitions';
+
+  const setTab = (t: Tab) => {
+    setParams(t === 'requisitions' ? {} : { tab: t });
+  };
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-xl font-bold text-slate-900">Purchase</h1>
-        <p className="text-sm text-slate-500 mt-0.5">
-          Requisitions, purchase orders, and suppliers
+      {/* Page header */}
+      <div className="mb-5">
+        <h1 className="text-lg font-semibold" style={{ color: 'var(--ink)' }}>
+          Purchase
+        </h1>
+        <p className="text-xs mt-0.5" style={{ color: 'var(--ink-3)' }}>
+          Requisitions, purchase orders &amp; suppliers
         </p>
       </div>
 
-      <div className="flex gap-0 mb-6 border-b border-slate-200">
-        {(Object.keys(TAB_LABELS) as Tab[]).map((t) => (
+      {/* Tab bar */}
+      <div className="flex gap-0 mb-5" style={{ borderBottom: '1px solid var(--hairline)' }}>
+        {TABS.map((t) => (
           <button
-            key={t}
-            onClick={() => setTab(t)}
-            className={`px-5 py-2.5 text-sm font-medium border-b-2 transition-colors ${
-              tab === t
-                ? 'border-blue-600 text-blue-700'
-                : 'border-transparent text-slate-500 hover:text-slate-700'
-            }`}
+            key={t.id}
+            onClick={() => setTab(t.id)}
+            className="px-4 py-2.5 text-xs font-medium border-b-2 transition-colors"
+            style={
+              tab === t.id
+                ? {
+                    borderBottomColor: 'var(--navy)',
+                    color: 'var(--navy)',
+                    marginBottom: '-1px',
+                  }
+                : {
+                    borderBottomColor: 'transparent',
+                    color: 'var(--ink-3)',
+                  }
+            }
           >
-            {TAB_LABELS[t]}
+            {t.label}
           </button>
         ))}
       </div>
