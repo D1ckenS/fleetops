@@ -12,7 +12,7 @@ import { JobInstancesPage } from './JobInstancesPage.js';
 import { MaintenanceHistoryTab } from './MaintenanceHistoryTab.js';
 import { MaintenanceTemplatesTab } from './MaintenanceTemplatesTab.js';
 import { MaintenanceRunningHoursTab } from './MaintenanceRunningHoursTab.js';
-import { MaintenanceProjectsTab } from './MaintenanceProjectsTab.js';
+import { ComingSoonPage } from './ComingSoonPage.js';
 
 type MaintenanceTab =
   | 'components'
@@ -31,7 +31,7 @@ const TABS: { id: MaintenanceTab; label: string }[] = [
   { id: 'projects', label: 'Projects' },
 ];
 
-interface Component extends ComponentItem {}
+type Component = ComponentItem;
 
 interface TreeNode extends Component {
   children: TreeNode[];
@@ -311,7 +311,9 @@ export function ComponentsPage() {
         />
       )}
       {activeTab === 'running-hours' && <MaintenanceRunningHoursTab />}
-      {activeTab === 'projects' && <MaintenanceProjectsTab />}
+      {activeTab === 'projects' && (
+        <ComingSoonPage module="Projects (Gantt)" phase="Phase 3 (P3-2)" />
+      )}
 
       {/* ── Components tab ───────────────────────────────────────── */}
       {activeTab === 'components' && (

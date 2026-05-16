@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Badge, type BadgeColor, Button, Input, Spinner, TextArea } from '@fleetops/ui-kit';
+import { Badge, type BadgeColor, Button, Spinner, TextArea } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
 import { CreateRequisitionModal } from '../components/CreateRequisitionModal.js';
 import { CreateSupplierModal } from '../components/CreateSupplierModal.js';
