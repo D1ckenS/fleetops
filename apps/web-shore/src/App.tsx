@@ -6,6 +6,7 @@ import { DashboardPage } from './pages/DashboardPage.js';
 import { ComponentsPage } from './pages/ComponentsPage.js';
 import { InventoryPage } from './pages/InventoryPage.js';
 import { PurchasePage } from './pages/PurchasePage.js';
+import { CrewingPage } from './pages/CrewingPage.js';
 import { ComingSoonPage } from './pages/ComingSoonPage.js';
 
 const NAV = [
@@ -47,10 +48,7 @@ function ProtectedLayout() {
         />
         <Route path="safety" element={<ComingSoonPage module="Safety" phase="Phase 2 (P2-2)" />} />
         <Route path="qhse" element={<ComingSoonPage module="QHSE" phase="Phase 2 (P2-3)" />} />
-        <Route
-          path="crewing"
-          element={<ComingSoonPage module="Crewing" phase="Phase 2 (P2-4)" />}
-        />
+        <Route path="crewing" element={<CrewingPage />} />
         <Route path="flgo" element={<ComingSoonPage module="FLGO" phase="Phase 3 (P3-1)" />} />
         <Route path="*" element={<Navigate to="dashboard" replace />} />
       </Routes>
