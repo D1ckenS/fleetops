@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Badge, Button, Spinner } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
 import { CreateComponentModal } from '../components/CreateComponentModal.js';
@@ -7,6 +8,14 @@ import { CreateJobModal } from '../components/CreateJobModal.js';
 import { EditJobModal, type Job } from '../components/EditJobModal.js';
 import { CreateJobInstanceModal } from '../components/CreateJobInstanceModal.js';
 import { LogRunningHoursModal } from '../components/LogRunningHoursModal.js';
+import { JobInstancesPage } from './JobInstancesPage.js';
+
+type MaintenanceTab = 'components' | 'jobs';
+
+const TABS: { id: MaintenanceTab; label: string }[] = [
+  { id: 'components', label: 'Components' },
+  { id: 'jobs', label: 'Jobs' },
+];
 
 interface Component extends ComponentItem {}
 
@@ -179,6 +188,9 @@ type Modal =
   | { kind: 'instance'; jobId: string; componentId: string };
 
 export function ComponentsPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab: MaintenanceTab = (searchParams.get('tab') as MaintenanceTab) ?? 'components';
+
   const [components, setComponents] = useState<Component[]>([]);
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
@@ -233,46 +245,95 @@ export function ComponentsPage() {
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-slate-900">Components</h1>
-          <p className="text-sm text-slate-500 mt-0.5">Equipment hierarchy for this vessel</p>
+      {/* ── Module header + tab bar ──────────────────────────────── */}
+      <div style={{ marginBottom: 24 }}>
+        <h1
+          style={{
+            fontSize: 20,
+            fontWeight: 600,
+            letterSpacing: '-0.011em',
+            color: '#0A1F33',
+            margin: '0 0 16px',
+          }}
+        >
+          Maintenance
+        </h1>
+        <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid #E5E3DA' }}>
+          {TABS.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setSearchParams(t.id === 'components' ? {} : { tab: t.id })}
+              style={{
+                padding: '0 2px',
+                height: 36,
+                marginRight: 20,
+                border: 'none',
+                borderBottom: `2px solid ${activeTab === t.id ? '#0A1F33' : 'transparent'}`,
+                background: 'transparent',
+                cursor: 'pointer',
+                fontSize: 13,
+                fontWeight: activeTab === t.id ? 600 : 500,
+                color: activeTab === t.id ? '#0A1F33' : '#8893A0',
+                fontFamily: 'inherit',
+                transition: 'color .1s, border-color .1s',
+              }}
+            >
+              {t.label}
+            </button>
+          ))}
         </div>
-        <Button onClick={() => setModal({ kind: 'component' })}>+ New Component</Button>
       </div>
 
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
-        {loading && (
-          <div className="p-8">
-            <Spinner />
+      {/* ── Jobs tab ─────────────────────────────────────────────── */}
+      {activeTab === 'jobs' && <JobInstancesPage />}
+
+      {/* ── Components tab ───────────────────────────────────────── */}
+      {activeTab === 'components' && (
+        <div>
+          <div className="mb-6 flex items-center justify-between">
+            <div>
+              <h1 className="text-xl font-bold text-slate-900" style={{ display: 'none' }}>
+                Components
+              </h1>
+              <p className="text-sm text-slate-500 mt-0.5">Equipment hierarchy for this vessel</p>
+            </div>
+            <Button onClick={() => setModal({ kind: 'component' })}>+ New Component</Button>
           </div>
-        )}
-        {error && <div className="p-6 text-sm text-red-600">{error}</div>}
-        {!loading && !error && components.length === 0 && (
-          <div className="p-8 text-center text-slate-500 text-sm">
-            No components yet.{' '}
-            <button
-              className="text-blue-600 hover:underline"
-              onClick={() => setModal({ kind: 'component' })}
-            >
-              Add the first one.
-            </button>
+
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
+            {loading && (
+              <div className="p-8">
+                <Spinner />
+              </div>
+            )}
+            {error && <div className="p-6 text-sm text-red-600">{error}</div>}
+            {!loading && !error && components.length === 0 && (
+              <div className="p-8 text-center text-slate-500 text-sm">
+                No components yet.{' '}
+                <button
+                  className="text-blue-600 hover:underline"
+                  onClick={() => setModal({ kind: 'component' })}
+                >
+                  Add the first one.
+                </button>
+              </div>
+            )}
+            {!loading && !error && tree.length > 0 && (
+              <div className="py-2">
+                {tree.map((node) => (
+                  <ComponentNode
+                    key={node.id}
+                    node={node}
+                    depth={0}
+                    actions={actions}
+                    jobsByComponentId={jobsByComponentId}
+                  />
+                ))}
+              </div>
+            )}
           </div>
-        )}
-        {!loading && !error && tree.length > 0 && (
-          <div className="py-2">
-            {tree.map((node) => (
-              <ComponentNode
-                key={node.id}
-                node={node}
-                depth={0}
-                actions={actions}
-                jobsByComponentId={jobsByComponentId}
-              />
-            ))}
-          </div>
-        )}
-      </div>
+        </div>
+      )}
 
       <CreateComponentModal
         open={modal.kind === 'component'}
