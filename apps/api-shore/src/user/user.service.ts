@@ -99,4 +99,26 @@ export class UserService {
       tx.user.update({ where: { id }, data: { deletedAt: new Date() } }),
     );
   }
+
+  /** Looks up a SUPER_ADMIN by email without tenant scoping (bypasses RLS). */
+  async findSuperAdminByEmail(email: string) {
+    const user = await this.prisma.user.findFirst({
+      where: { email, role: 'SUPER_ADMIN', tenantId: null, deletedAt: null },
+    });
+    if (!user) throw new NotFoundException(`Super admin ${email} not found`);
+    return user;
+  }
+
+  /** Creates a SUPER_ADMIN with no tenant. Bypasses withTenant(). */
+  async createSuperAdmin(email: string, password: string) {
+    const existing = await this.prisma.user.findFirst({
+      where: { email, role: 'SUPER_ADMIN', tenantId: null },
+    });
+    if (existing) throw new ConflictException('A super admin with this email already exists');
+    const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
+    return this.prisma.user.create({
+      data: { id: newId(), tenantId: null, email, passwordHash, role: 'SUPER_ADMIN' },
+      select: { id: true, email: true, role: true, createdAt: true },
+    });
+  }
 }

@@ -9,11 +9,11 @@ export class DrillService {
   constructor(private readonly prisma: PrismaService) {}
 
   create(auth: AuthContext, dto: CreateDrillDto) {
-    return this.prisma.withTenant(auth.tenantId, (tx) =>
+    return this.prisma.withTenant(auth.tenantId!, (tx) =>
       tx.drill.create({
         data: {
           id: newId(),
-          tenantId: auth.tenantId,
+          tenantId: auth.tenantId!,
           vesselId: dto.vesselId,
           drillTypeId: dto.drillTypeId,
           scheduledAt: new Date(dto.scheduledAt),
@@ -27,10 +27,10 @@ export class DrillService {
   }
 
   findAll(auth: AuthContext, query: { status?: string; vesselId?: string }) {
-    return this.prisma.withTenant(auth.tenantId, (tx) =>
+    return this.prisma.withTenant(auth.tenantId!, (tx) =>
       tx.drill.findMany({
         where: {
-          tenantId: auth.tenantId,
+          tenantId: auth.tenantId!,
           deletedAt: null,
           ...(query.vesselId && { vesselId: query.vesselId }),
           ...(query.status && { status: query.status as never }),
@@ -42,9 +42,9 @@ export class DrillService {
   }
 
   async findOne(auth: AuthContext, id: string) {
-    const row = await this.prisma.withTenant(auth.tenantId, (tx) =>
+    const row = await this.prisma.withTenant(auth.tenantId!, (tx) =>
       tx.drill.findFirst({
-        where: { id, tenantId: auth.tenantId, deletedAt: null },
+        where: { id, tenantId: auth.tenantId!, deletedAt: null },
         include: { drillType: true, records: { where: { deletedAt: null } } },
       }),
     );
@@ -54,7 +54,7 @@ export class DrillService {
 
   async update(auth: AuthContext, id: string, dto: UpdateDrillDto) {
     await this.findOne(auth, id);
-    return this.prisma.withTenant(auth.tenantId, (tx) =>
+    return this.prisma.withTenant(auth.tenantId!, (tx) =>
       tx.drill.update({
         where: { id },
         data: {
@@ -73,18 +73,18 @@ export class DrillService {
 
   async softDelete(auth: AuthContext, id: string) {
     await this.findOne(auth, id);
-    await this.prisma.withTenant(auth.tenantId, (tx) =>
+    await this.prisma.withTenant(auth.tenantId!, (tx) =>
       tx.drill.update({ where: { id }, data: { deletedAt: new Date() } }),
     );
   }
 
   async addRecord(auth: AuthContext, drillId: string, dto: CreateDrillRecordDto) {
     const drill = await this.findOne(auth, drillId);
-    return this.prisma.withTenant(auth.tenantId, (tx) =>
+    return this.prisma.withTenant(auth.tenantId!, (tx) =>
       tx.drillRecord.create({
         data: {
           id: newId(),
-          tenantId: auth.tenantId,
+          tenantId: auth.tenantId!,
           vesselId: drill.vesselId,
           drillId,
           participantName: dto.participantName,

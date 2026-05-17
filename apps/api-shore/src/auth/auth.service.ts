@@ -4,15 +4,9 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '../user/user.service';
 
-/**
- * Access-token claim set. RS256-signed by shore.
- *
- * `vesselId` is optional — populated when the user is bound to a single
- * vessel, omitted for tenant-wide roles like TENANT_ADMIN.
- */
 export type JwtPayload = {
-  sub: string; // user id
-  tenantId: string;
+  sub: string;
+  tenantId: string | null; // null for SUPER_ADMIN
   vesselId?: string;
   email: string;
   role: string;
@@ -36,10 +30,16 @@ export class AuthService {
     private readonly jwt: JwtService,
   ) {}
 
-  async login(tenantId: string, email: string, password: string): Promise<LoginResult> {
+  async login(tenantId: string | null, email: string, password: string): Promise<LoginResult> {
     let user;
     try {
-      user = await this.users.findByEmail(tenantId, email);
+      if (!tenantId) {
+        // No tenantId supplied → must be SUPER_ADMIN login
+        user = await this.users.findSuperAdminByEmail(email);
+        if (user.role !== 'SUPER_ADMIN') throw new Error('Not a super admin');
+      } else {
+        user = await this.users.findByEmail(tenantId, email);
+      }
     } catch {
       throw new UnauthorizedException('Invalid credentials');
     }
@@ -47,17 +47,12 @@ export class AuthService {
     if (!user.passwordHash) {
       throw new UnauthorizedException('This account uses SSO — password login not allowed');
     }
-
     const valid = await bcrypt.compare(password, user.passwordHash);
     if (!valid) throw new UnauthorizedException('Invalid credentials');
 
     return this.issueTokens(user);
   }
 
-  /**
-   * Validate a refresh token and mint a fresh access + refresh pair.
-   * Refresh tokens rotate — the caller should discard the old one.
-   */
   async refresh(refreshToken: string): Promise<LoginResult> {
     let payload: JwtPayload;
     try {
@@ -71,7 +66,11 @@ export class AuthService {
 
     let user;
     try {
-      user = await this.users.findByEmail(payload.tenantId, payload.email);
+      if (!payload.tenantId) {
+        user = await this.users.findSuperAdminByEmail(payload.email);
+      } else {
+        user = await this.users.findByEmail(payload.tenantId, payload.email);
+      }
     } catch {
       throw new UnauthorizedException('User no longer exists');
     }
@@ -80,15 +79,15 @@ export class AuthService {
 
   private issueTokens(user: {
     id: string;
-    tenantId: string;
+    tenantId: string | null;
     vesselId?: string | null;
     email: string;
     role: string;
   }): LoginResult {
     const base = {
       sub: user.id,
-      tenantId: user.tenantId,
-      ...(user.vesselId !== null && user.vesselId !== undefined && { vesselId: user.vesselId }),
+      tenantId: user.tenantId ?? null,
+      ...(user.vesselId ? { vesselId: user.vesselId } : {}),
       email: user.email,
       role: user.role,
     };

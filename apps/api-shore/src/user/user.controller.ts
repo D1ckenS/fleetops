@@ -25,25 +25,25 @@ export class UserController {
   @Post()
   @UseGuards(requireRole('SUPER_ADMIN', 'TENANT_ADMIN'))
   create(@AuthCtx() auth: AuthContext, @Body() dto: CreateUserDto) {
-    return this.users.create(auth.tenantId, dto);
+    return this.users.create(auth.tenantId!, dto);
   }
 
   @Get()
   @UseGuards(requireRole('SUPER_ADMIN', 'TENANT_ADMIN'))
   findAll(@AuthCtx() auth: AuthContext) {
-    return this.users.findAll(auth.tenantId);
+    return this.users.findAll(auth.tenantId!);
   }
 
   @Patch(':id')
   @UseGuards(requireRole('SUPER_ADMIN', 'TENANT_ADMIN'))
   update(@AuthCtx() auth: AuthContext, @Param('id') id: string, @Body() dto: UpdateUserDto) {
-    return this.users.update(auth.tenantId, id, dto);
+    return this.users.update(auth.tenantId!, id, dto);
   }
 
   @Delete(':id')
   @HttpCode(204)
   @UseGuards(requireRole('SUPER_ADMIN', 'TENANT_ADMIN'))
   remove(@AuthCtx() auth: AuthContext, @Param('id') id: string) {
-    return this.users.softDelete(auth.tenantId, id);
+    return this.users.softDelete(auth.tenantId!, id);
   }
 }

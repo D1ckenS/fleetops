@@ -27,7 +27,7 @@ export class TenantController {
   @Get('self')
   @UseGuards(JwtAuthGuard)
   self(@AuthCtx() auth: AuthContext) {
-    return this.tenants.findById(auth.tenantId);
+    return this.tenants.findById(auth.tenantId!);
   }
 
   /** SUPER_ADMIN: rename a company. */

@@ -7,10 +7,10 @@ export class NotificationService {
   constructor(private readonly prisma: PrismaService) {}
 
   findAll(auth: AuthContext, query: { unreadOnly?: boolean; vesselId?: string }) {
-    return this.prisma.withTenant(auth.tenantId, (tx) =>
+    return this.prisma.withTenant(auth.tenantId!, (tx) =>
       tx.notification.findMany({
         where: {
-          tenantId: auth.tenantId,
+          tenantId: auth.tenantId!,
           ...(query.unreadOnly === true && { readAt: null }),
           ...(query.vesselId !== undefined && { vesselId: query.vesselId }),
         },
@@ -21,7 +21,7 @@ export class NotificationService {
   }
 
   markRead(auth: AuthContext, id: string) {
-    return this.prisma.withTenant(auth.tenantId, (tx) =>
+    return this.prisma.withTenant(auth.tenantId!, (tx) =>
       tx.notification.update({
         where: { id },
         data: { readAt: new Date() },

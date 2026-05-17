@@ -12,11 +12,11 @@ export class PermitTemplateService {
   constructor(private readonly prisma: PrismaService) {}
 
   create(auth: AuthContext, dto: CreatePermitTemplateDto) {
-    return this.prisma.withTenant(auth.tenantId, (tx) =>
+    return this.prisma.withTenant(auth.tenantId!, (tx) =>
       tx.permitTemplate.create({
         data: {
           id: newId(),
-          tenantId: auth.tenantId,
+          tenantId: auth.tenantId!,
           permitType: dto.permitType,
           name: dto.name,
           checklistItemsJson: dto.checklistItemsJson ?? null,
@@ -26,10 +26,10 @@ export class PermitTemplateService {
   }
 
   findAll(auth: AuthContext, permitType?: string) {
-    return this.prisma.withTenant(auth.tenantId, (tx) =>
+    return this.prisma.withTenant(auth.tenantId!, (tx) =>
       tx.permitTemplate.findMany({
         where: {
-          tenantId: auth.tenantId,
+          tenantId: auth.tenantId!,
           deletedAt: null,
           ...(permitType && { permitType: permitType as never }),
         },
@@ -39,8 +39,8 @@ export class PermitTemplateService {
   }
 
   async findOne(auth: AuthContext, id: string) {
-    const row = await this.prisma.withTenant(auth.tenantId, (tx) =>
-      tx.permitTemplate.findFirst({ where: { id, tenantId: auth.tenantId, deletedAt: null } }),
+    const row = await this.prisma.withTenant(auth.tenantId!, (tx) =>
+      tx.permitTemplate.findFirst({ where: { id, tenantId: auth.tenantId!, deletedAt: null } }),
     );
     if (!row) throw new NotFoundException(`PermitTemplate ${id} not found`);
     return row;
@@ -48,7 +48,7 @@ export class PermitTemplateService {
 
   async update(auth: AuthContext, id: string, dto: UpdatePermitTemplateDto) {
     await this.findOne(auth, id);
-    return this.prisma.withTenant(auth.tenantId, (tx) =>
+    return this.prisma.withTenant(auth.tenantId!, (tx) =>
       tx.permitTemplate.update({
         where: { id },
         data: {
@@ -64,7 +64,7 @@ export class PermitTemplateService {
 
   async softDelete(auth: AuthContext, id: string) {
     await this.findOne(auth, id);
-    await this.prisma.withTenant(auth.tenantId, (tx) =>
+    await this.prisma.withTenant(auth.tenantId!, (tx) =>
       tx.permitTemplate.update({ where: { id }, data: { deletedAt: new Date() } }),
     );
   }

@@ -10,11 +10,11 @@ export class DrillTypeService {
   constructor(private readonly prisma: PrismaService) {}
 
   create(auth: AuthContext, dto: CreateDrillTypeDto) {
-    return this.prisma.withTenant(auth.tenantId, (tx) =>
+    return this.prisma.withTenant(auth.tenantId!, (tx) =>
       tx.drillType.create({
         data: {
           id: newId(),
-          tenantId: auth.tenantId,
+          tenantId: auth.tenantId!,
           name: dto.name,
           description: dto.description ?? null,
         },
@@ -23,17 +23,17 @@ export class DrillTypeService {
   }
 
   findAll(auth: AuthContext) {
-    return this.prisma.withTenant(auth.tenantId, (tx) =>
+    return this.prisma.withTenant(auth.tenantId!, (tx) =>
       tx.drillType.findMany({
-        where: { tenantId: auth.tenantId, deletedAt: null },
+        where: { tenantId: auth.tenantId!, deletedAt: null },
         orderBy: { name: 'asc' },
       }),
     );
   }
 
   async findOne(auth: AuthContext, id: string) {
-    const row = await this.prisma.withTenant(auth.tenantId, (tx) =>
-      tx.drillType.findFirst({ where: { id, tenantId: auth.tenantId, deletedAt: null } }),
+    const row = await this.prisma.withTenant(auth.tenantId!, (tx) =>
+      tx.drillType.findFirst({ where: { id, tenantId: auth.tenantId!, deletedAt: null } }),
     );
     if (!row) throw new NotFoundException(`DrillType ${id} not found`);
     return row;
@@ -41,7 +41,7 @@ export class DrillTypeService {
 
   async update(auth: AuthContext, id: string, dto: UpdateDrillTypeDto) {
     await this.findOne(auth, id);
-    return this.prisma.withTenant(auth.tenantId, (tx) =>
+    return this.prisma.withTenant(auth.tenantId!, (tx) =>
       tx.drillType.update({
         where: { id },
         data: {
@@ -54,7 +54,7 @@ export class DrillTypeService {
 
   async softDelete(auth: AuthContext, id: string) {
     await this.findOne(auth, id);
-    await this.prisma.withTenant(auth.tenantId, (tx) =>
+    await this.prisma.withTenant(auth.tenantId!, (tx) =>
       tx.drillType.update({ where: { id }, data: { deletedAt: new Date() } }),
     );
   }

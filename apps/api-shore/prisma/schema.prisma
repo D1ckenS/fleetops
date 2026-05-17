@@ -205,11 +205,13 @@ model Vessel {
 }
 
 // ── User ─────────────────────────────────────────────────────────────────────
-// Tenant-scoped. passwordHash is nullable for OIDC-only users (P0-10).
+// tenantId is nullable — SUPER_ADMIN users have no tenant assignment.
+// A partial unique index (WHERE tenant_id IS NULL) on email prevents duplicate
+// super-admin accounts; see migration SQL.
 
 model User {
   id           String    @id
-  tenantId     String    @map("tenant_id")
+  tenantId     String?   @map("tenant_id")
   vesselId     String?   @map("vessel_id")
   email        String
   passwordHash String?   @map("password_hash")
@@ -219,7 +221,7 @@ model User {
   hlc          String?
   deletedAt    DateTime? @map("deleted_at")
 
-  tenant Tenant  @relation(fields: [tenantId], references: [id])
+  tenant Tenant? @relation(fields: [tenantId], references: [id])
   vessel Vessel? @relation(fields: [vesselId], references: [id])
 
   @@unique([tenantId, email])

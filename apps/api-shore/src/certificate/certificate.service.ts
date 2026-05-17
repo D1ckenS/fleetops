@@ -19,11 +19,11 @@ export class CertificateService {
   ) {}
 
   create(auth: AuthContext, dto: CreateCertificateDto) {
-    return this.prisma.withTenant(auth.tenantId, (tx) =>
+    return this.prisma.withTenant(auth.tenantId!, (tx) =>
       tx.certificate.create({
         data: {
           id: newId(),
-          tenantId: auth.tenantId,
+          tenantId: auth.tenantId!,
           vesselId: dto.vesselId ?? null,
           certificateTypeId: dto.certificateTypeId,
           subjectType: dto.subjectType,
@@ -54,10 +54,10 @@ export class CertificateService {
         ? new Date(now.getTime() + query.expiringWithinDays * 86_400_000)
         : undefined;
 
-    return this.prisma.withTenant(auth.tenantId, (tx) =>
+    return this.prisma.withTenant(auth.tenantId!, (tx) =>
       tx.certificate.findMany({
         where: {
-          tenantId: auth.tenantId,
+          tenantId: auth.tenantId!,
           deletedAt: null,
           ...(query.subjectType && { subjectType: query.subjectType as never }),
           ...(query.subjectId && { subjectId: query.subjectId }),
@@ -73,9 +73,9 @@ export class CertificateService {
   }
 
   async findOne(auth: AuthContext, id: string) {
-    const row = await this.prisma.withTenant(auth.tenantId, (tx) =>
+    const row = await this.prisma.withTenant(auth.tenantId!, (tx) =>
       tx.certificate.findFirst({
-        where: { id, tenantId: auth.tenantId, deletedAt: null },
+        where: { id, tenantId: auth.tenantId!, deletedAt: null },
         include: { certificateType: true, attachments: { where: { deletedAt: null } } },
       }),
     );
@@ -85,7 +85,7 @@ export class CertificateService {
 
   async update(auth: AuthContext, id: string, dto: UpdateCertificateDto) {
     await this.findOne(auth, id);
-    return this.prisma.withTenant(auth.tenantId, (tx) =>
+    return this.prisma.withTenant(auth.tenantId!, (tx) =>
       tx.certificate.update({
         where: { id },
         data: {
@@ -102,20 +102,20 @@ export class CertificateService {
 
   async softDelete(auth: AuthContext, id: string) {
     await this.findOne(auth, id);
-    await this.prisma.withTenant(auth.tenantId, (tx) =>
+    await this.prisma.withTenant(auth.tenantId!, (tx) =>
       tx.certificate.update({ where: { id }, data: { deletedAt: new Date() } }),
     );
   }
 
   async addAttachment(auth: AuthContext, id: string, file: Express.Multer.File) {
     const cert = await this.findOne(auth, id);
-    const key = `certs/${auth.tenantId}/${id}/${newId()}-${file.originalname}`;
+    const key = `certs/${auth.tenantId!}/${id}/${newId()}-${file.originalname}`;
     await this.storage.put(key, file.buffer, file.mimetype);
-    return this.prisma.withTenant(auth.tenantId, (tx) =>
+    return this.prisma.withTenant(auth.tenantId!, (tx) =>
       tx.certificateAttachment.create({
         data: {
           id: newId(),
-          tenantId: auth.tenantId,
+          tenantId: auth.tenantId!,
           vesselId: cert.vesselId,
           certificateId: id,
           fileName: file.originalname,
@@ -136,10 +136,10 @@ export class CertificateService {
   async checkExpiry(auth: AuthContext): Promise<{ notificationsCreated: number }> {
     const now = new Date();
 
-    const certs = await this.prisma.withTenant(auth.tenantId, async (tx) =>
+    const certs = await this.prisma.withTenant(auth.tenantId!, async (tx) =>
       tx.certificate.findMany({
         where: {
-          tenantId: auth.tenantId,
+          tenantId: auth.tenantId!,
           deletedAt: null,
           expiresAt: { not: null, gte: now },
         },
@@ -168,9 +168,9 @@ export class CertificateService {
 
       const dedupeRefId = `${cert.id}:${matchingThreshold}`;
 
-      const existing = await this.prisma.withTenant(auth.tenantId, (tx) =>
+      const existing = await this.prisma.withTenant(auth.tenantId!, (tx) =>
         tx.notification.findFirst({
-          where: { tenantId: auth.tenantId, type: 'CERTIFICATE_EXPIRY', refId: dedupeRefId },
+          where: { tenantId: auth.tenantId!, type: 'CERTIFICATE_EXPIRY', refId: dedupeRefId },
         }),
       );
       if (existing) continue;
@@ -178,11 +178,11 @@ export class CertificateService {
       const title = `Certificate expiring in ${daysRemaining} day${daysRemaining === 1 ? '' : 's'}`;
       const message = `"${cert.certificateType.name}" (${cert.number ?? cert.id}) expires on ${cert.expiresAt.toISOString().slice(0, 10)}.`;
 
-      await this.prisma.withTenant(auth.tenantId, (tx) =>
+      await this.prisma.withTenant(auth.tenantId!, (tx) =>
         tx.notification.create({
           data: {
             id: newId(),
-            tenantId: auth.tenantId,
+            tenantId: auth.tenantId!,
             vesselId: cert.vesselId,
             type: 'CERTIFICATE_EXPIRY',
             title,
@@ -193,7 +193,7 @@ export class CertificateService {
       );
 
       this.logger.log(
-        { tenantId: auth.tenantId, certId: cert.id, daysRemaining },
+        { tenantId: auth.tenantId!, certId: cert.id, daysRemaining },
         `EMAIL_STUB: ${title} — ${message}`,
       );
 

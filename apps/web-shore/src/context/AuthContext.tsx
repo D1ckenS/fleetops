@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 
 interface JwtPayload {
   sub: string;
-  tenantId: string;
+  tenantId: string | null; // null for SUPER_ADMIN (no company)
   vesselId?: string;
   email: string;
   role: string;

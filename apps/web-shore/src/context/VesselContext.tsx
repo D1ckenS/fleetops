@@ -33,6 +33,11 @@ export function VesselProvider({ children }: { children: ReactNode }) {
 
   const load = useCallback(() => {
     if (!user) return;
+    // SUPER_ADMIN has no tenant — skip vessel/company fetching
+    if (!user.tenantId) {
+      setLoaded(true);
+      return;
+    }
     api
       .get<{ name: string }>('/tenants/self')
       .then((t) => setCompanyName(t.name))
@@ -42,10 +47,8 @@ export function VesselProvider({ children }: { children: ReactNode }) {
       .then((vs) => {
         setVessels(vs);
         if (user.vesselId) {
-          // User is bound to one vessel — lock selection
           setSelectedVesselIdState(user.vesselId);
         } else {
-          // Restore last selection from localStorage, but only if it still exists
           const stored = localStorage.getItem(STORAGE_KEY);
           const stillExists = stored && vs.some((v) => v.id === stored);
           setSelectedVesselIdState(stillExists ? stored : null);

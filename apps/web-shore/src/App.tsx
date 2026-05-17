@@ -18,7 +18,7 @@ import type { NavItem } from '@fleetops/ui-kit';
 
 // ─── Role helpers ─────────────────────────────────────────────────────────────
 
-const ADMIN_ROLES = ['SUPER_ADMIN', 'TENANT_ADMIN'];
+const VESSEL_ADMIN_ROLES = ['TENANT_ADMIN']; // SUPER_ADMIN has no tenant, can't manage vessels
 const SUPER_ADMIN_ONLY = ['SUPER_ADMIN'];
 
 function isRole(role: string | undefined, allowed: string[]) {
@@ -49,21 +49,23 @@ function ProtectedContent() {
   const role = user.role;
   const isSuperAdmin = role === 'SUPER_ADMIN';
 
-  // Build nav based on role
-  const moduleNav: NavItem[] = [
-    { label: 'Start', href: '/dashboard', code: 'ST' },
-    { label: 'Maintenance', href: '/components', code: 'MA' },
-    { label: 'Inventory', href: '/inventory', code: 'IN' },
-    { label: 'Purchase', href: '/purchase', code: 'PO' },
-    { label: 'Certificates', href: '/certificates', code: 'CR' },
-    { label: 'Safety', href: '/safety', code: 'SF' },
-    { label: 'QHSE', href: '/qhse', code: 'QH' },
-    { label: 'Crewing', href: '/crewing', code: 'CW' },
-    { label: 'FLGO', href: '/flgo', code: 'FL' },
-  ];
+  // SUPER_ADMIN only sees Companies; company users see the full module nav
+  const moduleNav: NavItem[] = isSuperAdmin
+    ? []
+    : [
+        { label: 'Start', href: '/dashboard', code: 'ST' },
+        { label: 'Maintenance', href: '/components', code: 'MA' },
+        { label: 'Inventory', href: '/inventory', code: 'IN' },
+        { label: 'Purchase', href: '/purchase', code: 'PO' },
+        { label: 'Certificates', href: '/certificates', code: 'CR' },
+        { label: 'Safety', href: '/safety', code: 'SF' },
+        { label: 'QHSE', href: '/qhse', code: 'QH' },
+        { label: 'Crewing', href: '/crewing', code: 'CW' },
+        { label: 'FLGO', href: '/flgo', code: 'FL' },
+      ];
 
   const adminNav: NavItem[] = [
-    ...(isRole(role, ADMIN_ROLES)
+    ...(isRole(role, VESSEL_ADMIN_ROLES)
       ? [{ label: 'Vessels & Users', href: '/vessels', code: 'VS' }]
       : []),
     ...(isRole(role, SUPER_ADMIN_ONLY)
@@ -100,7 +102,7 @@ function ProtectedContent() {
         <Route
           path="vessels"
           element={
-            <RequireRole roles={ADMIN_ROLES}>
+            <RequireRole roles={VESSEL_ADMIN_ROLES}>
               <VesselsPage />
             </RequireRole>
           }
@@ -113,7 +115,10 @@ function ProtectedContent() {
             </RequireRole>
           }
         />
-        <Route path="*" element={<Navigate to="dashboard" replace />} />
+        <Route
+          path="*"
+          element={<Navigate to={isSuperAdmin ? 'companies' : 'dashboard'} replace />}
+        />
       </Routes>
     </AppShell>
   );

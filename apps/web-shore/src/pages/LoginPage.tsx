@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Input } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
@@ -12,6 +12,7 @@ export function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  const [isPlatformAdmin, setIsPlatformAdmin] = useState(false);
   const [tenantId, setTenantId] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,9 +24,11 @@ export function LoginPage() {
     setError(null);
     setLoading(true);
     try {
-      const res = await api.post<LoginResult>('/auth/login', { tenantId, email, password });
+      const body = isPlatformAdmin ? { email, password } : { tenantId, email, password };
+      const res = await api.post<LoginResult>('/auth/login', body);
       login(res.access_token);
-      navigate('/components');
+      // SUPER_ADMIN lands on /companies; everyone else on /dashboard
+      navigate(isPlatformAdmin ? '/companies' : '/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
     } finally {
@@ -43,15 +46,17 @@ export function LoginPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-lg p-6 space-y-4">
-          <Input
-            id="tenantId"
-            label="Organisation ID"
-            placeholder="tenant-id"
-            value={tenantId}
-            onChange={(e) => setTenantId(e.target.value)}
-            required
-            autoFocus
-          />
+          {!isPlatformAdmin && (
+            <Input
+              id="tenantId"
+              label="Organisation ID"
+              placeholder="tenant-id"
+              value={tenantId}
+              onChange={(e) => setTenantId(e.target.value)}
+              required
+              autoFocus
+            />
+          )}
           <Input
             id="email"
             type="email"
@@ -60,6 +65,7 @@ export function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            autoFocus={isPlatformAdmin}
           />
           <Input
             id="password"
@@ -74,6 +80,18 @@ export function LoginPage() {
           <Button type="submit" className="w-full" loading={loading}>
             Sign in
           </Button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setIsPlatformAdmin((p) => !p);
+              setError(null);
+            }}
+            className="w-full text-center text-xs text-slate-400 hover:text-slate-600 pt-1"
+            style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
+          >
+            {isPlatformAdmin ? '← Back to company login' : 'Platform admin login'}
+          </button>
         </form>
       </div>
     </div>

@@ -15,11 +15,11 @@ export class WorkPermitService {
   constructor(private readonly prisma: PrismaService) {}
 
   create(auth: AuthContext, dto: CreateWorkPermitDto) {
-    return this.prisma.withTenant(auth.tenantId, (tx) =>
+    return this.prisma.withTenant(auth.tenantId!, (tx) =>
       tx.workPermit.create({
         data: {
           id: newId(),
-          tenantId: auth.tenantId,
+          tenantId: auth.tenantId!,
           vesselId: dto.vesselId,
           permitType: dto.permitType,
           templateId: dto.templateId ?? null,
@@ -36,10 +36,10 @@ export class WorkPermitService {
   }
 
   findAll(auth: AuthContext, query: { status?: string; vesselId?: string; permitType?: string }) {
-    return this.prisma.withTenant(auth.tenantId, (tx) =>
+    return this.prisma.withTenant(auth.tenantId!, (tx) =>
       tx.workPermit.findMany({
         where: {
-          tenantId: auth.tenantId,
+          tenantId: auth.tenantId!,
           deletedAt: null,
           ...(query.vesselId && { vesselId: query.vesselId }),
           ...(query.status && { status: query.status as never }),
@@ -52,9 +52,9 @@ export class WorkPermitService {
   }
 
   async findOne(auth: AuthContext, id: string) {
-    const row = await this.prisma.withTenant(auth.tenantId, (tx) =>
+    const row = await this.prisma.withTenant(auth.tenantId!, (tx) =>
       tx.workPermit.findFirst({
-        where: { id, tenantId: auth.tenantId, deletedAt: null },
+        where: { id, tenantId: auth.tenantId!, deletedAt: null },
         include: { approvals: { where: { deletedAt: null } } },
       }),
     );
@@ -64,7 +64,7 @@ export class WorkPermitService {
 
   async update(auth: AuthContext, id: string, dto: UpdateWorkPermitDto) {
     await this.findOne(auth, id);
-    return this.prisma.withTenant(auth.tenantId, (tx) =>
+    return this.prisma.withTenant(auth.tenantId!, (tx) =>
       tx.workPermit.update({
         where: { id },
         data: {
@@ -86,7 +86,7 @@ export class WorkPermitService {
 
   async softDelete(auth: AuthContext, id: string) {
     await this.findOne(auth, id);
-    await this.prisma.withTenant(auth.tenantId, (tx) =>
+    await this.prisma.withTenant(auth.tenantId!, (tx) =>
       tx.workPermit.update({ where: { id }, data: { deletedAt: new Date() } }),
     );
   }
@@ -96,7 +96,7 @@ export class WorkPermitService {
     if (permit.status !== 'REQUESTED') {
       throw new BadRequestException(`Cannot approve permit in status ${permit.status}`);
     }
-    return this.prisma.withTenant(auth.tenantId, (tx) =>
+    return this.prisma.withTenant(auth.tenantId!, (tx) =>
       tx.workPermit.update({
         where: { id },
         data: { status: 'APPROVED' },
@@ -124,7 +124,7 @@ export class WorkPermitService {
         );
       }
     }
-    return this.prisma.withTenant(auth.tenantId, (tx) =>
+    return this.prisma.withTenant(auth.tenantId!, (tx) =>
       tx.workPermit.update({
         where: { id },
         data: { status: 'ACTIVE' },
@@ -138,7 +138,7 @@ export class WorkPermitService {
     if (permit.status !== 'ACTIVE') {
       throw new BadRequestException(`Cannot close permit in status ${permit.status}`);
     }
-    return this.prisma.withTenant(auth.tenantId, (tx) =>
+    return this.prisma.withTenant(auth.tenantId!, (tx) =>
       tx.workPermit.update({
         where: { id },
         data: { status: 'CLOSED', closedAt: new Date() },
@@ -152,7 +152,7 @@ export class WorkPermitService {
     if (permit.status === 'CLOSED' || permit.status === 'CANCELLED') {
       throw new BadRequestException(`Cannot cancel permit in status ${permit.status}`);
     }
-    return this.prisma.withTenant(auth.tenantId, (tx) =>
+    return this.prisma.withTenant(auth.tenantId!, (tx) =>
       tx.workPermit.update({
         where: { id },
         data: { status: 'CANCELLED' },
@@ -163,11 +163,11 @@ export class WorkPermitService {
 
   async addApproval(auth: AuthContext, permitId: string, dto: AddPermitApprovalDto) {
     const permit = await this.findOne(auth, permitId);
-    return this.prisma.withTenant(auth.tenantId, (tx) =>
+    return this.prisma.withTenant(auth.tenantId!, (tx) =>
       tx.permitApproval.create({
         data: {
           id: newId(),
-          tenantId: auth.tenantId,
+          tenantId: auth.tenantId!,
           vesselId: permit.vesselId,
           permitId,
           approvedBy: dto.approvedBy,
