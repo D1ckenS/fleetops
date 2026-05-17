@@ -1072,6 +1072,166 @@ export const permitApprovals = sqliteTable(
   ],
 );
 
+// ── QHSE (P2-3) ──────────────────────────────────────────────────────────────
+
+export const FINDING_KINDS = ['NEAR_MISS', 'NON_CONFORMANCE', 'OBSERVATION', 'HAZARD'] as const;
+export type FindingKind = (typeof FINDING_KINDS)[number];
+
+export const FINDING_STATUSES = ['OPEN', 'UNDER_REVIEW', 'CLOSED'] as const;
+export type FindingStatus = (typeof FINDING_STATUSES)[number];
+
+export const CAPA_STATUSES = ['OPEN', 'IN_PROGRESS', 'VERIFIED', 'CLOSED'] as const;
+export type CapaStatus = (typeof CAPA_STATUSES)[number];
+
+export const CHECKLIST_INSTANCE_STATUSES = ['IN_PROGRESS', 'COMPLETED'] as const;
+export type ChecklistInstanceStatus = (typeof CHECKLIST_INSTANCE_STATUSES)[number];
+
+export const qhseDocuments = sqliteTable(
+  'qhse_documents',
+  {
+    id: text('id').primaryKey(),
+    tenantId: text('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    title: text('title').notNull(),
+    category: text('category'),
+    description: text('description'),
+    isControlled: integer('is_controlled', { mode: 'boolean' }).notNull().default(false),
+    currentRevisionId: text('current_revision_id'),
+    createdAt: text('created_at').notNull().default(nowIso),
+    updatedAt: text('updated_at').notNull().default(nowIso),
+    hlc: text('hlc'),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [index('qhse_documents_tenant_idx').on(t.tenantId)],
+);
+
+export const documentRevisions = sqliteTable(
+  'document_revisions',
+  {
+    id: text('id').primaryKey(),
+    tenantId: text('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    documentId: text('document_id')
+      .notNull()
+      .references(() => qhseDocuments.id),
+    revisionNumber: integer('revision_number').notNull(),
+    summary: text('summary'),
+    s3Key: text('s3_key').notNull(),
+    authoredByUserId: text('authored_by_user_id'),
+    approvedByUserId: text('approved_by_user_id'),
+    approvedAt: text('approved_at'),
+    createdAt: text('created_at').notNull().default(nowIso),
+    hlc: text('hlc'),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [
+    unique('document_revisions_doc_rev_uniq').on(t.documentId, t.revisionNumber),
+    index('document_revisions_tenant_doc_idx').on(t.tenantId, t.documentId),
+  ],
+);
+
+export const checklistTemplates = sqliteTable(
+  'checklist_templates',
+  {
+    id: text('id').primaryKey(),
+    tenantId: text('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    title: text('title').notNull(),
+    description: text('description'),
+    itemsJson: text('items_json').notNull(),
+    createdAt: text('created_at').notNull().default(nowIso),
+    updatedAt: text('updated_at').notNull().default(nowIso),
+    hlc: text('hlc'),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [index('checklist_templates_tenant_idx').on(t.tenantId)],
+);
+
+export const checklistInstances = sqliteTable(
+  'checklist_instances',
+  {
+    id: text('id').primaryKey(),
+    tenantId: text('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    vesselId: text('vessel_id')
+      .notNull()
+      .references(() => vessels.id),
+    templateId: text('template_id').references(() => checklistTemplates.id),
+    title: text('title').notNull(),
+    status: text('status', { enum: CHECKLIST_INSTANCE_STATUSES }).notNull().default('IN_PROGRESS'),
+    responsesJson: text('responses_json').notNull().default('[]'),
+    completedAt: text('completed_at'),
+    createdAt: text('created_at').notNull().default(nowIso),
+    updatedAt: text('updated_at').notNull().default(nowIso),
+    hlc: text('hlc'),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [
+    index('checklist_instances_tenant_vessel_status_idx').on(t.tenantId, t.vesselId, t.status),
+  ],
+);
+
+export const findings = sqliteTable(
+  'findings',
+  {
+    id: text('id').primaryKey(),
+    tenantId: text('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    vesselId: text('vessel_id')
+      .notNull()
+      .references(() => vessels.id),
+    kind: text('kind', { enum: FINDING_KINDS }).notNull(),
+    status: text('status', { enum: FINDING_STATUSES }).notNull().default('OPEN'),
+    title: text('title').notNull(),
+    description: text('description'),
+    raisedByUserId: text('raised_by_user_id'),
+    raisedAt: text('raised_at').notNull(),
+    closedAt: text('closed_at'),
+    createdAt: text('created_at').notNull().default(nowIso),
+    updatedAt: text('updated_at').notNull().default(nowIso),
+    hlc: text('hlc'),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [
+    index('findings_tenant_vessel_status_idx').on(t.tenantId, t.vesselId, t.status),
+    index('findings_tenant_vessel_kind_idx').on(t.tenantId, t.vesselId, t.kind),
+  ],
+);
+
+export const capas = sqliteTable(
+  'capas',
+  {
+    id: text('id').primaryKey(),
+    tenantId: text('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    vesselId: text('vessel_id')
+      .notNull()
+      .references(() => vessels.id),
+    findingId: text('finding_id').references(() => findings.id),
+    type: text('type').notNull(),
+    description: text('description').notNull(),
+    ownerUserId: text('owner_user_id'),
+    dueDate: text('due_date'),
+    status: text('status', { enum: CAPA_STATUSES }).notNull().default('OPEN'),
+    verifiedAt: text('verified_at'),
+    closedAt: text('closed_at'),
+    createdAt: text('created_at').notNull().default(nowIso),
+    updatedAt: text('updated_at').notNull().default(nowIso),
+    hlc: text('hlc'),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [
+    index('capas_tenant_vessel_status_idx').on(t.tenantId, t.vesselId, t.status),
+    index('capas_tenant_vessel_finding_idx').on(t.tenantId, t.vesselId, t.findingId),
+  ],
+);
+
 // Sync engine outbox. Pending entries have sent_at = null.
 export const outbox = sqliteTable(
   'outbox',

@@ -159,6 +159,12 @@ model Tenant {
   permitTemplates      PermitTemplate[]
   workPermits          WorkPermit[]
   permitApprovals      PermitApproval[]
+  qhseDocuments        QhseDocument[]
+  documentRevisions    DocumentRevision[]
+  checklistTemplates   ChecklistTemplate[]
+  checklistInstances   ChecklistInstance[]
+  findings             Finding[]
+  capas                Capa[]
 
   @@map("tenants")
 }
@@ -201,6 +207,9 @@ model Vessel {
   drillRecords         DrillRecord[]
   workPermits          WorkPermit[]
   permitApprovals      PermitApproval[]
+  checklistInstances   ChecklistInstance[]
+  findings             Finding[]
+  capas                Capa[]
 
   @@map("vessels")
 }
@@ -1152,6 +1161,175 @@ model PermitApproval {
 
   @@index([tenantId, vesselId, permitId])
   @@map("permit_approvals")
+}
+
+// ── QHSE (P2-3) ──────────────────────────────────────────────────────────────
+// QhseDocument + DocumentRevision: tenant-scoped document control. Replacing a
+//   controlled document adds a new DocumentRevision row; old revisions stay.
+// ChecklistTemplate: tenant-scoped reusable checklist definition.
+// ChecklistInstance: vessel-scoped, sync-aware. responsesJson stores per-item
+//   signature: [{itemId, text, checked, signatureKey?, signedByUserId?, signedAt?}]
+// Finding: vessel-scoped, sync-aware (NEAR_MISS / NC / OBSERVATION / HAZARD).
+// Capa: vessel-scoped, sync-aware, with ownerUserId + dueDate.
+
+enum FindingKind {
+  NEAR_MISS
+  NON_CONFORMANCE
+  OBSERVATION
+  HAZARD
+}
+
+enum FindingStatus {
+  OPEN
+  UNDER_REVIEW
+  CLOSED
+}
+
+enum CapaStatus {
+  OPEN
+  IN_PROGRESS
+  VERIFIED
+  CLOSED
+}
+
+enum ChecklistInstanceStatus {
+  IN_PROGRESS
+  COMPLETED
+}
+
+model QhseDocument {
+  id                String    @id
+  tenantId          String    @map("tenant_id")
+  title             String
+  category          String?
+  description       String?
+  isControlled      Boolean   @default(false) @map("is_controlled")
+  currentRevisionId String?   @map("current_revision_id")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+  hlc               String?
+  deletedAt         DateTime? @map("deleted_at")
+
+  tenant    Tenant             @relation(fields: [tenantId], references: [id])
+  revisions DocumentRevision[]
+
+  @@index([tenantId])
+  @@map("qhse_documents")
+}
+
+model DocumentRevision {
+  id               String    @id
+  tenantId         String    @map("tenant_id")
+  documentId       String    @map("document_id")
+  revisionNumber   Int       @map("revision_number")
+  summary          String?
+  s3Key            String    @map("s3_key")
+  authoredByUserId String?   @map("authored_by_user_id")
+  approvedByUserId String?   @map("approved_by_user_id")
+  approvedAt       DateTime? @map("approved_at")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  hlc              String?
+  deletedAt        DateTime? @map("deleted_at")
+
+  tenant   Tenant       @relation(fields: [tenantId], references: [id])
+  document QhseDocument @relation(fields: [documentId], references: [id])
+
+  @@unique([documentId, revisionNumber])
+  @@index([tenantId, documentId])
+  @@map("document_revisions")
+}
+
+model ChecklistTemplate {
+  id          String    @id
+  tenantId    String    @map("tenant_id")
+  title       String
+  description String?
+  /// JSON: [{id, text, required}]
+  itemsJson   String    @map("items_json")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  hlc         String?
+  deletedAt   DateTime? @map("deleted_at")
+
+  tenant    Tenant              @relation(fields: [tenantId], references: [id])
+  instances ChecklistInstance[]
+
+  @@index([tenantId])
+  @@map("checklist_templates")
+}
+
+model ChecklistInstance {
+  id            String                  @id
+  tenantId      String                  @map("tenant_id")
+  vesselId      String                  @map("vessel_id")
+  templateId    String?                 @map("template_id")
+  title         String
+  status        ChecklistInstanceStatus @default(IN_PROGRESS)
+  /// JSON: [{itemId, text, checked, signatureKey?, signedByUserId?, signedAt?}]
+  responsesJson String                  @map("responses_json")
+  completedAt   DateTime?               @map("completed_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  hlc           String?
+  deletedAt     DateTime? @map("deleted_at")
+
+  tenant   Tenant             @relation(fields: [tenantId], references: [id])
+  vessel   Vessel             @relation(fields: [vesselId], references: [id])
+  template ChecklistTemplate? @relation(fields: [templateId], references: [id])
+
+  @@index([tenantId, vesselId, status])
+  @@map("checklist_instances")
+}
+
+model Finding {
+  id             String        @id
+  tenantId       String        @map("tenant_id")
+  vesselId       String        @map("vessel_id")
+  kind           FindingKind
+  status         FindingStatus @default(OPEN)
+  title          String
+  description    String?
+  raisedByUserId String?       @map("raised_by_user_id")
+  raisedAt       DateTime      @map("raised_at")
+  closedAt       DateTime?     @map("closed_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  hlc            String?
+  deletedAt      DateTime? @map("deleted_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  vessel Vessel @relation(fields: [vesselId], references: [id])
+  capas  Capa[]
+
+  @@index([tenantId, vesselId, status])
+  @@index([tenantId, vesselId, kind])
+  @@map("findings")
+}
+
+model Capa {
+  id          String     @id
+  tenantId    String     @map("tenant_id")
+  vesselId    String     @map("vessel_id")
+  findingId   String?    @map("finding_id")
+  type        String
+  description String
+  ownerUserId String?    @map("owner_user_id")
+  dueDate     DateTime?  @map("due_date")
+  status      CapaStatus @default(OPEN)
+  verifiedAt  DateTime?  @map("verified_at")
+  closedAt    DateTime?  @map("closed_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  hlc         String?
+  deletedAt   DateTime? @map("deleted_at")
+
+  tenant  Tenant   @relation(fields: [tenantId], references: [id])
+  vessel  Vessel   @relation(fields: [vesselId], references: [id])
+  finding Finding? @relation(fields: [findingId], references: [id])
+
+  @@index([tenantId, vesselId, status])
+  @@index([tenantId, vesselId, findingId])
+  @@map("capas")
 }
 
 // ── Sync engine tables ───────────────────────────────────────────────────────

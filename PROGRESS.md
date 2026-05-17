@@ -8,6 +8,19 @@
 
 > Most-recent first. Format: `### YYYY-MM-DD — <task> — <summary>` then bullets.
 
+### 2026-05-17 — P2-3 — QHSE backend (documents, checklists, findings, CAPA)
+
+| Item                      | Detail                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Shore Prisma schema**   | 4 new enums (`FindingKind`, `FindingStatus`, `CapaStatus`, `ChecklistInstanceStatus`) + 6 new models: `QhseDocument` (tenant-scoped, document library with `currentRevisionId` soft FK), `DocumentRevision` (tenant-scoped, immutable revision history, unique on `(documentId, revisionNumber)`), `ChecklistTemplate` (tenant-scoped, `itemsJson`), `ChecklistInstance` (vessel-scoped, sync-aware, `responsesJson` stores per-item instant-sign: `{itemId, text, checked, signatureKey?, signedByUserId?, signedAt?}`), `Finding` (vessel-scoped, sync-aware), `Capa` (vessel-scoped, sync-aware, `ownerUserId + dueDate`). Migration `20260517113332_add_qhse_schema`. RLS on all 6 tables. |
+| **Vessel Drizzle schema** | Mirror of all 6 tables. Migration `0008_big_morbius.sql` applied. SQLite boolean for `isControlled` via `integer mode:'boolean'`. |
+| **Shore API**             | 5 NestJS modules: `QhseDocumentModule` (CRUD + `POST /:id/revisions` + `GET /:id/revisions` + `POST /revisions/:revId/approve`), `ChecklistTemplateModule` (CRUD), `ChecklistInstanceModule` (CRUD + `POST /:id/sign-item` + `POST /:id/complete`), `FindingModule` (CRUD + `POST /:id/close`), `CapaModule` (CRUD + `POST /:id/verify` + `POST /:id/close`). All registered in AppModule. |
+| **Vessel API**            | Mirror of all 5 modules using Drizzle/SQLite + OutboxRecorder for vessel-scoped entities (ChecklistInstance, Finding, Capa). QhseDocument and ChecklistTemplate are tenant-scoped (no outbox). |
+| **Key behaviors**         | (1) Replacing a controlled document creates new `DocumentRevision`; old revisions stay in history (acceptance criterion). (2) Checklist instant-sign: `POST /checklist-instances/:id/sign-item` patches the item's entry in `responsesJson` with `signatureKey + signedByUserId + signedAt`. (3) CAPA lifecycle: OPEN → IN_PROGRESS → VERIFIED → CLOSED. Finding lifecycle: OPEN → UNDER_REVIEW → CLOSED. |
+| **Auth fix**              | Updated 8 existing shore e2e test files to use `identifier:` (not `email:`) in `POST /auth/login` sends, and added `username:` to `POST /tenants` and `POST /users` API calls — required by the username commit in the P2-2 merge that hadn't been reflected in the tests. |
+| **e2e tests**             | Shore: 14 tests (145 total, 14 files); vessel: 12 tests (111 total, 13 files). Cover document CRUD + revision history, instant-sign + completion guards, finding lifecycle, CAPA lifecycle (verify + close), outbox entries, RLS policy presence. |
+| **CI result**             | `pnpm -w run ci:full` ✓ (139 unit); shore e2e → 145 ✓ (14 files); vessel e2e → 111 ✓ (13 files) |
+
 ### 2026-05-17 — P2-2 — Safety backend (drill register, work permit lifecycle)
 
 | Item                      | Detail                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
@@ -363,9 +376,9 @@ Large batch of UI work implementing the Bearing design system across all Phase 1
 
 > Single, unambiguous next task for any fresh Claude Code session. Update this immediately when a task completes.
 
-**P2-2 complete.** Safety backend fully implemented: DrillType + Drill + DrillRecord + PermitTemplate + WorkPermit + PermitApproval schema on both shore (Prisma) and vessel (Drizzle). HOT_WORK activation guard enforced at application layer and DB CHECK. Shore: 125 ✓ (13 files). Vessel: 95 ✓ (12 files). ci:full ✓.
+**P2-3 complete.** QHSE backend fully implemented: QhseDocument + DocumentRevision + ChecklistTemplate + ChecklistInstance + Finding + Capa schema on both shore (Prisma) and vessel (Drizzle). Instant-sign on checklist items enforced. Document replacement creates new revision; old revisions stay in history. Shore: 145 ✓ (14 files). Vessel: 111 ✓ (13 files). ci:full ✓.
 
-Next: **P2-3 — QHSE backend** — documents with revision history, checklists with instant-sign (signature image + user ID + timestamp), findings, CAPA with owners and due dates. See §9.8 in REFERENCE.md for acceptance criteria.
+Next: **P2-4 — Crewing** — master records, competency certificates, MLC 2006 rest-hour validation (≥10h/24h, ≥77h/7d). See §9.5 in REFERENCE.md for acceptance criteria.
 
 **Outstanding follow-up tickets (deferred, not blocking P1-4):**
 

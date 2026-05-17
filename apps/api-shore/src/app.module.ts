@@ -1,6 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from 'nestjs-pino';
+import { CapaModule } from './capa/capa.module';
+import { ChecklistInstanceModule } from './checklist-instance/checklist-instance.module';
+import { ChecklistTemplateModule } from './checklist-template/checklist-template.module';
+import { FindingModule } from './finding/finding.module';
+import { QhseDocumentModule } from './qhse-document/qhse-document.module';
 import { ApprovalFlowModule } from './approval-flow/approval-flow.module';
 import { DrillTypeModule } from './drill-type/drill-type.module';
 import { DrillModule } from './drill/drill.module';
@@ -75,6 +80,11 @@ import { VesselModule } from './vessel/vessel.module';
     DrillModule,
     PermitTemplateModule,
     WorkPermitModule,
+    QhseDocumentModule,
+    ChecklistTemplateModule,
+    ChecklistInstanceModule,
+    FindingModule,
+    CapaModule,
   ],
 })
 export class AppModule {}
