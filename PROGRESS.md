@@ -8,6 +8,15 @@
 
 > Most-recent first. Format: `### YYYY-MM-DD — <task> — <summary>` then bullets.
 
+### 2026-05-17 — Phase 1 verification + tsconfig fix — All CI checks green
+
+| Item | Detail |
+| ---- | ------ |
+| **TS5107 fix** | TypeScript 5.9.3 emits TS5107 for explicit `moduleResolution: node10/node`. Fixed by removing `moduleResolution: "NodeNext"` from `tsconfig.base.json` and dropping explicit `moduleResolution` from all CJS tsconfigs (api-shore, api-vessel, desktop-vessel, domain/build, sync-engine/build). TypeScript now derives node10 resolution implicitly from `module: CommonJS` — implicit default does not trigger TS5107. |
+| **Multer type fix** | `@types/multer@2.1.0` is a module file; its `declare global` augmentation only takes effect when imported. Added `/// <reference types="multer" />` to `job-history.controller.ts` and `job-history.service.ts` in api-shore. |
+| **CLAUDE.md §21** | Updated `ignoreDeprecations` note to document `moduleResolution: "node"` must NOT be explicit (use implicit default). |
+| **CI result** | `pnpm run ci:full` ✓; shore e2e → 100 ✓ (11 files); vessel e2e → 80 ✓ (10 files); `pnpm run soak:sync` → PASS (both phases) |
+
 ### 2026-05-17 — UI — Certificates, Safety, QHSE pages implemented (Bearing design, API-connected)
 
 | Item                                            | Detail                                                                                                                                                                                                                                                                                                         |
@@ -329,9 +338,9 @@ Large batch of UI work implementing the Bearing design system across all Phase 1
 
 > Single, unambiguous next task for any fresh Claude Code session. Update this immediately when a task completes.
 
-**UI modules complete.** PR #21 (`feat/phase1-ui-gaps`) now includes Certificates (5 tabs), Safety (5 tabs, rewrite), and QHSE (5 tabs). FLGO is not yet designed — still shows ComingSoonPage stub.
+**Phase 1 verification complete.** All CI checks green (ci:full ✓, shore e2e 100 ✓, vessel e2e 80 ✓, soak PASS). Phase 1 checklist at `apps/docs/checklists/phase1.md` requires manual smoke-test sign-off by lead engineer + QA (sections G–J need a live deployment).
 
-Next: **Phase 1 verification** — run `pnpm run ci:full && pnpm run e2e:phase1 && pnpm run soak:sync` and work through `apps/docs/checklists/phase1.md`. After all checklist items are green, begin **P2-1 — Certificates backend** (schema, API, expiry alerts, email/in-app notifications).
+Next: **P2-1 — Certificates backend** — schema (Certificate, CertificateType, CertificateAttachment on both shore Prisma + vessel Drizzle, sync-aware), API (CRUD + expiry alert query + email/in-app notification dispatch), e2e tests. See §9.4 in REFERENCE.md for acceptance criteria.
 
 **Outstanding follow-up tickets (deferred, not blocking P1-4):**
 

@@ -109,6 +109,7 @@ These settings exist for reasons. Do not alter them without explicit instruction
 
 | Setting | Location | Value | Reason |
 |---|---|---|---|
-| `ignoreDeprecations` | All tsconfig files | `"5.0"` | Project TypeScript is 5.9.3; the only valid value is `"5.0"`. Silences the `moduleResolution: Node10` deprecation warning. |
+| `moduleResolution` in CJS tsconfigs | api-shore, api-vessel, desktop-vessel, domain/tsconfig.build.json, sync-engine/tsconfig.build.json | **NOT SET** (implicit) | TypeScript 5.9.3 emits TS5107 for any EXPLICIT `moduleResolution: node/node10`. The fix: do not specify `moduleResolution` in CJS tsconfigs — TypeScript derives `node10` implicitly from `module: CommonJS`, which does not trigger TS5107. Also removed `moduleResolution` from `tsconfig.base.json` for this reason. |
+| `ignoreDeprecations` | Removed from all CJS tsconfigs | n/a | No longer needed after switching to implicit moduleResolution. |
 | Vite port | `apps/web-shore/vite.config.ts` | `5342` | Port 5173 is in Windows Hyper-V excluded range 5141–5240; 5342 is the first available port after the exclusion. |
 | Proto namespace | `packages/proto/sync.proto` | `fleetops.sync.v1` | Was `marad.sync.v1`; renamed during branding to FleetOps. All generated code references this namespace. |
