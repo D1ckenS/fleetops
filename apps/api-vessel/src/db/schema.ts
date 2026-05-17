@@ -888,6 +888,190 @@ export const certificateAttachments = sqliteTable(
   (t) => [index('certificate_attachments_cert_idx').on(t.tenantId, t.certificateId)],
 );
 
+// ── Safety (P2-2) ──────────────────────────────────────────────────────────────
+
+export const DRILL_STATUSES = ['SCHEDULED', 'COMPLETED', 'CANCELLED'] as const;
+export type DrillStatus = (typeof DRILL_STATUSES)[number];
+
+export const WORK_PERMIT_STATUSES = [
+  'REQUESTED',
+  'APPROVED',
+  'ACTIVE',
+  'CLOSED',
+  'CANCELLED',
+] as const;
+export type WorkPermitStatus = (typeof WORK_PERMIT_STATUSES)[number];
+
+export const WORK_PERMIT_TYPES = [
+  'HOT_WORK',
+  'CONFINED_SPACE',
+  'WORKING_AT_HEIGHT',
+  'ELECTRICAL_ISOLATION',
+  'COLD_WORK',
+  'DIVING',
+  'OVERSIDE_WORK',
+] as const;
+export type WorkPermitType = (typeof WORK_PERMIT_TYPES)[number];
+
+export const drillTypes = sqliteTable(
+  'drill_types',
+  {
+    id: text('id').primaryKey(),
+    tenantId: text('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    name: text('name').notNull(),
+    description: text('description'),
+    createdAt: text('created_at').notNull().default(nowIso),
+    updatedAt: text('updated_at').notNull().default(nowIso),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [
+    unique('drill_types_tenant_name_uniq').on(t.tenantId, t.name),
+    index('drill_types_tenant_idx').on(t.tenantId),
+  ],
+);
+
+export const drills = sqliteTable(
+  'drills',
+  {
+    id: text('id').primaryKey(),
+    tenantId: text('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    vesselId: text('vessel_id')
+      .notNull()
+      .references(() => vessels.id),
+    drillTypeId: text('drill_type_id')
+      .notNull()
+      .references(() => drillTypes.id),
+    status: text('status', { enum: DRILL_STATUSES }).notNull().default('SCHEDULED'),
+    scheduledAt: text('scheduled_at').notNull(),
+    conductedAt: text('conducted_at'),
+    durationMinutes: integer('duration_minutes'),
+    location: text('location'),
+    leadOfficer: text('lead_officer'),
+    notes: text('notes'),
+    reportKey: text('report_key'),
+    createdAt: text('created_at').notNull().default(nowIso),
+    updatedAt: text('updated_at').notNull().default(nowIso),
+    hlc: text('hlc'),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [
+    index('drills_tenant_vessel_status_idx').on(t.tenantId, t.vesselId, t.status),
+    index('drills_tenant_vessel_scheduled_idx').on(t.tenantId, t.vesselId, t.scheduledAt),
+  ],
+);
+
+export const drillRecords = sqliteTable(
+  'drill_records',
+  {
+    id: text('id').primaryKey(),
+    tenantId: text('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    vesselId: text('vessel_id')
+      .notNull()
+      .references(() => vessels.id),
+    drillId: text('drill_id')
+      .notNull()
+      .references(() => drills.id),
+    participantName: text('participant_name').notNull(),
+    role: text('role'),
+    signedAt: text('signed_at'),
+    signatureHash: text('signature_hash'),
+    createdAt: text('created_at').notNull().default(nowIso),
+    updatedAt: text('updated_at').notNull().default(nowIso),
+    hlc: text('hlc'),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [index('drill_records_tenant_vessel_drill_idx').on(t.tenantId, t.vesselId, t.drillId)],
+);
+
+export const permitTemplates = sqliteTable(
+  'permit_templates',
+  {
+    id: text('id').primaryKey(),
+    tenantId: text('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    permitType: text('permit_type', { enum: WORK_PERMIT_TYPES }).notNull(),
+    name: text('name').notNull(),
+    checklistItemsJson: text('checklist_items_json'),
+    createdAt: text('created_at').notNull().default(nowIso),
+    updatedAt: text('updated_at').notNull().default(nowIso),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [index('permit_templates_tenant_idx').on(t.tenantId)],
+);
+
+export const workPermits = sqliteTable(
+  'work_permits',
+  {
+    id: text('id').primaryKey(),
+    tenantId: text('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    vesselId: text('vessel_id')
+      .notNull()
+      .references(() => vessels.id),
+    permitType: text('permit_type', { enum: WORK_PERMIT_TYPES }).notNull(),
+    templateId: text('template_id').references(() => permitTemplates.id),
+    status: text('status', { enum: WORK_PERMIT_STATUSES }).notNull().default('REQUESTED'),
+    title: text('title').notNull(),
+    location: text('location'),
+    workDescription: text('work_description'),
+    requestedByUserId: text('requested_by_user_id'),
+    validFrom: text('valid_from'),
+    validUntil: text('valid_until'),
+    closedAt: text('closed_at'),
+    riskAssessmentJson: text('risk_assessment_json'),
+    gasTestJson: text('gas_test_json'),
+    hazardsJson: text('hazards_json'),
+    createdAt: text('created_at').notNull().default(nowIso),
+    updatedAt: text('updated_at').notNull().default(nowIso),
+    hlc: text('hlc'),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [
+    index('work_permits_tenant_vessel_status_idx').on(t.tenantId, t.vesselId, t.status),
+    index('work_permits_tenant_vessel_type_idx').on(t.tenantId, t.vesselId, t.permitType),
+    // HOT_WORK permit cannot be ACTIVE without risk_assessment_json
+    check(
+      'work_permits_hot_work_active_needs_risk_chk',
+      sql`NOT (${t.permitType} = 'HOT_WORK' AND ${t.status} = 'ACTIVE' AND ${t.riskAssessmentJson} IS NULL)`,
+    ),
+  ],
+);
+
+export const permitApprovals = sqliteTable(
+  'permit_approvals',
+  {
+    id: text('id').primaryKey(),
+    tenantId: text('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    vesselId: text('vessel_id')
+      .notNull()
+      .references(() => vessels.id),
+    permitId: text('permit_id')
+      .notNull()
+      .references(() => workPermits.id),
+    approvedBy: text('approved_by').notNull(),
+    role: text('role').notNull(),
+    approvedAt: text('approved_at').notNull(),
+    signatureHash: text('signature_hash'),
+    createdAt: text('created_at').notNull().default(nowIso),
+    updatedAt: text('updated_at').notNull().default(nowIso),
+    hlc: text('hlc'),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [
+    index('permit_approvals_tenant_vessel_permit_idx').on(t.tenantId, t.vesselId, t.permitId),
+  ],
+);
+
 // Sync engine outbox. Pending entries have sent_at = null.
 export const outbox = sqliteTable(
   'outbox',

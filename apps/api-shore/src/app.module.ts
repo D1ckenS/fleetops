@@ -2,6 +2,10 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from 'nestjs-pino';
 import { ApprovalFlowModule } from './approval-flow/approval-flow.module';
+import { DrillTypeModule } from './drill-type/drill-type.module';
+import { DrillModule } from './drill/drill.module';
+import { PermitTemplateModule } from './permit-template/permit-template.module';
+import { WorkPermitModule } from './work-permit/work-permit.module';
 import { CertificateModule } from './certificate/certificate.module';
 import { CertificateTypeModule } from './certificate-type/certificate-type.module';
 import { NotificationModule } from './notification/notification.module';
@@ -67,6 +71,10 @@ import { VesselModule } from './vessel/vessel.module';
     CertificateTypeModule,
     CertificateModule,
     NotificationModule,
+    DrillTypeModule,
+    DrillModule,
+    PermitTemplateModule,
+    WorkPermitModule,
   ],
 })
 export class AppModule {}
