@@ -104,41 +104,41 @@ interface Capa {
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 
 const PERMIT_KIND_META: Record<PermitKind, { label: string; color: BadgeColor; short: string }> = {
-  hot:      { label: 'Hot work',          color: 'red',    short: 'HOT'  },
-  enc:      { label: 'Enclosed space',    color: 'red',    short: 'ENC'  },
-  aloft:    { label: 'Working aloft',     color: 'amber',  short: 'ALFT' },
-  overside: { label: 'Over the side',     color: 'amber',  short: 'OS'   },
-  elec:     { label: 'Electrical LO-TO',  color: 'amber',  short: 'ELEC' },
-  cold:     { label: 'Cold work',         color: 'blue',   short: 'COLD' },
-  bunker:   { label: 'Bunkering',         color: 'slate',  short: 'BNK'  },
-  crane:    { label: 'Crane / lifting',   color: 'amber',  short: 'LIFT' },
+  hot: { label: 'Hot work', color: 'red', short: 'HOT' },
+  enc: { label: 'Enclosed space', color: 'red', short: 'ENC' },
+  aloft: { label: 'Working aloft', color: 'amber', short: 'ALFT' },
+  overside: { label: 'Over the side', color: 'amber', short: 'OS' },
+  elec: { label: 'Electrical LO-TO', color: 'amber', short: 'ELEC' },
+  cold: { label: 'Cold work', color: 'blue', short: 'COLD' },
+  bunker: { label: 'Bunkering', color: 'slate', short: 'BNK' },
+  crane: { label: 'Crane / lifting', color: 'amber', short: 'LIFT' },
 };
 
 const statusMeta: Record<string, { color: BadgeColor; label: string }> = {
-  active:        { color: 'green',  label: 'ACTIVE' },
-  awaiting:      { color: 'amber',  label: 'AWAITING' },
-  closed:        { color: 'slate',  label: 'CLOSED' },
-  suspended:     { color: 'red',    label: 'SUSPENDED' },
-  investigation: { color: 'amber',  label: 'INVESTIGATION' },
-  action:        { color: 'blue',   label: 'ACTION' },
-  verification:  { color: 'purple', label: 'VERIFYING' },
-  open:          { color: 'red',    label: 'OPEN' },
+  active: { color: 'green', label: 'ACTIVE' },
+  awaiting: { color: 'amber', label: 'AWAITING' },
+  closed: { color: 'slate', label: 'CLOSED' },
+  suspended: { color: 'red', label: 'SUSPENDED' },
+  investigation: { color: 'amber', label: 'INVESTIGATION' },
+  action: { color: 'blue', label: 'ACTION' },
+  verification: { color: 'purple', label: 'VERIFYING' },
+  open: { color: 'red', label: 'OPEN' },
 };
 
 const findingMeta: Record<FindingKind, { color: BadgeColor; label: string }> = {
-  'near-miss':   { color: 'red',    label: 'NEAR-MISS' },
-  NC:            { color: 'amber',  label: 'NON-CONF' },
-  observation:   { color: 'blue',   label: 'OBSERV' },
-  hazard:        { color: 'purple', label: 'HAZARD' },
+  'near-miss': { color: 'red', label: 'NEAR-MISS' },
+  NC: { color: 'amber', label: 'NON-CONF' },
+  observation: { color: 'blue', label: 'OBSERV' },
+  hazard: { color: 'purple', label: 'HAZARD' },
 };
 
 type Tab = 'permit' | 'find' | 'jha' | 'eq' | 'capa';
 const TABS: { id: Tab; label: string }[] = [
   { id: 'permit', label: 'Permits to work' },
-  { id: 'find',   label: 'Findings' },
-  { id: 'jha',    label: 'JHA' },
-  { id: 'eq',     label: 'Equipment' },
-  { id: 'capa',   label: 'CAPA' },
+  { id: 'find', label: 'Findings' },
+  { id: 'jha', label: 'JHA' },
+  { id: 'eq', label: 'Equipment' },
+  { id: 'capa', label: 'CAPA' },
 ];
 
 // ─── Shared atoms ─────────────────────────────────────────────────────────────
@@ -146,7 +146,9 @@ const TABS: { id: Tab; label: string }[] = [
 function EmptyState({ msg }: { msg: string }) {
   return (
     <div className="flex-1 flex items-center justify-center p-10">
-      <p className="text-xs text-center" style={{ color: 'var(--ink-3)' }}>{msg}</p>
+      <p className="text-xs text-center" style={{ color: 'var(--ink-3)' }}>
+        {msg}
+      </p>
     </div>
   );
 }
@@ -162,161 +164,373 @@ function PermitsTab({ permits, loading }: { permits: WorkPermit[]; loading: bool
   const [selected, setSelected] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | PermitStatus>('all');
 
-  const visible = filter === 'all' ? permits : permits.filter(p => p.status === filter);
-  const sel = permits.find(p => p.id === selected) ?? visible[0] ?? null;
+  const visible = filter === 'all' ? permits : permits.filter((p) => p.status === filter);
+  const sel = permits.find((p) => p.id === selected) ?? visible[0] ?? null;
 
   const chipStyle = (active: boolean): React.CSSProperties => ({
-    height: 24, padding: '0 10px', borderRadius: 5, fontSize: 11.5, fontWeight: 500, cursor: 'pointer',
+    height: 24,
+    padding: '0 10px',
+    borderRadius: 5,
+    fontSize: 11.5,
+    fontWeight: 500,
+    cursor: 'pointer',
     border: `1px solid ${active ? 'var(--ink)' : 'var(--border)'}`,
     background: active ? 'var(--ink)' : 'var(--surface)',
     color: active ? '#fff' : 'var(--ink-2)',
   });
 
-  if (loading) return <div className="flex-1 flex items-center justify-center"><Spinner /></div>;
+  if (loading)
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <Spinner />
+      </div>
+    );
 
   return (
     <div className="flex flex-1 min-h-0">
       {/* Left list */}
-      <section style={{ width: 420, flexShrink: 0, background: 'var(--surface)', borderRight: '1px solid var(--border)', display: 'flex', flexDirection: 'column' }}>
-        <div className="flex items-center gap-2 px-3 py-2 flex-wrap flex-shrink-0" style={{ borderBottom: '1px solid var(--hairline)' }}>
-          {(['all', 'active', 'awaiting', 'closed'] as const).map(f => (
+      <section
+        style={{
+          width: 420,
+          flexShrink: 0,
+          background: 'var(--surface)',
+          borderRight: '1px solid var(--border)',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        <div
+          className="flex items-center gap-2 px-3 py-2 flex-wrap flex-shrink-0"
+          style={{ borderBottom: '1px solid var(--hairline)' }}
+        >
+          {(['all', 'active', 'awaiting', 'closed'] as const).map((f) => (
             <button key={f} onClick={() => setFilter(f)} style={chipStyle(filter === f)}>
               {f.charAt(0).toUpperCase() + f.slice(1)}
               <span className="font-mono text-[10px] ml-1 opacity-70">
-                {f === 'all' ? permits.length : permits.filter(p => p.status === f).length}
+                {f === 'all' ? permits.length : permits.filter((p) => p.status === f).length}
               </span>
             </button>
           ))}
         </div>
-        {visible.length === 0
-          ? <EmptyState msg="No permits match this filter." />
-          : (
-            <div className="flex-1 overflow-y-auto">
-              {visible.map(p => {
-                const km = PERMIT_KIND_META[p.kind] ?? { label: p.kind, color: 'slate' as BadgeColor, short: p.kind };
-                const isActive = p.id === sel?.id;
-                return (
-                  <div key={p.id} onClick={() => setSelected(p.id)}
-                    className="px-3 py-3 cursor-pointer"
-                    style={{
-                      borderBottom: '1px solid var(--hairline)',
-                      borderLeft: `3px solid ${isActive ? 'var(--navy)' : 'transparent'}`,
-                      background: isActive ? 'var(--surface-sunk)' : 'var(--surface)',
-                    }}>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-mono text-[11px] font-medium" style={{ color: 'var(--ink-2)' }}>{p.id}</span>
-                      <Badge color={km.color}>{km.short}</Badge>
-                      <div className="flex-1" />
-                      <StatusBadge s={p.status} />
-                    </div>
-                    <div className="text-[12.5px] font-medium mb-0.5" style={{ lineHeight: 1.3 }}>{p.title}</div>
-                    <div className="text-[11px] mb-1" style={{ color: 'var(--ink-3)' }}>{p.location}</div>
-                    <div className="text-[10.5px]" style={{ color: 'var(--ink-3)' }}>
-                      Sup. {p.supervisor} · <span className="font-mono">{p.countdown}</span>
-                    </div>
+        {visible.length === 0 ? (
+          <EmptyState msg="No permits match this filter." />
+        ) : (
+          <div className="flex-1 overflow-y-auto">
+            {visible.map((p) => {
+              const km = PERMIT_KIND_META[p.kind] ?? {
+                label: p.kind,
+                color: 'slate' as BadgeColor,
+                short: p.kind,
+              };
+              const isActive = p.id === sel?.id;
+              return (
+                <div
+                  key={p.id}
+                  onClick={() => setSelected(p.id)}
+                  className="px-3 py-3 cursor-pointer"
+                  style={{
+                    borderBottom: '1px solid var(--hairline)',
+                    borderLeft: `3px solid ${isActive ? 'var(--navy)' : 'transparent'}`,
+                    background: isActive ? 'var(--surface-sunk)' : 'var(--surface)',
+                  }}
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    <span
+                      className="font-mono text-[11px] font-medium"
+                      style={{ color: 'var(--ink-2)' }}
+                    >
+                      {p.id}
+                    </span>
+                    <Badge color={km.color}>{km.short}</Badge>
+                    <div className="flex-1" />
+                    <StatusBadge s={p.status} />
                   </div>
-                );
-              })}
-            </div>
-          )}
+                  <div className="text-[12.5px] font-medium mb-0.5" style={{ lineHeight: 1.3 }}>
+                    {p.title}
+                  </div>
+                  <div className="text-[11px] mb-1" style={{ color: 'var(--ink-3)' }}>
+                    {p.location}
+                  </div>
+                  <div className="text-[10.5px]" style={{ color: 'var(--ink-3)' }}>
+                    Sup. {p.supervisor} · <span className="font-mono">{p.countdown}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       {/* Right detail */}
-      {!sel
-        ? <div className="flex-1 flex items-center justify-center" style={{ background: 'var(--bg)' }}>
-            <p className="text-xs" style={{ color: 'var(--ink-3)' }}>Select a permit to view details</p>
+      {!sel ? (
+        <div
+          className="flex-1 flex items-center justify-center"
+          style={{ background: 'var(--bg)' }}
+        >
+          <p className="text-xs" style={{ color: 'var(--ink-3)' }}>
+            Select a permit to view details
+          </p>
+        </div>
+      ) : (
+        <div className="flex-1 overflow-y-auto min-w-0" style={{ background: 'var(--bg)' }}>
+          {/* Header */}
+          <div
+            className="px-5 py-4"
+            style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)' }}
+          >
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="font-mono text-[11px]" style={{ color: 'var(--ink-3)' }}>
+                {sel.id}
+              </span>
+              <Badge color={PERMIT_KIND_META[sel.kind]?.color ?? 'slate'}>
+                {PERMIT_KIND_META[sel.kind]?.short}
+              </Badge>
+              <div className="flex-1" />
+              <StatusBadge s={sel.status} />
+            </div>
+            <h2 className="text-[17px] font-semibold m-0" style={{ letterSpacing: '-0.005em' }}>
+              {sel.title}
+            </h2>
+            <div className="text-[12px] mt-1" style={{ color: 'var(--ink-3)' }}>
+              {sel.location}
+            </div>
           </div>
-        : (
-          <div className="flex-1 overflow-y-auto min-w-0" style={{ background: 'var(--bg)' }}>
-            {/* Header */}
-            <div className="px-5 py-4" style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)' }}>
-              <div className="flex items-center gap-2 mb-1.5">
-                <span className="font-mono text-[11px]" style={{ color: 'var(--ink-3)' }}>{sel.id}</span>
-                <Badge color={PERMIT_KIND_META[sel.kind]?.color ?? 'slate'}>{PERMIT_KIND_META[sel.kind]?.short}</Badge>
-                <div className="flex-1" />
-                <StatusBadge s={sel.status} />
-              </div>
-              <h2 className="text-[17px] font-semibold m-0" style={{ letterSpacing: '-0.005em' }}>{sel.title}</h2>
-              <div className="text-[12px] mt-1" style={{ color: 'var(--ink-3)' }}>{sel.location}</div>
-            </div>
 
-            {/* Validity strip */}
-            <div className="grid gap-px" style={{ gridTemplateColumns: 'repeat(3, 1fr)', background: 'var(--hairline)', borderBottom: '1px solid var(--hairline)' }}>
-              {[['Valid from', sel.validFrom], ['Valid to', sel.validTo], [sel.status === 'active' ? 'Time remaining' : 'Status', sel.countdown]].map(([k, v]) => (
-                <div key={k} className="px-4 py-3" style={{ background: 'var(--surface)' }}>
-                  <div className="text-[9.5px] font-semibold uppercase tracking-widest mb-1" style={{ color: 'var(--ink-3)' }}>{k}</div>
-                  <div className="font-mono text-[13px] font-semibold">{v}</div>
+          {/* Validity strip */}
+          <div
+            className="grid gap-px"
+            style={{
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              background: 'var(--hairline)',
+              borderBottom: '1px solid var(--hairline)',
+            }}
+          >
+            {[
+              ['Valid from', sel.validFrom],
+              ['Valid to', sel.validTo],
+              [sel.status === 'active' ? 'Time remaining' : 'Status', sel.countdown],
+            ].map(([k, v]) => (
+              <div key={k} className="px-4 py-3" style={{ background: 'var(--surface)' }}>
+                <div
+                  className="text-[9.5px] font-semibold uppercase tracking-widest mb-1"
+                  style={{ color: 'var(--ink-3)' }}
+                >
+                  {k}
                 </div>
-              ))}
-            </div>
+                <div className="font-mono text-[13px] font-semibold">{v}</div>
+              </div>
+            ))}
+          </div>
 
-            {/* Gas checks */}
-            {sel.gasChecks && (
-              <div className="px-4 py-3">
-                <div className="rounded-2 overflow-hidden" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
-                  <div className="flex items-center gap-3 px-4 py-2.5" style={{ borderBottom: '1px solid var(--hairline)', background: 'var(--surface-sunk)' }}>
-                    <span className="text-[10.5px] font-semibold uppercase tracking-widest" style={{ color: 'var(--ink-3)' }}>Gas monitoring · interval {sel.gasChecks.interval}</span>
-                    <div className="flex-1" />
-                    <Badge color="green">NEXT {sel.gasChecks.next}</Badge>
-                  </div>
-                  <div className="grid gap-px" style={{ gridTemplateColumns: 'repeat(5, 1fr)', background: 'var(--hairline)' }}>
-                    {[['Last check', sel.gasChecks.last], ['LEL', sel.gasChecks.lel], ['O₂', sel.gasChecks.o2], ['H₂S', sel.gasChecks.h2s], ['CO', sel.gasChecks.co]].map(([k, v]) => (
-                      <div key={k} className="px-3 py-2.5" style={{ background: 'var(--surface)' }}>
-                        <div className="text-[9px] font-semibold uppercase tracking-widest mb-0.5" style={{ color: 'var(--ink-3)' }}>{k}</div>
-                        <div className="font-mono text-[13px] font-semibold">{v}</div>
+          {/* Gas checks */}
+          {sel.gasChecks && (
+            <div className="px-4 py-3">
+              <div
+                className="rounded-2 overflow-hidden"
+                style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
+              >
+                <div
+                  className="flex items-center gap-3 px-4 py-2.5"
+                  style={{
+                    borderBottom: '1px solid var(--hairline)',
+                    background: 'var(--surface-sunk)',
+                  }}
+                >
+                  <span
+                    className="text-[10.5px] font-semibold uppercase tracking-widest"
+                    style={{ color: 'var(--ink-3)' }}
+                  >
+                    Gas monitoring · interval {sel.gasChecks.interval}
+                  </span>
+                  <div className="flex-1" />
+                  <Badge color="green">NEXT {sel.gasChecks.next}</Badge>
+                </div>
+                <div
+                  className="grid gap-px"
+                  style={{ gridTemplateColumns: 'repeat(5, 1fr)', background: 'var(--hairline)' }}
+                >
+                  {[
+                    ['Last check', sel.gasChecks.last],
+                    ['LEL', sel.gasChecks.lel],
+                    ['O₂', sel.gasChecks.o2],
+                    ['H₂S', sel.gasChecks.h2s],
+                    ['CO', sel.gasChecks.co],
+                  ].map(([k, v]) => (
+                    <div key={k} className="px-3 py-2.5" style={{ background: 'var(--surface)' }}>
+                      <div
+                        className="text-[9px] font-semibold uppercase tracking-widest mb-0.5"
+                        style={{ color: 'var(--ink-3)' }}
+                      >
+                        {k}
                       </div>
-                    ))}
-                  </div>
+                      <div className="font-mono text-[13px] font-semibold">{v}</div>
+                    </div>
+                  ))}
                 </div>
               </div>
-            )}
+            </div>
+          )}
 
-            {/* Hazards + PPE */}
-            <div className="grid gap-3 px-4 py-0 pb-3" style={{ gridTemplateColumns: '1fr 1fr' }}>
-              {[
-                { label: 'Hazards', items: sel.hazards, prefix: '!', prefixColor: 'var(--sig-red)' },
-                { label: 'PPE required', items: sel.ppe, prefix: '✓', prefixColor: 'var(--sig-green)' },
-              ].map(({ label, items, prefix, prefixColor }) => (
-                <div key={label} className="rounded-2 overflow-hidden" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
-                  <div className="px-4 py-2.5 text-[10.5px] font-semibold uppercase tracking-widest" style={{ borderBottom: '1px solid var(--hairline)', color: 'var(--ink-3)', background: 'var(--surface-sunk)' }}>{label}</div>
-                  <ul className="m-0 list-none p-3 text-[12.5px]" style={{ color: 'var(--ink-2)', lineHeight: 1.6 }}>
-                    {items.map((h, i) => (
-                      <li key={i} className="flex gap-2 items-start">
-                        <span className="font-mono flex-shrink-0" style={{ color: prefixColor }}>{prefix}</span>
-                        {h}
-                      </li>
-                    ))}
-                  </ul>
+          {/* Hazards + PPE */}
+          <div className="grid gap-3 px-4 py-0 pb-3" style={{ gridTemplateColumns: '1fr 1fr' }}>
+            {[
+              { label: 'Hazards', items: sel.hazards, prefix: '!', prefixColor: 'var(--sig-red)' },
+              {
+                label: 'PPE required',
+                items: sel.ppe,
+                prefix: '✓',
+                prefixColor: 'var(--sig-green)',
+              },
+            ].map(({ label, items, prefix, prefixColor }) => (
+              <div
+                key={label}
+                className="rounded-2 overflow-hidden"
+                style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
+              >
+                <div
+                  className="px-4 py-2.5 text-[10.5px] font-semibold uppercase tracking-widest"
+                  style={{
+                    borderBottom: '1px solid var(--hairline)',
+                    color: 'var(--ink-3)',
+                    background: 'var(--surface-sunk)',
+                  }}
+                >
+                  {label}
+                </div>
+                <ul
+                  className="m-0 list-none p-3 text-[12.5px]"
+                  style={{ color: 'var(--ink-2)', lineHeight: 1.6 }}
+                >
+                  {items.map((h, i) => (
+                    <li key={i} className="flex gap-2 items-start">
+                      <span className="font-mono flex-shrink-0" style={{ color: prefixColor }}>
+                        {prefix}
+                      </span>
+                      {h}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          {/* Co-signers */}
+          <div className="px-4 pb-4">
+            <div
+              className="rounded-2 overflow-hidden"
+              style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
+            >
+              <div
+                className="px-4 py-2.5 text-[10.5px] font-semibold uppercase tracking-widest"
+                style={{
+                  borderBottom: '1px solid var(--hairline)',
+                  color: 'var(--ink-3)',
+                  background: 'var(--surface-sunk)',
+                }}
+              >
+                Sign-offs
+              </div>
+              {sel.coSigners.map((s, i) => (
+                <div
+                  key={i}
+                  className="grid gap-3 px-4 py-2.5 items-center"
+                  style={{
+                    gridTemplateColumns: '1fr 140px 90px',
+                    borderTop: i === 0 ? 'none' : '1px solid var(--hairline)',
+                  }}
+                >
+                  <div>
+                    <div className="text-[12.5px] font-medium">{s.name}</div>
+                    <div className="text-[11px]" style={{ color: 'var(--ink-3)' }}>
+                      {s.role}
+                    </div>
+                  </div>
+                  <span
+                    className="font-mono text-[11px]"
+                    style={{ color: s.signedAt ? 'var(--ink-3)' : 'var(--sig-amber)' }}
+                  >
+                    {s.signedAt ?? 'pending'}
+                  </span>
+                  <Badge color={s.signedAt ? 'green' : 'amber'}>
+                    {s.signedAt ? 'SIGNED' : 'PENDING'}
+                  </Badge>
                 </div>
               ))}
             </div>
-
-            {/* Co-signers */}
-            <div className="px-4 pb-4">
-              <div className="rounded-2 overflow-hidden" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
-                <div className="px-4 py-2.5 text-[10.5px] font-semibold uppercase tracking-widest" style={{ borderBottom: '1px solid var(--hairline)', color: 'var(--ink-3)', background: 'var(--surface-sunk)' }}>Sign-offs</div>
-                {sel.coSigners.map((s, i) => (
-                  <div key={i} className="grid gap-3 px-4 py-2.5 items-center" style={{ gridTemplateColumns: '1fr 140px 90px', borderTop: i === 0 ? 'none' : '1px solid var(--hairline)' }}>
-                    <div>
-                      <div className="text-[12.5px] font-medium">{s.name}</div>
-                      <div className="text-[11px]" style={{ color: 'var(--ink-3)' }}>{s.role}</div>
-                    </div>
-                    <span className="font-mono text-[11px]" style={{ color: s.signedAt ? 'var(--ink-3)' : 'var(--sig-amber)' }}>{s.signedAt ?? 'pending'}</span>
-                    <Badge color={s.signedAt ? 'green' : 'amber'}>{s.signedAt ? 'SIGNED' : 'PENDING'}</Badge>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="sticky bottom-0 flex gap-2 px-4 py-3 justify-end" style={{ background: 'var(--surface)', borderTop: '1px solid var(--border)' }}>
-              {sel.status === 'active' && <button className="px-3 py-1.5 rounded-2 text-[12px] font-medium" style={{ background: 'var(--sig-red)', color: '#fff', border: 'none', cursor: 'pointer' }}>Suspend</button>}
-              {sel.status === 'awaiting' && <button className="px-3 py-1.5 rounded-2 text-[12px] font-medium border" style={{ background: 'var(--surface)', borderColor: 'var(--border)', cursor: 'pointer', color: 'var(--ink)' }}>Request changes</button>}
-              {sel.status === 'awaiting' && <button className="px-3 py-1.5 rounded-2 text-[12px] font-medium" style={{ background: 'var(--navy)', color: '#fff', border: 'none', cursor: 'pointer' }}>Approve &amp; issue</button>}
-              {sel.status === 'active' && <button className="px-3 py-1.5 rounded-2 text-[12px] font-medium" style={{ background: 'var(--navy)', color: '#fff', border: 'none', cursor: 'pointer' }}>Log gas check</button>}
-              {sel.status === 'closed' && <button className="px-3 py-1.5 rounded-2 text-[12px] font-medium border" style={{ background: 'var(--surface)', borderColor: 'var(--border)', cursor: 'pointer', color: 'var(--ink)' }}>Clone</button>}
-            </div>
           </div>
-        )}
+
+          <div
+            className="sticky bottom-0 flex gap-2 px-4 py-3 justify-end"
+            style={{ background: 'var(--surface)', borderTop: '1px solid var(--border)' }}
+          >
+            {sel.status === 'active' && (
+              <button
+                className="px-3 py-1.5 rounded-2 text-[12px] font-medium"
+                style={{
+                  background: 'var(--sig-red)',
+                  color: '#fff',
+                  border: 'none',
+                  cursor: 'pointer',
+                }}
+              >
+                Suspend
+              </button>
+            )}
+            {sel.status === 'awaiting' && (
+              <button
+                className="px-3 py-1.5 rounded-2 text-[12px] font-medium border"
+                style={{
+                  background: 'var(--surface)',
+                  borderColor: 'var(--border)',
+                  cursor: 'pointer',
+                  color: 'var(--ink)',
+                }}
+              >
+                Request changes
+              </button>
+            )}
+            {sel.status === 'awaiting' && (
+              <button
+                className="px-3 py-1.5 rounded-2 text-[12px] font-medium"
+                style={{
+                  background: 'var(--navy)',
+                  color: '#fff',
+                  border: 'none',
+                  cursor: 'pointer',
+                }}
+              >
+                Approve &amp; issue
+              </button>
+            )}
+            {sel.status === 'active' && (
+              <button
+                className="px-3 py-1.5 rounded-2 text-[12px] font-medium"
+                style={{
+                  background: 'var(--navy)',
+                  color: '#fff',
+                  border: 'none',
+                  cursor: 'pointer',
+                }}
+              >
+                Log gas check
+              </button>
+            )}
+            {sel.status === 'closed' && (
+              <button
+                className="px-3 py-1.5 rounded-2 text-[12px] font-medium border"
+                style={{
+                  background: 'var(--surface)',
+                  borderColor: 'var(--border)',
+                  cursor: 'pointer',
+                  color: 'var(--ink)',
+                }}
+              >
+                Clone
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -326,20 +540,28 @@ function PermitsTab({ permits, loading }: { permits: WorkPermit[]; loading: bool
 function FindingsTab({ findings, loading }: { findings: SafetyFinding[]; loading: boolean }) {
   const [filter, setFilter] = useState<'all' | 'open' | FindingKind>('all');
 
-  const visible = findings.filter(f =>
-    filter === 'all' ? true :
-    filter === 'open' ? f.status !== 'closed' :
-    f.kind === filter,
+  const visible = findings.filter((f) =>
+    filter === 'all' ? true : filter === 'open' ? f.status !== 'closed' : f.kind === filter,
   );
 
-  if (loading) return <div className="flex-1 flex items-center justify-center"><Spinner /></div>;
+  if (loading)
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <Spinner />
+      </div>
+    );
 
-  const open = findings.filter(f => f.status !== 'closed').length;
-  const nearMisses = findings.filter(f => f.kind === 'near-miss').length;
-  const ncs = findings.filter(f => f.kind === 'NC').length;
+  const open = findings.filter((f) => f.status !== 'closed').length;
+  const nearMisses = findings.filter((f) => f.kind === 'near-miss').length;
+  const ncs = findings.filter((f) => f.kind === 'NC').length;
 
   const chipStyle = (active: boolean): React.CSSProperties => ({
-    height: 22, padding: '0 8px', borderRadius: 4, fontSize: 11, fontWeight: 500, cursor: 'pointer',
+    height: 22,
+    padding: '0 8px',
+    borderRadius: 4,
+    fontSize: 11,
+    fontWeight: 500,
+    cursor: 'pointer',
     border: `1px solid ${active ? 'var(--ink)' : 'var(--border)'}`,
     background: active ? 'var(--ink)' : 'var(--surface)',
     color: active ? '#fff' : 'var(--ink-2)',
@@ -351,51 +573,142 @@ function FindingsTab({ findings, loading }: { findings: SafetyFinding[]; loading
       <div className="grid gap-2 p-4" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
         {[
           { label: 'Open findings', value: open, sub: 'last 30 days' },
-          { label: 'Near-misses · 30d', value: nearMisses, sub: 'LTI rate 0.00', accent: nearMisses > 0 ? 'var(--sig-amber)' : undefined },
+          {
+            label: 'Near-misses · 30d',
+            value: nearMisses,
+            sub: 'LTI rate 0.00',
+            accent: nearMisses > 0 ? 'var(--sig-amber)' : undefined,
+          },
           { label: 'NCs raised · 30d', value: ncs, sub: '' },
-          { label: 'Days since LTI', value: '—', sub: 'no incidents recorded', accent: 'var(--sig-green)' },
-        ].map(k => (
-          <div key={k.label} className="rounded-2 px-4 py-3" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
-            <div className="text-[10.5px] font-semibold uppercase tracking-widest mb-1" style={{ color: 'var(--ink-3)' }}>{k.label}</div>
-            <div className="font-mono text-[22px] font-semibold" style={{ color: (k as { accent?: string }).accent ?? 'var(--ink)', letterSpacing: '-0.02em' }}>{k.value}</div>
-            <div className="text-[11px] mt-0.5" style={{ color: 'var(--ink-3)' }}>{k.sub}</div>
+          {
+            label: 'Days since LTI',
+            value: '—',
+            sub: 'no incidents recorded',
+            accent: 'var(--sig-green)',
+          },
+        ].map((k) => (
+          <div
+            key={k.label}
+            className="rounded-2 px-4 py-3"
+            style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
+          >
+            <div
+              className="text-[10.5px] font-semibold uppercase tracking-widest mb-1"
+              style={{ color: 'var(--ink-3)' }}
+            >
+              {k.label}
+            </div>
+            <div
+              className="font-mono text-[22px] font-semibold"
+              style={{
+                color: (k as { accent?: string }).accent ?? 'var(--ink)',
+                letterSpacing: '-0.02em',
+              }}
+            >
+              {k.value}
+            </div>
+            <div className="text-[11px] mt-0.5" style={{ color: 'var(--ink-3)' }}>
+              {k.sub}
+            </div>
           </div>
         ))}
       </div>
 
       <div className="px-4 pb-4">
-        <div className="rounded-2 overflow-hidden" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
-          <div className="flex items-center gap-2 px-4 py-2.5 flex-wrap" style={{ borderBottom: '1px solid var(--hairline)' }}>
-            <span className="text-[10.5px] font-semibold uppercase tracking-widest flex-1" style={{ color: 'var(--ink-3)' }}>Findings register</span>
-            {(['all', 'open', 'near-miss', 'NC', 'observation'] as const).map(f => (
+        <div
+          className="rounded-2 overflow-hidden"
+          style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
+        >
+          <div
+            className="flex items-center gap-2 px-4 py-2.5 flex-wrap"
+            style={{ borderBottom: '1px solid var(--hairline)' }}
+          >
+            <span
+              className="text-[10.5px] font-semibold uppercase tracking-widest flex-1"
+              style={{ color: 'var(--ink-3)' }}
+            >
+              Findings register
+            </span>
+            {(['all', 'open', 'near-miss', 'NC', 'observation'] as const).map((f) => (
               <button key={f} onClick={() => setFilter(f)} style={chipStyle(filter === f)}>
                 {f === 'near-miss' ? 'Near-miss' : f.charAt(0).toUpperCase() + f.slice(1)}
               </button>
             ))}
-            <button className="px-2 py-0.5 rounded-1 text-[11px] font-medium" style={{ background: 'var(--navy)', color: '#fff', border: 'none', cursor: 'pointer' }}>+ Raise</button>
+            <button
+              className="px-2 py-0.5 rounded-1 text-[11px] font-medium"
+              style={{
+                background: 'var(--navy)',
+                color: '#fff',
+                border: 'none',
+                cursor: 'pointer',
+              }}
+            >
+              + Raise
+            </button>
           </div>
-          <div className="grid gap-2 px-4 py-2 text-[10.5px] font-semibold uppercase tracking-widest"
-            style={{ gridTemplateColumns: '80px 100px 90px 1fr 150px 80px 100px 80px', background: 'var(--surface-sunk)', color: 'var(--ink-3)', borderBottom: '1px solid var(--hairline)' }}>
-            <span>ID</span><span>Date</span><span>Kind</span><span>Title / location</span><span>Raised by</span><span>Sev</span><span>CAPA</span><span>Status</span>
+          <div
+            className="grid gap-2 px-4 py-2 text-[10.5px] font-semibold uppercase tracking-widest"
+            style={{
+              gridTemplateColumns: '80px 100px 90px 1fr 150px 80px 100px 80px',
+              background: 'var(--surface-sunk)',
+              color: 'var(--ink-3)',
+              borderBottom: '1px solid var(--hairline)',
+            }}
+          >
+            <span>ID</span>
+            <span>Date</span>
+            <span>Kind</span>
+            <span>Title / location</span>
+            <span>Raised by</span>
+            <span>Sev</span>
+            <span>CAPA</span>
+            <span>Status</span>
           </div>
-          {visible.length === 0
-            ? <EmptyState msg="No findings match this filter. Safety findings, near-misses and observations will appear here." />
-            : visible.map(f => (
-              <div key={f.id} className="grid gap-2 px-4 py-2.5 items-center"
-                style={{ gridTemplateColumns: '80px 100px 90px 1fr 150px 80px 100px 80px', borderTop: '1px solid var(--hairline)' }}>
-                <span className="font-mono text-[11px]" style={{ color: 'var(--ink-2)' }}>{f.id}</span>
-                <span className="font-mono text-[11px]" style={{ color: 'var(--ink-3)' }}>{f.raisedAt.split(' ').slice(0, 2).join(' ')}</span>
-                <Badge color={findingMeta[f.kind]?.color ?? 'slate'}>{findingMeta[f.kind]?.label ?? f.kind}</Badge>
+          {visible.length === 0 ? (
+            <EmptyState msg="No findings match this filter. Safety findings, near-misses and observations will appear here." />
+          ) : (
+            visible.map((f) => (
+              <div
+                key={f.id}
+                className="grid gap-2 px-4 py-2.5 items-center"
+                style={{
+                  gridTemplateColumns: '80px 100px 90px 1fr 150px 80px 100px 80px',
+                  borderTop: '1px solid var(--hairline)',
+                }}
+              >
+                <span className="font-mono text-[11px]" style={{ color: 'var(--ink-2)' }}>
+                  {f.id}
+                </span>
+                <span className="font-mono text-[11px]" style={{ color: 'var(--ink-3)' }}>
+                  {f.raisedAt.split(' ').slice(0, 2).join(' ')}
+                </span>
+                <Badge color={findingMeta[f.kind]?.color ?? 'slate'}>
+                  {findingMeta[f.kind]?.label ?? f.kind}
+                </Badge>
                 <div className="min-w-0">
                   <div className="text-[12.5px] font-medium truncate">{f.title}</div>
-                  <div className="text-[10.5px]" style={{ color: 'var(--ink-3)' }}>{f.where}</div>
+                  <div className="text-[10.5px]" style={{ color: 'var(--ink-3)' }}>
+                    {f.where}
+                  </div>
                 </div>
-                <span className="text-[11.5px]" style={{ color: 'var(--ink-2)' }}>{f.raisedBy}</span>
-                <Badge color={f.severity === 'High' ? 'red' : f.severity === 'Med' ? 'amber' : 'green'}>{f.severity.toUpperCase()}</Badge>
-                <span className="font-mono text-[10.5px]" style={{ color: f.capaRef ? 'var(--sig-blue)' : 'var(--ink-3)' }}>{f.capaRef ?? '—'}</span>
+                <span className="text-[11.5px]" style={{ color: 'var(--ink-2)' }}>
+                  {f.raisedBy}
+                </span>
+                <Badge
+                  color={f.severity === 'High' ? 'red' : f.severity === 'Med' ? 'amber' : 'green'}
+                >
+                  {f.severity.toUpperCase()}
+                </Badge>
+                <span
+                  className="font-mono text-[10.5px]"
+                  style={{ color: f.capaRef ? 'var(--sig-blue)' : 'var(--ink-3)' }}
+                >
+                  {f.capaRef ?? '—'}
+                </span>
                 <StatusBadge s={f.status} />
               </div>
-            ))}
+            ))
+          )}
         </div>
       </div>
     </div>
@@ -406,38 +719,76 @@ function FindingsTab({ findings, loading }: { findings: SafetyFinding[]; loading
 
 function RiskMatrix({ l, s }: { l: number; s: number }) {
   const score = (li: number, si: number) => li * si;
-  const cellColor = (sc: number) => sc >= 15 ? 'var(--sig-red)' : sc >= 8 ? 'var(--sig-amber)' : sc >= 4 ? 'var(--sig-green)' : 'var(--ink-3)';
-  const cellBg = (sc: number) => sc >= 15 ? '#F2DDD8' : sc >= 8 ? '#F4E7D0' : sc >= 4 ? '#E2EEE6' : 'var(--surface-sunk)';
+  const cellColor = (sc: number) =>
+    sc >= 15
+      ? 'var(--sig-red)'
+      : sc >= 8
+        ? 'var(--sig-amber)'
+        : sc >= 4
+          ? 'var(--sig-green)'
+          : 'var(--ink-3)';
+  const cellBg = (sc: number) =>
+    sc >= 15 ? '#F2DDD8' : sc >= 8 ? '#F4E7D0' : sc >= 4 ? '#E2EEE6' : 'var(--surface-sunk)';
   const total = l * s;
   return (
     <div className="p-4">
       <div className="grid gap-0.5" style={{ gridTemplateColumns: '32px repeat(5, 1fr)' }}>
         <span />
-        {[1, 2, 3, 4, 5].map(si => <div key={si} className="text-center font-mono text-[9.5px]" style={{ color: 'var(--ink-3)', paddingBottom: 4 }}>S{si}</div>)}
-        {[5, 4, 3, 2, 1].map(li => (
+        {[1, 2, 3, 4, 5].map((si) => (
+          <div
+            key={si}
+            className="text-center font-mono text-[9.5px]"
+            style={{ color: 'var(--ink-3)', paddingBottom: 4 }}
+          >
+            S{si}
+          </div>
+        ))}
+        {[5, 4, 3, 2, 1].map((li) => (
           <div key={li} className="contents">
-            <div className="flex items-center justify-center font-mono text-[9.5px]" style={{ color: 'var(--ink-3)' }}>L{li}</div>
-            {[1, 2, 3, 4, 5].map(si => {
+            <div
+              className="flex items-center justify-center font-mono text-[9.5px]"
+              style={{ color: 'var(--ink-3)' }}
+            >
+              L{li}
+            </div>
+            {[1, 2, 3, 4, 5].map((si) => {
               const sc = score(li, si);
               const isThis = li === l && si === s;
               return (
-                <div key={si} style={{
-                  height: 30, background: cellBg(sc), color: cellColor(sc),
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 500,
-                  border: isThis ? '2px solid var(--ink)' : '1px solid transparent',
-                }}>{sc}</div>
+                <div
+                  key={si}
+                  style={{
+                    height: 30,
+                    background: cellBg(sc),
+                    color: cellColor(sc),
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: 11,
+                    fontWeight: 500,
+                    border: isThis ? '2px solid var(--ink)' : '1px solid transparent',
+                  }}
+                >
+                  {sc}
+                </div>
               );
             })}
           </div>
         ))}
       </div>
       <div className="flex items-baseline gap-2 mt-3">
-        <span className="font-mono text-[22px] font-semibold" style={{ color: cellColor(total) }}>{total}</span>
+        <span className="font-mono text-[22px] font-semibold" style={{ color: cellColor(total) }}>
+          {total}
+        </span>
         <span className="text-[11.5px]" style={{ color: 'var(--ink-3)' }}>
-          {total >= 15 ? 'Intolerable — immediate control required' :
-           total >= 8  ? 'Substantial — additional control needed' :
-           total >= 4  ? 'Moderate — control via SOPs/PPE' : 'Acceptable — routine controls'}
+          {total >= 15
+            ? 'Intolerable — immediate control required'
+            : total >= 8
+              ? 'Substantial — additional control needed'
+              : total >= 4
+                ? 'Moderate — control via SOPs/PPE'
+                : 'Acceptable — routine controls'}
         </span>
       </div>
     </div>
@@ -446,93 +797,220 @@ function RiskMatrix({ l, s }: { l: number; s: number }) {
 
 function JhaTab({ jhas, loading }: { jhas: JHA[]; loading: boolean }) {
   const [selected, setSelected] = useState<string | null>(null);
-  const sel = jhas.find(j => j.id === selected) ?? jhas[0] ?? null;
+  const sel = jhas.find((j) => j.id === selected) ?? jhas[0] ?? null;
 
-  if (loading) return <div className="flex-1 flex items-center justify-center"><Spinner /></div>;
+  if (loading)
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <Spinner />
+      </div>
+    );
 
   return (
     <div className="flex flex-1 min-h-0">
       {/* Library list */}
-      <section style={{ width: 360, flexShrink: 0, background: 'var(--surface)', borderRight: '1px solid var(--border)', display: 'flex', flexDirection: 'column' }}>
-        <div className="flex items-center gap-2 px-4 py-2.5 flex-shrink-0" style={{ borderBottom: '1px solid var(--hairline)' }}>
-          <span className="text-[10.5px] font-semibold uppercase tracking-widest flex-1" style={{ color: 'var(--ink-3)' }}>Library · {jhas.length} assessments</span>
-          <button className="w-6 h-6 flex items-center justify-center rounded-1 text-[13px]"
-            style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--ink-3)' }}>+</button>
+      <section
+        style={{
+          width: 360,
+          flexShrink: 0,
+          background: 'var(--surface)',
+          borderRight: '1px solid var(--border)',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        <div
+          className="flex items-center gap-2 px-4 py-2.5 flex-shrink-0"
+          style={{ borderBottom: '1px solid var(--hairline)' }}
+        >
+          <span
+            className="text-[10.5px] font-semibold uppercase tracking-widest flex-1"
+            style={{ color: 'var(--ink-3)' }}
+          >
+            Library · {jhas.length} assessments
+          </span>
+          <button
+            className="w-6 h-6 flex items-center justify-center rounded-1 text-[13px]"
+            style={{
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              color: 'var(--ink-3)',
+            }}
+          >
+            +
+          </button>
         </div>
-        {jhas.length === 0
-          ? <EmptyState msg="No JHA / risk assessments on file. Add your first assessment to build the library." />
-          : (
-            <div className="flex-1 overflow-y-auto">
-              {jhas.map(j => {
-                const residual = j.residualL * j.residualS;
-                const tone: BadgeColor = residual >= 15 ? 'red' : residual >= 8 ? 'amber' : 'green';
-                const isActive = j.id === sel?.id;
-                return (
-                  <div key={j.id} onClick={() => setSelected(j.id)}
-                    className="px-4 py-3 cursor-pointer"
-                    style={{ borderBottom: '1px solid var(--hairline)', borderLeft: `3px solid ${isActive ? 'var(--navy)' : 'transparent'}`, background: isActive ? 'var(--surface-sunk)' : 'var(--surface)' }}>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-mono text-[10.5px]" style={{ color: 'var(--ink-3)' }}>{j.id}</span>
-                      <Badge color="slate">{j.category.toUpperCase()}</Badge>
-                      <div className="flex-1" />
-                      <Badge color={tone}>R {residual}</Badge>
-                    </div>
-                    <div className="text-[12.5px] font-medium">{j.title}</div>
-                    <div className="text-[10.5px] mt-0.5" style={{ color: 'var(--ink-3)' }}>{j.owner} · {j.revision} · used {j.useCount}×</div>
+        {jhas.length === 0 ? (
+          <EmptyState msg="No JHA / risk assessments on file. Add your first assessment to build the library." />
+        ) : (
+          <div className="flex-1 overflow-y-auto">
+            {jhas.map((j) => {
+              const residual = j.residualL * j.residualS;
+              const tone: BadgeColor = residual >= 15 ? 'red' : residual >= 8 ? 'amber' : 'green';
+              const isActive = j.id === sel?.id;
+              return (
+                <div
+                  key={j.id}
+                  onClick={() => setSelected(j.id)}
+                  className="px-4 py-3 cursor-pointer"
+                  style={{
+                    borderBottom: '1px solid var(--hairline)',
+                    borderLeft: `3px solid ${isActive ? 'var(--navy)' : 'transparent'}`,
+                    background: isActive ? 'var(--surface-sunk)' : 'var(--surface)',
+                  }}
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-mono text-[10.5px]" style={{ color: 'var(--ink-3)' }}>
+                      {j.id}
+                    </span>
+                    <Badge color="slate">{j.category.toUpperCase()}</Badge>
+                    <div className="flex-1" />
+                    <Badge color={tone}>R {residual}</Badge>
                   </div>
-                );
-              })}
-            </div>
-          )}
+                  <div className="text-[12.5px] font-medium">{j.title}</div>
+                  <div className="text-[10.5px] mt-0.5" style={{ color: 'var(--ink-3)' }}>
+                    {j.owner} · {j.revision} · used {j.useCount}×
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       {/* Detail */}
-      {!sel
-        ? <div className="flex-1 flex items-center justify-center" style={{ background: 'var(--bg)' }}>
-            <p className="text-xs" style={{ color: 'var(--ink-3)' }}>Select a JHA to view risk matrices and controls</p>
-          </div>
-        : (
-          <section className="flex-1 overflow-y-auto min-w-0" style={{ background: 'var(--bg)' }}>
-            <div className="px-5 py-4" style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)' }}>
-              <div className="flex items-center gap-2 mb-1.5">
-                <span className="font-mono text-[11px]" style={{ color: 'var(--ink-3)' }}>{sel.id}</span>
-                <Badge color="slate">{sel.category.toUpperCase()}</Badge>
-                <span className="text-[11px]" style={{ color: 'var(--ink-3)' }}>· {sel.revision}</span>
-                <div className="flex-1" />
-                <button className="px-2 py-1 rounded-1 text-[11px] border" style={{ background: 'var(--surface)', borderColor: 'var(--border)', cursor: 'pointer', color: 'var(--ink)' }}>Revise</button>
-                <button className="px-2 py-1 rounded-1 text-[11px]" style={{ background: 'var(--navy)', color: '#fff', border: 'none', cursor: 'pointer' }}>Open as permit JHA</button>
-              </div>
-              <h2 className="text-[18px] font-semibold m-0" style={{ letterSpacing: '-0.005em' }}>{sel.title}</h2>
-              <div className="text-[11.5px] mt-1" style={{ color: 'var(--ink-3)' }}>Owner {sel.owner} · last used {sel.lastUsed} · {sel.useCount} uses</div>
+      {!sel ? (
+        <div
+          className="flex-1 flex items-center justify-center"
+          style={{ background: 'var(--bg)' }}
+        >
+          <p className="text-xs" style={{ color: 'var(--ink-3)' }}>
+            Select a JHA to view risk matrices and controls
+          </p>
+        </div>
+      ) : (
+        <section className="flex-1 overflow-y-auto min-w-0" style={{ background: 'var(--bg)' }}>
+          <div
+            className="px-5 py-4"
+            style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)' }}
+          >
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="font-mono text-[11px]" style={{ color: 'var(--ink-3)' }}>
+                {sel.id}
+              </span>
+              <Badge color="slate">{sel.category.toUpperCase()}</Badge>
+              <span className="text-[11px]" style={{ color: 'var(--ink-3)' }}>
+                · {sel.revision}
+              </span>
+              <div className="flex-1" />
+              <button
+                className="px-2 py-1 rounded-1 text-[11px] border"
+                style={{
+                  background: 'var(--surface)',
+                  borderColor: 'var(--border)',
+                  cursor: 'pointer',
+                  color: 'var(--ink)',
+                }}
+              >
+                Revise
+              </button>
+              <button
+                className="px-2 py-1 rounded-1 text-[11px]"
+                style={{
+                  background: 'var(--navy)',
+                  color: '#fff',
+                  border: 'none',
+                  cursor: 'pointer',
+                }}
+              >
+                Open as permit JHA
+              </button>
             </div>
+            <h2 className="text-[18px] font-semibold m-0" style={{ letterSpacing: '-0.005em' }}>
+              {sel.title}
+            </h2>
+            <div className="text-[11.5px] mt-1" style={{ color: 'var(--ink-3)' }}>
+              Owner {sel.owner} · last used {sel.lastUsed} · {sel.useCount} uses
+            </div>
+          </div>
 
-            <div className="grid gap-3 p-4" style={{ gridTemplateColumns: '1fr 1fr' }}>
-              {[{ label: 'Inherent risk', eyebrow: 'WITHOUT CONTROLS', l: sel.inherentL, s: sel.inherentS },
-                { label: 'Residual risk', eyebrow: 'WITH CONTROLS APPLIED', l: sel.residualL, s: sel.residualS }].map(({ label, eyebrow, l, s }) => (
-                <div key={label} className="rounded-2 overflow-hidden" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
-                  <div className="flex items-center gap-2 px-4 py-2.5" style={{ borderBottom: '1px solid var(--hairline)', background: 'var(--surface-sunk)' }}>
-                    <span className="text-[12px] font-semibold">{label}</span>
-                    <span className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: 'var(--ink-3)' }}>{eyebrow}</span>
-                  </div>
-                  <RiskMatrix l={l} s={s} />
+          <div className="grid gap-3 p-4" style={{ gridTemplateColumns: '1fr 1fr' }}>
+            {[
+              {
+                label: 'Inherent risk',
+                eyebrow: 'WITHOUT CONTROLS',
+                l: sel.inherentL,
+                s: sel.inherentS,
+              },
+              {
+                label: 'Residual risk',
+                eyebrow: 'WITH CONTROLS APPLIED',
+                l: sel.residualL,
+                s: sel.residualS,
+              },
+            ].map(({ label, eyebrow, l, s }) => (
+              <div
+                key={label}
+                className="rounded-2 overflow-hidden"
+                style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
+              >
+                <div
+                  className="flex items-center gap-2 px-4 py-2.5"
+                  style={{
+                    borderBottom: '1px solid var(--hairline)',
+                    background: 'var(--surface-sunk)',
+                  }}
+                >
+                  <span className="text-[12px] font-semibold">{label}</span>
+                  <span
+                    className="text-[10px] font-semibold uppercase tracking-widest"
+                    style={{ color: 'var(--ink-3)' }}
+                  >
+                    {eyebrow}
+                  </span>
+                </div>
+                <RiskMatrix l={l} s={s} />
+              </div>
+            ))}
+          </div>
+
+          <div className="px-4 pb-4">
+            <div
+              className="rounded-2 overflow-hidden"
+              style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
+            >
+              <div
+                className="px-4 py-2.5 text-[10.5px] font-semibold uppercase tracking-widest"
+                style={{
+                  borderBottom: '1px solid var(--hairline)',
+                  color: 'var(--ink-3)',
+                  background: 'var(--surface-sunk)',
+                }}
+              >
+                Key controls
+              </div>
+              {sel.keyControls.map((c, i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-3 px-4 py-2.5"
+                  style={{ borderTop: i === 0 ? 'none' : '1px solid var(--hairline)' }}
+                >
+                  <span
+                    className="font-mono text-[11px] font-semibold flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-1"
+                    style={{ background: 'var(--navy)', color: '#fff' }}
+                  >
+                    {i + 1}
+                  </span>
+                  <span className="text-[12.5px]" style={{ color: 'var(--ink-2)' }}>
+                    {c}
+                  </span>
                 </div>
               ))}
             </div>
-
-            <div className="px-4 pb-4">
-              <div className="rounded-2 overflow-hidden" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
-                <div className="px-4 py-2.5 text-[10.5px] font-semibold uppercase tracking-widest" style={{ borderBottom: '1px solid var(--hairline)', color: 'var(--ink-3)', background: 'var(--surface-sunk)' }}>Key controls</div>
-                {sel.keyControls.map((c, i) => (
-                  <div key={i} className="flex items-center gap-3 px-4 py-2.5" style={{ borderTop: i === 0 ? 'none' : '1px solid var(--hairline)' }}>
-                    <span className="font-mono text-[11px] font-semibold flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-1"
-                      style={{ background: 'var(--navy)', color: '#fff' }}>{i + 1}</span>
-                    <span className="text-[12.5px]" style={{ color: 'var(--ink-2)' }}>{c}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
+          </div>
+        </section>
+      )}
     </div>
   );
 }
@@ -540,7 +1018,12 @@ function JhaTab({ jhas, loading }: { jhas: JHA[]; loading: boolean }) {
 // ─── Equipment tab ────────────────────────────────────────────────────────────
 
 function EquipmentTab({ equipment, loading }: { equipment: SafetyEquipment[]; loading: boolean }) {
-  if (loading) return <div className="flex-1 flex items-center justify-center"><Spinner /></div>;
+  if (loading)
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <Spinner />
+      </div>
+    );
 
   const groups: { cat: 'FFA' | 'LSA' | 'OTH'; label: string }[] = [
     { cat: 'FFA', label: 'Fire-fighting appliances' },
@@ -548,63 +1031,161 @@ function EquipmentTab({ equipment, loading }: { equipment: SafetyEquipment[]; lo
     { cat: 'OTH', label: 'Other safety equipment' },
   ];
 
-  const flagged = equipment.filter(e => e.status !== 'green').length;
+  const flagged = equipment.filter((e) => e.status !== 'green').length;
 
   return (
     <div className="flex-1 overflow-y-auto min-h-0" style={{ background: 'var(--bg)' }}>
       <div className="grid gap-2 p-4" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
         {[
-          { label: 'FFA items', value: equipment.filter(e => e.category === 'FFA').length, sub: `${equipment.filter(e => e.category === 'FFA' && e.status !== 'green').length} flagged` },
-          { label: 'LSA items', value: equipment.filter(e => e.category === 'LSA').length, sub: `${equipment.filter(e => e.category === 'LSA' && e.status !== 'green').length} flagged` },
-          { label: 'Items flagged', value: flagged, sub: 'require attention', accent: flagged > 0 ? 'var(--sig-amber)' : undefined },
+          {
+            label: 'FFA items',
+            value: equipment.filter((e) => e.category === 'FFA').length,
+            sub: `${equipment.filter((e) => e.category === 'FFA' && e.status !== 'green').length} flagged`,
+          },
+          {
+            label: 'LSA items',
+            value: equipment.filter((e) => e.category === 'LSA').length,
+            sub: `${equipment.filter((e) => e.category === 'LSA' && e.status !== 'green').length} flagged`,
+          },
+          {
+            label: 'Items flagged',
+            value: flagged,
+            sub: 'require attention',
+            accent: flagged > 0 ? 'var(--sig-amber)' : undefined,
+          },
           { label: 'Total items', value: equipment.length, sub: 'all categories' },
-        ].map(k => (
-          <div key={k.label} className="rounded-2 px-4 py-3" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
-            <div className="text-[10.5px] font-semibold uppercase tracking-widest mb-1" style={{ color: 'var(--ink-3)' }}>{k.label}</div>
-            <div className="font-mono text-[22px] font-semibold" style={{ color: (k as { accent?: string }).accent ?? 'var(--ink)', letterSpacing: '-0.02em' }}>{k.value}</div>
-            <div className="text-[11px] mt-0.5" style={{ color: 'var(--ink-3)' }}>{k.sub}</div>
+        ].map((k) => (
+          <div
+            key={k.label}
+            className="rounded-2 px-4 py-3"
+            style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
+          >
+            <div
+              className="text-[10.5px] font-semibold uppercase tracking-widest mb-1"
+              style={{ color: 'var(--ink-3)' }}
+            >
+              {k.label}
+            </div>
+            <div
+              className="font-mono text-[22px] font-semibold"
+              style={{
+                color: (k as { accent?: string }).accent ?? 'var(--ink)',
+                letterSpacing: '-0.02em',
+              }}
+            >
+              {k.value}
+            </div>
+            <div className="text-[11px] mt-0.5" style={{ color: 'var(--ink-3)' }}>
+              {k.sub}
+            </div>
           </div>
         ))}
       </div>
 
       {groups.map(({ cat, label }) => {
-        const items = equipment.filter(e => e.category === cat);
+        const items = equipment.filter((e) => e.category === cat);
         return (
           <div key={cat} className="px-4 pb-4">
-            <div className="rounded-2 overflow-hidden" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
-              <div className="flex items-center gap-3 px-4 py-2.5" style={{ borderBottom: '1px solid var(--hairline)', background: 'var(--surface-sunk)' }}>
+            <div
+              className="rounded-2 overflow-hidden"
+              style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
+            >
+              <div
+                className="flex items-center gap-3 px-4 py-2.5"
+                style={{
+                  borderBottom: '1px solid var(--hairline)',
+                  background: 'var(--surface-sunk)',
+                }}
+              >
                 <span className="text-[12px] font-semibold">{label}</span>
-                <Badge color="slate">{cat} · {items.length} ITEMS</Badge>
+                <Badge color="slate">
+                  {cat} · {items.length} ITEMS
+                </Badge>
                 <div className="flex-1" />
-                <button className="text-[11px] px-2 py-0.5 rounded-1 border"
-                  style={{ background: 'var(--surface)', borderColor: 'var(--border)', cursor: 'pointer', color: 'var(--ink-2)' }}>+ Log check</button>
+                <button
+                  className="text-[11px] px-2 py-0.5 rounded-1 border"
+                  style={{
+                    background: 'var(--surface)',
+                    borderColor: 'var(--border)',
+                    cursor: 'pointer',
+                    color: 'var(--ink-2)',
+                  }}
+                >
+                  + Log check
+                </button>
               </div>
-              <div className="grid gap-2 px-4 py-2 text-[10.5px] font-semibold uppercase tracking-widest"
-                style={{ gridTemplateColumns: '110px 1fr 180px 80px 110px 120px 90px', background: 'var(--surface-sunk)', color: 'var(--ink-3)', borderBottom: '1px solid var(--hairline)' }}>
-                <span>ID</span><span>Item</span><span>Location</span><span>Status</span><span>Last check</span><span>Next check</span><span />
+              <div
+                className="grid gap-2 px-4 py-2 text-[10.5px] font-semibold uppercase tracking-widest"
+                style={{
+                  gridTemplateColumns: '110px 1fr 180px 80px 110px 120px 90px',
+                  background: 'var(--surface-sunk)',
+                  color: 'var(--ink-3)',
+                  borderBottom: '1px solid var(--hairline)',
+                }}
+              >
+                <span>ID</span>
+                <span>Item</span>
+                <span>Location</span>
+                <span>Status</span>
+                <span>Last check</span>
+                <span>Next check</span>
+                <span />
               </div>
-              {items.length === 0
-                ? <EmptyState msg={`No ${label.toLowerCase()} on file.`} />
-                : items.map(it => (
-                  <div key={it.id} className="grid gap-2 px-4 py-2.5 items-center"
-                    style={{ gridTemplateColumns: '110px 1fr 180px 80px 110px 120px 90px', borderTop: '1px solid var(--hairline)' }}>
-                    <span className="font-mono text-[11px]" style={{ color: 'var(--ink-2)' }}>{it.id}</span>
+              {items.length === 0 ? (
+                <EmptyState msg={`No ${label.toLowerCase()} on file.`} />
+              ) : (
+                items.map((it) => (
+                  <div
+                    key={it.id}
+                    className="grid gap-2 px-4 py-2.5 items-center"
+                    style={{
+                      gridTemplateColumns: '110px 1fr 180px 80px 110px 120px 90px',
+                      borderTop: '1px solid var(--hairline)',
+                    }}
+                  >
+                    <span className="font-mono text-[11px]" style={{ color: 'var(--ink-2)' }}>
+                      {it.id}
+                    </span>
                     <div className="min-w-0">
                       <div className="text-[12.5px] font-medium">{it.name}</div>
-                      <div className="text-[10.5px]" style={{ color: 'var(--ink-3)' }}>{it.quantity}</div>
+                      <div className="text-[10.5px]" style={{ color: 'var(--ink-3)' }}>
+                        {it.quantity}
+                      </div>
                     </div>
-                    <span className="text-[11.5px]" style={{ color: 'var(--ink-2)' }}>{it.location}</span>
-                    <Badge color={it.status === 'red' ? 'red' : it.status === 'amber' ? 'amber' : 'green'}>
+                    <span className="text-[11.5px]" style={{ color: 'var(--ink-2)' }}>
+                      {it.location}
+                    </span>
+                    <Badge
+                      color={
+                        it.status === 'red' ? 'red' : it.status === 'amber' ? 'amber' : 'green'
+                      }
+                    >
                       {it.status === 'red' ? 'ATTN' : it.status === 'amber' ? 'CHECK' : 'OK'}
                     </Badge>
-                    <span className="font-mono text-[11px]" style={{ color: 'var(--ink-3)' }}>{it.lastCheck}</span>
-                    <span className="font-mono text-[11px]" style={{ color: 'var(--ink-2)' }}>{it.nextCheck}</span>
-                    {it.flag
-                      ? <Badge color="amber">FLAG</Badge>
-                      : <button className="text-[11px] px-2 py-0.5 rounded-1 border justify-self-end"
-                          style={{ background: 'var(--surface)', borderColor: 'var(--border)', cursor: 'pointer', color: 'var(--ink-2)' }}>Check</button>}
+                    <span className="font-mono text-[11px]" style={{ color: 'var(--ink-3)' }}>
+                      {it.lastCheck}
+                    </span>
+                    <span className="font-mono text-[11px]" style={{ color: 'var(--ink-2)' }}>
+                      {it.nextCheck}
+                    </span>
+                    {it.flag ? (
+                      <Badge color="amber">FLAG</Badge>
+                    ) : (
+                      <button
+                        className="text-[11px] px-2 py-0.5 rounded-1 border justify-self-end"
+                        style={{
+                          background: 'var(--surface)',
+                          borderColor: 'var(--border)',
+                          cursor: 'pointer',
+                          color: 'var(--ink-2)',
+                        }}
+                      >
+                        Check
+                      </button>
+                    )}
                   </div>
-                ))}
+                ))
+              )}
             </div>
           </div>
         );
@@ -616,30 +1197,67 @@ function EquipmentTab({ equipment, loading }: { equipment: SafetyEquipment[]; lo
 // ─── CAPA tab ─────────────────────────────────────────────────────────────────
 
 function CapaTab({ capas, loading }: { capas: Capa[]; loading: boolean }) {
-  if (loading) return <div className="flex-1 flex items-center justify-center"><Spinner /></div>;
+  if (loading)
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <Spinner />
+      </div>
+    );
 
   const stages: { id: CapaStage; label: string; color: string }[] = [
     { id: 'investigation', label: 'Investigation', color: 'var(--sig-amber)' },
-    { id: 'action',        label: 'Action',        color: 'var(--sig-blue)' },
-    { id: 'verification',  label: 'Verification',  color: '#5E479F' },
-    { id: 'closed',        label: 'Closed',        color: 'var(--sig-green)' },
+    { id: 'action', label: 'Action', color: 'var(--sig-blue)' },
+    { id: 'verification', label: 'Verification', color: '#5E479F' },
+    { id: 'closed', label: 'Closed', color: 'var(--sig-green)' },
   ];
 
-  const open = capas.filter(c => c.stage !== 'closed').length;
+  const open = capas.filter((c) => c.stage !== 'closed').length;
 
   return (
     <div className="flex-1 overflow-y-auto min-h-0" style={{ background: 'var(--bg)' }}>
       <div className="grid gap-2 p-4" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
         {[
-          { label: 'Open CAPA', value: open, sub: 'in progress', accent: open > 0 ? 'var(--sig-amber)' : undefined },
+          {
+            label: 'Open CAPA',
+            value: open,
+            sub: 'in progress',
+            accent: open > 0 ? 'var(--sig-amber)' : undefined,
+          },
           { label: 'Avg cycle time', value: '—', sub: 'target ≤ 45d' },
-          { label: 'Overdue actions', value: capas.filter(c => c.daysLeft !== null && c.daysLeft < 0).length, sub: '' },
-          { label: 'Closed', value: capas.filter(c => c.stage === 'closed').length, sub: 'all time' },
-        ].map(k => (
-          <div key={k.label} className="rounded-2 px-4 py-3" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
-            <div className="text-[10.5px] font-semibold uppercase tracking-widest mb-1" style={{ color: 'var(--ink-3)' }}>{k.label}</div>
-            <div className="font-mono text-[22px] font-semibold" style={{ color: (k as { accent?: string }).accent ?? 'var(--ink)', letterSpacing: '-0.02em' }}>{k.value}</div>
-            <div className="text-[11px] mt-0.5" style={{ color: 'var(--ink-3)' }}>{k.sub}</div>
+          {
+            label: 'Overdue actions',
+            value: capas.filter((c) => c.daysLeft !== null && c.daysLeft < 0).length,
+            sub: '',
+          },
+          {
+            label: 'Closed',
+            value: capas.filter((c) => c.stage === 'closed').length,
+            sub: 'all time',
+          },
+        ].map((k) => (
+          <div
+            key={k.label}
+            className="rounded-2 px-4 py-3"
+            style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
+          >
+            <div
+              className="text-[10.5px] font-semibold uppercase tracking-widest mb-1"
+              style={{ color: 'var(--ink-3)' }}
+            >
+              {k.label}
+            </div>
+            <div
+              className="font-mono text-[22px] font-semibold"
+              style={{
+                color: (k as { accent?: string }).accent ?? 'var(--ink)',
+                letterSpacing: '-0.02em',
+              }}
+            >
+              {k.value}
+            </div>
+            <div className="text-[11px] mt-0.5" style={{ color: 'var(--ink-3)' }}>
+              {k.sub}
+            </div>
           </div>
         ))}
       </div>
@@ -647,40 +1265,115 @@ function CapaTab({ capas, loading }: { capas: Capa[]; loading: boolean }) {
       {/* Kanban board */}
       <div className="px-4 pb-4 grid gap-3" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
         {stages.map(({ id, label, color }) => {
-          const items = capas.filter(c => c.stage === id);
+          const items = capas.filter((c) => c.stage === id);
           return (
-            <div key={id} className="rounded-2 overflow-hidden"
-              style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderTop: `3px solid ${color}`, minHeight: 200 }}>
-              <div className="flex items-center gap-2 px-3 py-2.5" style={{ borderBottom: '1px solid var(--hairline)' }}>
-                <span className="text-[10.5px] font-semibold uppercase tracking-widest flex-1" style={{ color: 'var(--ink-3)' }}>{label}</span>
-                <span className="font-mono text-[10.5px] px-1.5 py-px rounded-[10px]"
-                  style={{ background: 'var(--surface-2)', color: 'var(--ink-3)', fontWeight: 600 }}>{items.length}</span>
+            <div
+              key={id}
+              className="rounded-2 overflow-hidden"
+              style={{
+                background: 'var(--surface)',
+                border: '1px solid var(--border)',
+                borderTop: `3px solid ${color}`,
+                minHeight: 200,
+              }}
+            >
+              <div
+                className="flex items-center gap-2 px-3 py-2.5"
+                style={{ borderBottom: '1px solid var(--hairline)' }}
+              >
+                <span
+                  className="text-[10.5px] font-semibold uppercase tracking-widest flex-1"
+                  style={{ color: 'var(--ink-3)' }}
+                >
+                  {label}
+                </span>
+                <span
+                  className="font-mono text-[10.5px] px-1.5 py-px rounded-[10px]"
+                  style={{ background: 'var(--surface-2)', color: 'var(--ink-3)', fontWeight: 600 }}
+                >
+                  {items.length}
+                </span>
               </div>
               <div className="p-2 flex flex-col gap-1.5">
-                {items.length === 0
-                  ? <div className="py-4 text-center text-[11px]" style={{ color: 'var(--ink-3)' }}>No items</div>
-                  : items.map(c => (
-                    <div key={c.id} className="rounded-1 p-2.5"
-                      style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderLeft: `3px solid ${c.tone === 'red' ? 'var(--sig-red)' : c.tone === 'amber' ? 'var(--sig-amber)' : 'var(--sig-green)'}` }}>
+                {items.length === 0 ? (
+                  <div className="py-4 text-center text-[11px]" style={{ color: 'var(--ink-3)' }}>
+                    No items
+                  </div>
+                ) : (
+                  items.map((c) => (
+                    <div
+                      key={c.id}
+                      className="rounded-1 p-2.5"
+                      style={{
+                        background: 'var(--surface-2)',
+                        border: '1px solid var(--border)',
+                        borderLeft: `3px solid ${c.tone === 'red' ? 'var(--sig-red)' : c.tone === 'amber' ? 'var(--sig-amber)' : 'var(--sig-green)'}`,
+                      }}
+                    >
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="font-mono text-[10.5px] font-medium" style={{ color: 'var(--ink-2)' }}>{c.id}</span>
+                        <span
+                          className="font-mono text-[10.5px] font-medium"
+                          style={{ color: 'var(--ink-2)' }}
+                        >
+                          {c.id}
+                        </span>
                         <div className="flex-1" />
                         {c.daysLeft !== null && (
-                          <span className="font-mono text-[10px]" style={{ color: c.daysLeft <= 0 ? 'var(--sig-red)' : c.daysLeft <= 7 ? 'var(--sig-amber)' : 'var(--ink-3)' }}>
+                          <span
+                            className="font-mono text-[10px]"
+                            style={{
+                              color:
+                                c.daysLeft <= 0
+                                  ? 'var(--sig-red)'
+                                  : c.daysLeft <= 7
+                                    ? 'var(--sig-amber)'
+                                    : 'var(--ink-3)',
+                            }}
+                          >
                             {c.daysLeft <= 0 ? `${-c.daysLeft}d late` : `${c.daysLeft}d`}
                           </span>
                         )}
                       </div>
-                      <div className="text-[11.5px] font-medium" style={{ lineHeight: 1.3, marginBottom: 4 }}>{c.title}</div>
-                      <div className="text-[10px]" style={{ color: 'var(--ink-3)', marginBottom: 6 }}>{c.owner}</div>
+                      <div
+                        className="text-[11.5px] font-medium"
+                        style={{ lineHeight: 1.3, marginBottom: 4 }}
+                      >
+                        {c.title}
+                      </div>
+                      <div
+                        className="text-[10px]"
+                        style={{ color: 'var(--ink-3)', marginBottom: 6 }}
+                      >
+                        {c.owner}
+                      </div>
                       <div className="flex items-center gap-1.5">
-                        <div className="flex-1 rounded-[3px] overflow-hidden" style={{ height: 4, background: 'var(--hairline)' }}>
-                          <div style={{ width: `${(c.doneActions / Math.max(c.totalActions, 1)) * 100}%`, height: '100%', background: c.tone === 'red' ? 'var(--sig-red)' : c.tone === 'amber' ? 'var(--sig-amber)' : 'var(--sig-green)' }} />
+                        <div
+                          className="flex-1 rounded-[3px] overflow-hidden"
+                          style={{ height: 4, background: 'var(--hairline)' }}
+                        >
+                          <div
+                            style={{
+                              width: `${(c.doneActions / Math.max(c.totalActions, 1)) * 100}%`,
+                              height: '100%',
+                              background:
+                                c.tone === 'red'
+                                  ? 'var(--sig-red)'
+                                  : c.tone === 'amber'
+                                    ? 'var(--sig-amber)'
+                                    : 'var(--sig-green)',
+                            }}
+                          />
                         </div>
-                        <span className="font-mono text-[10px]" style={{ color: 'var(--ink-3)', flexShrink: 0 }}>{c.doneActions}/{c.totalActions}</span>
+                        <span
+                          className="font-mono text-[10px]"
+                          style={{ color: 'var(--ink-3)', flexShrink: 0 }}
+                        >
+                          {c.doneActions}/{c.totalActions}
+                        </span>
                       </div>
                     </div>
-                  ))}
+                  ))
+                )}
               </div>
             </div>
           );
@@ -709,57 +1402,127 @@ export function SafetyPage() {
   const [loadC, setLoadC] = useState(true);
 
   const fetchAll = useCallback(() => {
-    api.get<WorkPermit[]>('/work-permits').then(setPermits).catch(() => setPermits([])).finally(() => setLoadP(false));
-    api.get<SafetyFinding[]>('/safety-findings').then(setFindings).catch(() => setFindings([])).finally(() => setLoadF(false));
-    api.get<JHA[]>('/jhas').then(setJhas).catch(() => setJhas([])).finally(() => setLoadJ(false));
-    api.get<SafetyEquipment[]>('/safety-equipment').then(setEquipment).catch(() => setEquipment([])).finally(() => setLoadE(false));
-    api.get<Capa[]>('/capas').then(setCapas).catch(() => setCapas([])).finally(() => setLoadC(false));
+    api
+      .get<WorkPermit[]>('/work-permits')
+      .then(setPermits)
+      .catch(() => setPermits([]))
+      .finally(() => setLoadP(false));
+    api
+      .get<SafetyFinding[]>('/safety-findings')
+      .then(setFindings)
+      .catch(() => setFindings([]))
+      .finally(() => setLoadF(false));
+    api
+      .get<JHA[]>('/jhas')
+      .then(setJhas)
+      .catch(() => setJhas([]))
+      .finally(() => setLoadJ(false));
+    api
+      .get<SafetyEquipment[]>('/safety-equipment')
+      .then(setEquipment)
+      .catch(() => setEquipment([]))
+      .finally(() => setLoadE(false));
+    api
+      .get<Capa[]>('/capas')
+      .then(setCapas)
+      .catch(() => setCapas([]))
+      .finally(() => setLoadC(false));
   }, []);
 
-  useEffect(() => { fetchAll(); }, [fetchAll]);
+  useEffect(() => {
+    fetchAll();
+  }, [fetchAll]);
 
-  const activePermits = permits.filter(p => p.status === 'active').length;
-  const awaitingPermits = permits.filter(p => p.status === 'awaiting').length;
+  const activePermits = permits.filter((p) => p.status === 'active').length;
+  const awaitingPermits = permits.filter((p) => p.status === 'awaiting').length;
 
   const counts: Record<Tab, number> = {
-    permit: permits.filter(p => p.status !== 'closed').length,
-    find:   findings.filter(f => f.status !== 'closed').length,
-    jha:    jhas.length,
-    eq:     equipment.filter(e => e.status !== 'green').length,
-    capa:   capas.filter(c => c.stage !== 'closed').length,
+    permit: permits.filter((p) => p.status !== 'closed').length,
+    find: findings.filter((f) => f.status !== 'closed').length,
+    jha: jhas.length,
+    eq: equipment.filter((e) => e.status !== 'green').length,
+    capa: capas.filter((c) => c.stage !== 'closed').length,
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, background: 'var(--bg)' }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+        minHeight: 0,
+        background: 'var(--bg)',
+      }}
+    >
       {/* Header */}
-      <div className="flex items-center gap-3 px-4 py-2.5 flex-shrink-0 flex-wrap"
-        style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)' }}>
-        <h1 className="text-[16px] font-semibold m-0" style={{ color: 'var(--ink)', letterSpacing: '-0.01em' }}>Safety</h1>
-        <span className="text-[12px]" style={{ color: 'var(--ink-3)' }}>MV HALCYON · ISM 2006</span>
+      <div
+        className="flex items-center gap-3 px-4 py-2.5 flex-shrink-0 flex-wrap"
+        style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)' }}
+      >
+        <h1
+          className="text-[16px] font-semibold m-0"
+          style={{ color: 'var(--ink)', letterSpacing: '-0.01em' }}
+        >
+          Safety
+        </h1>
+        <span className="text-[12px]" style={{ color: 'var(--ink-3)' }}>
+          MV HALCYON · ISM 2006
+        </span>
         {activePermits > 0 && <Badge color="green">{activePermits} ACTIVE</Badge>}
         {awaitingPermits > 0 && <Badge color="amber">{awaitingPermits} AWAITING</Badge>}
         <div className="flex-1" />
-        <button className="px-3 py-1 rounded-2 text-[12px] font-medium border"
-          style={{ background: 'var(--surface)', borderColor: 'var(--border)', cursor: 'pointer', color: 'var(--ink)' }}>Toolbox talk</button>
-        <button className="px-3 py-1 rounded-2 text-[12px] font-medium"
-          style={{ background: 'var(--navy)', color: '#fff', border: 'none', cursor: 'pointer' }}>+ New permit</button>
+        <button
+          className="px-3 py-1 rounded-2 text-[12px] font-medium border"
+          style={{
+            background: 'var(--surface)',
+            borderColor: 'var(--border)',
+            cursor: 'pointer',
+            color: 'var(--ink)',
+          }}
+        >
+          Toolbox talk
+        </button>
+        <button
+          className="px-3 py-1 rounded-2 text-[12px] font-medium"
+          style={{ background: 'var(--navy)', color: '#fff', border: 'none', cursor: 'pointer' }}
+        >
+          + New permit
+        </button>
       </div>
 
       {/* Tab bar */}
-      <div className="flex gap-0 flex-shrink-0 px-4 overflow-x-auto"
-        style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)' }}>
-        {TABS.map(t => (
-          <button key={t.id} onClick={() => setTab(t.id)}
+      <div
+        className="flex gap-0 flex-shrink-0 px-4 overflow-x-auto"
+        style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)' }}
+      >
+        {TABS.map((t) => (
+          <button
+            key={t.id}
+            onClick={() => setTab(t.id)}
             style={{
-              display: 'flex', alignItems: 'center', gap: 8, padding: '12px 16px',
-              border: 'none', background: 'transparent',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '12px 16px',
+              border: 'none',
+              background: 'transparent',
               borderBottom: `2px solid ${tab === t.id ? 'var(--navy)' : 'transparent'}`,
-              cursor: 'pointer', color: tab === t.id ? 'var(--ink)' : 'var(--ink-2)',
-              fontSize: 13, fontWeight: tab === t.id ? 600 : 500, marginBottom: -1, whiteSpace: 'nowrap',
-            }}>
+              cursor: 'pointer',
+              color: tab === t.id ? 'var(--ink)' : 'var(--ink-2)',
+              fontSize: 13,
+              fontWeight: tab === t.id ? 600 : 500,
+              marginBottom: -1,
+              whiteSpace: 'nowrap',
+            }}
+          >
             <span>{t.label}</span>
-            <span className="font-mono text-[10.5px] px-1.5 py-px rounded-[10px]"
-              style={{ background: tab === t.id ? 'var(--navy)' : 'var(--surface-2)', color: tab === t.id ? '#fff' : 'var(--ink-3)' }}>
+            <span
+              className="font-mono text-[10.5px] px-1.5 py-px rounded-[10px]"
+              style={{
+                background: tab === t.id ? 'var(--navy)' : 'var(--surface-2)',
+                color: tab === t.id ? '#fff' : 'var(--ink-3)',
+              }}
+            >
               {counts[t.id]}
             </span>
           </button>
@@ -767,10 +1530,10 @@ export function SafetyPage() {
       </div>
 
       {tab === 'permit' && <PermitsTab permits={permits} loading={loadP} />}
-      {tab === 'find'   && <FindingsTab findings={findings} loading={loadF} />}
-      {tab === 'jha'    && <JhaTab jhas={jhas} loading={loadJ} />}
-      {tab === 'eq'     && <EquipmentTab equipment={equipment} loading={loadE} />}
-      {tab === 'capa'   && <CapaTab capas={capas} loading={loadC} />}
+      {tab === 'find' && <FindingsTab findings={findings} loading={loadF} />}
+      {tab === 'jha' && <JhaTab jhas={jhas} loading={loadJ} />}
+      {tab === 'eq' && <EquipmentTab equipment={equipment} loading={loadE} />}
+      {tab === 'capa' && <CapaTab capas={capas} loading={loadC} />}
     </div>
   );
 }

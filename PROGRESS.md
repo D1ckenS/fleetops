@@ -10,14 +10,14 @@
 
 ### 2026-05-17 — UI — Certificates, Safety, QHSE pages implemented (Bearing design, API-connected)
 
-| Item | Detail |
-| --- | --- |
-| `apps/web-shore/src/pages/CertificatesPage.tsx` | New: 5 tabs — Register (split-pane list + detail with endorsement trail, document card, linked surveys), Surveys (grouped schedule), Conditions of class (severity cards with key-value grid), Inspections (KPI strip + table), Renewal timeline (Gantt-style bars per cert) |
-| `apps/web-shore/src/pages/SafetyPage.tsx` | Rewrite: 5 tabs — Permits to work (split-pane with gas checks, hazards/PPE, isolations, co-signer sign-offs), Findings (KPI strip + table with near-miss/NC/obs/hazard kinds), JHA (library list + 5×5 risk matrix + key controls), Equipment (FFA/LSA/OTH grouped tables), CAPA (Kanban board by stage) |
-| `apps/web-shore/src/pages/QHSEPage.tsx` | New: 5 tabs — Objectives (category-grouped KPI cards with sparklines), Audits (schedule table + open SMS findings), Environmental (CII band chart + voyage legs + MARPOL discharge log), DryBMS (30-element maturity heatmap with element drilldown), Management review (review cards + upcoming/recent split) |
-| `apps/web-shore/src/App.tsx` | Replaced ComingSoonPage stubs for /certificates, /safety, /qhse with real pages |
-| Design pattern | All tabs: Bearing CSS variables, empty states, API-connected (GET endpoints for each entity type), URL-tracked tab param, Spinner loading state |
-| Branch | `feat/phase1-ui-gaps` |
+| Item                                            | Detail                                                                                                                                                                                                                                                                                                         |
+| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/web-shore/src/pages/CertificatesPage.tsx` | New: 5 tabs — Register (split-pane list + detail with endorsement trail, document card, linked surveys), Surveys (grouped schedule), Conditions of class (severity cards with key-value grid), Inspections (KPI strip + table), Renewal timeline (Gantt-style bars per cert)                                   |
+| `apps/web-shore/src/pages/SafetyPage.tsx`       | Rewrite: 5 tabs — Permits to work (split-pane with gas checks, hazards/PPE, isolations, co-signer sign-offs), Findings (KPI strip + table with near-miss/NC/obs/hazard kinds), JHA (library list + 5×5 risk matrix + key controls), Equipment (FFA/LSA/OTH grouped tables), CAPA (Kanban board by stage)       |
+| `apps/web-shore/src/pages/QHSEPage.tsx`         | New: 5 tabs — Objectives (category-grouped KPI cards with sparklines), Audits (schedule table + open SMS findings), Environmental (CII band chart + voyage legs + MARPOL discharge log), DryBMS (30-element maturity heatmap with element drilldown), Management review (review cards + upcoming/recent split) |
+| `apps/web-shore/src/App.tsx`                    | Replaced ComingSoonPage stubs for /certificates, /safety, /qhse with real pages                                                                                                                                                                                                                                |
+| Design pattern                                  | All tabs: Bearing CSS variables, empty states, API-connected (GET endpoints for each entity type), URL-tracked tab param, Spinner loading state                                                                                                                                                                |
+| Branch                                          | `feat/phase1-ui-gaps`                                                                                                                                                                                                                                                                                          |
 
 ### 2026-05-16 — UI — Purchase page redesigned to match Bearing design
 
