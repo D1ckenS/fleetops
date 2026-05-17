@@ -169,6 +169,7 @@ model Tenant {
   rotations            Rotation[]
   restHourEntries      RestHourEntry[]
   crewCertificates     CrewCertificate[]
+  auditEvents          AuditEvent[]
 
   @@map("tenants")
 }
@@ -1338,6 +1339,31 @@ model Capa {
   @@index([tenantId, vesselId, status])
   @@index([tenantId, vesselId, findingId])
   @@map("capas")
+}
+
+// ── Audit (P2-5) ──────────────────────────────────────────────────────────────
+// Shore-only. Not sync-aware — the shore is the system of record for the DNV
+// CG-0339 evidence pack. Events are recorded when key operations succeed.
+// JobHistory immutability is enforced by the job_histories_immutable DB trigger
+// (created in the P1-1 migration); the evidence pack endpoint verifies it is
+// present via pg_trigger at report generation time.
+
+model AuditEvent {
+  id           String   @id
+  tenantId     String   @map("tenant_id")
+  vesselId     String?  @map("vessel_id")
+  actorUserId  String?  @map("actor_user_id")
+  action       String
+  entityType   String   @map("entity_type")
+  entityId     String   @map("entity_id")
+  metadata     Json?
+  recordedAt   DateTime @default(now()) @map("recorded_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, vesselId, recordedAt])
+  @@index([tenantId, entityType, entityId])
+  @@map("audit_events")
 }
 
 // ── Crewing (P2-4) ────────────────────────────────────────────────────────────

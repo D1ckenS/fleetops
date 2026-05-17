@@ -6,6 +6,7 @@ import { ChecklistInstanceModule } from './checklist-instance/checklist-instance
 import { ChecklistTemplateModule } from './checklist-template/checklist-template.module';
 import { FindingModule } from './finding/finding.module';
 import { QhseDocumentModule } from './qhse-document/qhse-document.module';
+import { AuditEventModule } from './audit-event/audit-event.module';
 import { CrewMemberModule } from './crew-member/crew-member.module';
 import { RotationModule } from './rotation/rotation.module';
 import { RestHourEntryModule } from './rest-hour-entry/rest-hour-entry.module';
@@ -93,6 +94,7 @@ import { VesselModule } from './vessel/vessel.module';
     RotationModule,
     RestHourEntryModule,
     CrewCertificateModule,
+    AuditEventModule,
   ],
 })
 export class AppModule {}
