@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsEmail, IsString, MinLength, ValidateNested } from 'class-validator';
+import { IsEmail, IsOptional, IsString, MinLength, ValidateNested } from 'class-validator';
 
 export class BootstrapAdminDto {
   @IsEmail()
@@ -19,6 +19,10 @@ export class CreateTenantDto {
   @IsString()
   @MinLength(2)
   name!: string;
+
+  @IsOptional()
+  @IsString()
+  shortName?: string;
 
   @ValidateNested()
   @Type(() => BootstrapAdminDto)

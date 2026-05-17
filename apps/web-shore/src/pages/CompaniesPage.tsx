@@ -7,6 +7,7 @@ import { api } from '../api/client.js';
 interface Company {
   id: string;
   name: string;
+  shortName: string | null;
   createdAt: string;
   vesselCount: number;
   userCount: number;
@@ -22,6 +23,7 @@ function CreateCompanyModal({
   onCreated: () => void;
 }) {
   const [name, setName] = useState('');
+  const [shortName, setShortName] = useState('');
   const [adminEmail, setAdminEmail] = useState('');
   const [adminPassword, setAdminPassword] = useState('');
   const [saving, setSaving] = useState(false);
@@ -36,6 +38,7 @@ function CreateCompanyModal({
     try {
       await api.post<unknown>('/tenants', {
         name: name.trim(),
+        shortName: shortName.trim() || undefined,
         admin: { email: adminEmail.trim(), password: adminPassword },
       });
       onCreated();
@@ -57,8 +60,21 @@ function CreateCompanyModal({
           <Input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Acme Shipping BV"
+            placeholder="Acme Shipping B.V."
             autoFocus
+          />
+        </div>
+        <div>
+          <label className="text-[11.5px] font-medium mb-1 block" style={{ color: 'var(--ink-2)' }}>
+            Short name{' '}
+            <span style={{ color: 'var(--ink-3)' }}>
+              (shown in the sidebar — falls back to full name)
+            </span>
+          </label>
+          <Input
+            value={shortName}
+            onChange={(e) => setShortName(e.target.value)}
+            placeholder="Acme"
           />
         </div>
         <div
@@ -117,7 +133,7 @@ function CreateCompanyModal({
   );
 }
 
-function RenameCompanyModal({
+function EditCompanyModal({
   company,
   onClose,
   onSaved,
@@ -127,6 +143,7 @@ function RenameCompanyModal({
   onSaved: () => void;
 }) {
   const [name, setName] = useState(company.name);
+  const [shortName, setShortName] = useState(company.shortName ?? '');
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState('');
 
@@ -137,24 +154,40 @@ function RenameCompanyModal({
     }
     setSaving(true);
     try {
-      await api.patch<unknown>(`/tenants/${company.id}`, { name: name.trim() });
+      await api.patch<unknown>(`/tenants/${company.id}`, {
+        name: name.trim(),
+        shortName: shortName.trim() || null,
+      });
       onSaved();
       onClose();
     } catch (e) {
-      setErr(e instanceof Error ? e.message : 'Failed to rename company');
+      setErr(e instanceof Error ? e.message : 'Failed to update company');
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <Modal open title="Rename company" onClose={onClose} size="sm">
+    <Modal open title="Edit company" onClose={onClose} size="sm">
       <div className="flex flex-col gap-3 p-4">
         <div>
           <label className="text-[11.5px] font-medium mb-1 block" style={{ color: 'var(--ink-2)' }}>
             Company name *
           </label>
           <Input value={name} onChange={(e) => setName(e.target.value)} autoFocus />
+        </div>
+        <div>
+          <label className="text-[11.5px] font-medium mb-1 block" style={{ color: 'var(--ink-2)' }}>
+            Short name{' '}
+            <span style={{ color: 'var(--ink-3)' }}>
+              (shown in the sidebar — falls back to full name)
+            </span>
+          </label>
+          <Input
+            value={shortName}
+            onChange={(e) => setShortName(e.target.value)}
+            placeholder="Leave blank to use full name"
+          />
         </div>
         {err && (
           <p className="text-[11.5px] m-0" style={{ color: 'var(--sig-red)' }}>
@@ -180,7 +213,7 @@ export function CompaniesPage() {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
-  const [rename, setRename] = useState<Company | null>(null);
+  const [edit, setEdit] = useState<Company | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -225,13 +258,14 @@ export function CompaniesPage() {
           <div
             className="grid gap-4 px-4 py-2 text-[10.5px] font-semibold uppercase tracking-widest"
             style={{
-              gridTemplateColumns: '1fr 80px 80px 120px 80px',
+              gridTemplateColumns: '1fr 120px 80px 80px 120px 60px',
               background: 'var(--surface-sunk)',
               color: 'var(--ink-3)',
               borderBottom: '1px solid var(--hairline)',
             }}
           >
             <span>Company</span>
+            <span>Short name</span>
             <span style={{ textAlign: 'right' }}>Vessels</span>
             <span style={{ textAlign: 'right' }}>Users</span>
             <span>Created</span>
@@ -249,7 +283,7 @@ export function CompaniesPage() {
               key={c.id}
               className="grid gap-4 px-4 py-3 items-center"
               style={{
-                gridTemplateColumns: '1fr 80px 80px 120px 80px',
+                gridTemplateColumns: '1fr 120px 80px 80px 120px 60px',
                 borderTop: i === 0 ? 'none' : '1px solid var(--hairline)',
               }}
             >
@@ -264,6 +298,20 @@ export function CompaniesPage() {
                   {c.id}
                 </div>
               </div>
+              <div className="min-w-0">
+                {c.shortName ? (
+                  <span
+                    className="text-[12.5px] font-medium truncate block"
+                    style={{ color: 'var(--ink-2)' }}
+                  >
+                    {c.shortName}
+                  </span>
+                ) : (
+                  <span className="text-[11.5px]" style={{ color: 'var(--ink-3)' }}>
+                    —
+                  </span>
+                )}
+              </div>
               <div style={{ textAlign: 'right' }}>
                 <Badge color="blue">{c.vesselCount}</Badge>
               </div>
@@ -274,7 +322,7 @@ export function CompaniesPage() {
                 {new Date(c.createdAt).toLocaleDateString('en-GB')}
               </span>
               <button
-                onClick={() => setRename(c)}
+                onClick={() => setEdit(c)}
                 className="text-[11.5px] px-2.5 py-1 rounded-1 border justify-self-end"
                 style={{
                   background: 'var(--surface)',
@@ -283,7 +331,7 @@ export function CompaniesPage() {
                   color: 'var(--ink-2)',
                 }}
               >
-                Rename
+                Edit
               </button>
             </div>
           ))}
@@ -291,9 +339,7 @@ export function CompaniesPage() {
       )}
 
       {showCreate && <CreateCompanyModal onClose={() => setShowCreate(false)} onCreated={load} />}
-      {rename && (
-        <RenameCompanyModal company={rename} onClose={() => setRename(null)} onSaved={load} />
-      )}
+      {edit && <EditCompanyModal company={edit} onClose={() => setEdit(null)} onSaved={load} />}
     </div>
   );
 }

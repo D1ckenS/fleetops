@@ -30,10 +30,10 @@ export class TenantController {
     return this.tenants.findById(auth.tenantId!);
   }
 
-  /** SUPER_ADMIN: rename a company. */
+  /** SUPER_ADMIN: update company name and/or short name. */
   @Patch(':id')
   @UseGuards(JwtAuthGuard, requireRole('SUPER_ADMIN'))
-  update(@Param('id') id: string, @Body() dto: { name: string }) {
-    return this.tenants.update(id, dto.name);
+  update(@Param('id') id: string, @Body() dto: { name?: string; shortName?: string | null }) {
+    return this.tenants.update(id, dto);
   }
 }

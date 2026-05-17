@@ -10,7 +10,7 @@ export interface Vessel {
 }
 
 interface VesselContextValue {
-  companyName: string;
+  companyName: string; // shortName ?? name — use this everywhere in the UI
   vessels: Vessel[];
   selectedVesselId: string | null; // null = "all vessels"
   isVesselLocked: boolean; // true when JWT binds the user to one vessel
@@ -39,8 +39,8 @@ export function VesselProvider({ children }: { children: ReactNode }) {
       return;
     }
     api
-      .get<{ name: string }>('/tenants/self')
-      .then((t) => setCompanyName(t.name))
+      .get<{ name: string; shortName: string | null }>('/tenants/self')
+      .then((t) => setCompanyName(t.shortName ?? t.name))
       .catch(() => {});
     api
       .get<Vessel[]>('/vessels')
@@ -64,7 +64,7 @@ export function VesselProvider({ children }: { children: ReactNode }) {
 
   const setSelectedVesselId = useCallback(
     (id: string | null) => {
-      if (isVesselLocked) return; // locked users can't switch
+      if (isVesselLocked) return;
       setSelectedVesselIdState(id);
       if (id) {
         localStorage.setItem(STORAGE_KEY, id);
@@ -76,7 +76,6 @@ export function VesselProvider({ children }: { children: ReactNode }) {
   );
 
   if (!loaded && user) {
-    // Avoid flash of wrong data; render nothing until vessels are fetched
     return null;
   }
 

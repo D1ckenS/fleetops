@@ -23,7 +23,7 @@ export class TenantService {
     try {
       return await this.prisma.$transaction(async (tx) => {
         const tenant = await tx.tenant.create({
-          data: { id: tenantId, name: dto.name },
+          data: { id: tenantId, name: dto.name, shortName: dto.shortName ?? null },
         });
         const admin = await tx.user.create({
           data: {
@@ -66,8 +66,14 @@ export class TenantService {
     );
   }
 
-  async update(id: string, name: string) {
+  async update(id: string, dto: { name?: string; shortName?: string | null }) {
     await this.findById(id);
-    return this.prisma.tenant.update({ where: { id }, data: { name } });
+    return this.prisma.tenant.update({
+      where: { id },
+      data: {
+        ...(dto.name !== undefined && { name: dto.name }),
+        ...(dto.shortName !== undefined && { shortName: dto.shortName }),
+      },
+    });
   }
 }
