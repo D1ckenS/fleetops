@@ -50,4 +50,24 @@ export class TenantService {
     if (!tenant) throw new NotFoundException(`Tenant ${id} not found`);
     return tenant;
   }
+
+  /** SUPER_ADMIN only — bypasses RLS to return all tenants. */
+  async findAll() {
+    const tenants = await this.prisma.tenant.findMany({ orderBy: { name: 'asc' } });
+    // Enrich each with vessel and user counts
+    return Promise.all(
+      tenants.map(async (t) => {
+        const [vesselCount, userCount] = await Promise.all([
+          this.prisma.vessel.count({ where: { tenantId: t.id, deletedAt: null } }),
+          this.prisma.user.count({ where: { tenantId: t.id, deletedAt: null } }),
+        ]);
+        return { ...t, vesselCount, userCount };
+      }),
+    );
+  }
+
+  async update(id: string, name: string) {
+    await this.findById(id);
+    return this.prisma.tenant.update({ where: { id }, data: { name } });
+  }
 }

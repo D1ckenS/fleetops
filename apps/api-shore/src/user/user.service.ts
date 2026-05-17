@@ -43,4 +43,60 @@ export class UserService {
     if (!user) throw new NotFoundException(`User ${email} not found`);
     return user;
   }
+
+  findAll(tenantId: string) {
+    return this.prisma.withTenant(tenantId, (tx) =>
+      tx.user.findMany({
+        where: { tenantId, deletedAt: null },
+        select: {
+          id: true,
+          tenantId: true,
+          vesselId: true,
+          email: true,
+          role: true,
+          createdAt: true,
+        },
+        orderBy: { email: 'asc' },
+      }),
+    );
+  }
+
+  async update(
+    tenantId: string,
+    id: string,
+    dto: { email?: string; role?: Role; vesselId?: string | null },
+  ) {
+    const existing = await this.prisma.withTenant(tenantId, (tx) =>
+      tx.user.findFirst({ where: { id, tenantId, deletedAt: null } }),
+    );
+    if (!existing) throw new NotFoundException(`User ${id} not found`);
+    return this.prisma.withTenant(tenantId, (tx) =>
+      tx.user.update({
+        where: { id },
+        data: {
+          ...(dto.email !== undefined && { email: dto.email }),
+          ...(dto.role !== undefined && { role: dto.role }),
+          ...(dto.vesselId !== undefined && { vesselId: dto.vesselId }),
+        },
+        select: {
+          id: true,
+          tenantId: true,
+          vesselId: true,
+          email: true,
+          role: true,
+          createdAt: true,
+        },
+      }),
+    );
+  }
+
+  async softDelete(tenantId: string, id: string) {
+    const existing = await this.prisma.withTenant(tenantId, (tx) =>
+      tx.user.findFirst({ where: { id, tenantId, deletedAt: null } }),
+    );
+    if (!existing) throw new NotFoundException(`User ${id} not found`);
+    await this.prisma.withTenant(tenantId, (tx) =>
+      tx.user.update({ where: { id }, data: { deletedAt: new Date() } }),
+    );
+  }
 }

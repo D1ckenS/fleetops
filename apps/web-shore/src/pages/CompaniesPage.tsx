@@ -1,0 +1,299 @@
+import { useCallback, useEffect, useState } from 'react';
+import { Badge, Button, Input, Modal, Spinner } from '@fleetops/ui-kit';
+import { api } from '../api/client.js';
+
+// ─── Types ───────────────────────────────────────────────────────────────────
+
+interface Company {
+  id: string;
+  name: string;
+  createdAt: string;
+  vesselCount: number;
+  userCount: number;
+}
+
+// ─── Modals ──────────────────────────────────────────────────────────────────
+
+function CreateCompanyModal({
+  onClose,
+  onCreated,
+}: {
+  onClose: () => void;
+  onCreated: () => void;
+}) {
+  const [name, setName] = useState('');
+  const [adminEmail, setAdminEmail] = useState('');
+  const [adminPassword, setAdminPassword] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [err, setErr] = useState('');
+
+  const submit = async () => {
+    if (!name.trim() || !adminEmail.trim() || !adminPassword) {
+      setErr('Company name, admin email and password are all required');
+      return;
+    }
+    setSaving(true);
+    try {
+      await api.post<unknown>('/tenants', {
+        name: name.trim(),
+        admin: { email: adminEmail.trim(), password: adminPassword },
+      });
+      onCreated();
+      onClose();
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : 'Failed to create company');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <Modal open title="Add company" onClose={onClose} size="sm">
+      <div className="flex flex-col gap-3 p-4">
+        <div>
+          <label className="text-[11.5px] font-medium mb-1 block" style={{ color: 'var(--ink-2)' }}>
+            Company name *
+          </label>
+          <Input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Acme Shipping BV"
+            autoFocus
+          />
+        </div>
+        <div
+          className="rounded-2 p-3 flex flex-col gap-3"
+          style={{ background: 'var(--surface-2)', border: '1px solid var(--hairline)' }}
+        >
+          <p
+            className="text-[11px] font-semibold uppercase tracking-widest m-0"
+            style={{ color: 'var(--ink-3)' }}
+          >
+            First admin account
+          </p>
+          <div>
+            <label
+              className="text-[11.5px] font-medium mb-1 block"
+              style={{ color: 'var(--ink-2)' }}
+            >
+              Email *
+            </label>
+            <Input
+              value={adminEmail}
+              onChange={(e) => setAdminEmail(e.target.value)}
+              placeholder="admin@company.com"
+            />
+          </div>
+          <div>
+            <label
+              className="text-[11.5px] font-medium mb-1 block"
+              style={{ color: 'var(--ink-2)' }}
+            >
+              Password *
+            </label>
+            <Input
+              type="password"
+              value={adminPassword}
+              onChange={(e) => setAdminPassword(e.target.value)}
+              placeholder="Min 8 characters"
+            />
+          </div>
+        </div>
+        {err && (
+          <p className="text-[11.5px] m-0" style={{ color: 'var(--sig-red)' }}>
+            {err}
+          </p>
+        )}
+        <div className="flex justify-end gap-2 pt-1">
+          <Button variant="secondary" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button onClick={submit} loading={saving}>
+            Create company
+          </Button>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
+function RenameCompanyModal({
+  company,
+  onClose,
+  onSaved,
+}: {
+  company: Company;
+  onClose: () => void;
+  onSaved: () => void;
+}) {
+  const [name, setName] = useState(company.name);
+  const [saving, setSaving] = useState(false);
+  const [err, setErr] = useState('');
+
+  const submit = async () => {
+    if (!name.trim()) {
+      setErr('Name is required');
+      return;
+    }
+    setSaving(true);
+    try {
+      await api.patch<unknown>(`/tenants/${company.id}`, { name: name.trim() });
+      onSaved();
+      onClose();
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : 'Failed to rename company');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <Modal open title="Rename company" onClose={onClose} size="sm">
+      <div className="flex flex-col gap-3 p-4">
+        <div>
+          <label className="text-[11.5px] font-medium mb-1 block" style={{ color: 'var(--ink-2)' }}>
+            Company name *
+          </label>
+          <Input value={name} onChange={(e) => setName(e.target.value)} autoFocus />
+        </div>
+        {err && (
+          <p className="text-[11.5px] m-0" style={{ color: 'var(--sig-red)' }}>
+            {err}
+          </p>
+        )}
+        <div className="flex justify-end gap-2 pt-1">
+          <Button variant="secondary" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button onClick={submit} loading={saving}>
+            Save
+          </Button>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
+// ─── Main page ────────────────────────────────────────────────────────────────
+
+export function CompaniesPage() {
+  const [companies, setCompanies] = useState<Company[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showCreate, setShowCreate] = useState(false);
+  const [rename, setRename] = useState<Company | null>(null);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    const cs = await api.get<Company[]>('/tenants').catch(() => [] as Company[]);
+    setCompanies(cs);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  return (
+    <div style={{ maxWidth: 800 }}>
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-6">
+        <div>
+          <h1
+            className="text-[20px] font-semibold m-0"
+            style={{ letterSpacing: '-0.01em', color: 'var(--ink)' }}
+          >
+            Companies
+          </h1>
+          <p className="text-[12.5px] mt-0.5 m-0" style={{ color: 'var(--ink-3)' }}>
+            Platform-level management · visible only to super admins
+          </p>
+        </div>
+        <div className="flex-1" />
+        <Button onClick={() => setShowCreate(true)}>+ Add company</Button>
+      </div>
+
+      {loading ? (
+        <div className="flex items-center justify-center h-48">
+          <Spinner />
+        </div>
+      ) : (
+        <div
+          className="rounded-2 overflow-hidden"
+          style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
+        >
+          {/* Column headers */}
+          <div
+            className="grid gap-4 px-4 py-2 text-[10.5px] font-semibold uppercase tracking-widest"
+            style={{
+              gridTemplateColumns: '1fr 80px 80px 120px 80px',
+              background: 'var(--surface-sunk)',
+              color: 'var(--ink-3)',
+              borderBottom: '1px solid var(--hairline)',
+            }}
+          >
+            <span>Company</span>
+            <span style={{ textAlign: 'right' }}>Vessels</span>
+            <span style={{ textAlign: 'right' }}>Users</span>
+            <span>Created</span>
+            <span />
+          </div>
+
+          {companies.length === 0 && (
+            <div className="px-4 py-8 text-center text-[12.5px]" style={{ color: 'var(--ink-3)' }}>
+              No companies yet.
+            </div>
+          )}
+
+          {companies.map((c, i) => (
+            <div
+              key={c.id}
+              className="grid gap-4 px-4 py-3 items-center"
+              style={{
+                gridTemplateColumns: '1fr 80px 80px 120px 80px',
+                borderTop: i === 0 ? 'none' : '1px solid var(--hairline)',
+              }}
+            >
+              <div className="min-w-0">
+                <div
+                  className="text-[13.5px] font-semibold truncate"
+                  style={{ color: 'var(--ink)' }}
+                >
+                  {c.name}
+                </div>
+                <div className="font-mono text-[10.5px]" style={{ color: 'var(--ink-3)' }}>
+                  {c.id}
+                </div>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <Badge color="blue">{c.vesselCount}</Badge>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <Badge color="slate">{c.userCount}</Badge>
+              </div>
+              <span className="font-mono text-[11px]" style={{ color: 'var(--ink-3)' }}>
+                {new Date(c.createdAt).toLocaleDateString('en-GB')}
+              </span>
+              <button
+                onClick={() => setRename(c)}
+                className="text-[11.5px] px-2.5 py-1 rounded-1 border justify-self-end"
+                style={{
+                  background: 'var(--surface)',
+                  borderColor: 'var(--border)',
+                  cursor: 'pointer',
+                  color: 'var(--ink-2)',
+                }}
+              >
+                Rename
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {showCreate && <CreateCompanyModal onClose={() => setShowCreate(false)} onCreated={load} />}
+      {rename && (
+        <RenameCompanyModal company={rename} onClose={() => setRename(null)} onSaved={load} />
+      )}
+    </div>
+  );
+}
