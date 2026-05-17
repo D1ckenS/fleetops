@@ -8,6 +8,17 @@
 
 > Most-recent first. Format: `### YYYY-MM-DD — <task> — <summary>` then bullets.
 
+### 2026-05-17 — UI — Certificates, Safety, QHSE pages implemented (Bearing design, API-connected)
+
+| Item | Detail |
+| --- | --- |
+| `apps/web-shore/src/pages/CertificatesPage.tsx` | New: 5 tabs — Register (split-pane list + detail with endorsement trail, document card, linked surveys), Surveys (grouped schedule), Conditions of class (severity cards with key-value grid), Inspections (KPI strip + table), Renewal timeline (Gantt-style bars per cert) |
+| `apps/web-shore/src/pages/SafetyPage.tsx` | Rewrite: 5 tabs — Permits to work (split-pane with gas checks, hazards/PPE, isolations, co-signer sign-offs), Findings (KPI strip + table with near-miss/NC/obs/hazard kinds), JHA (library list + 5×5 risk matrix + key controls), Equipment (FFA/LSA/OTH grouped tables), CAPA (Kanban board by stage) |
+| `apps/web-shore/src/pages/QHSEPage.tsx` | New: 5 tabs — Objectives (category-grouped KPI cards with sparklines), Audits (schedule table + open SMS findings), Environmental (CII band chart + voyage legs + MARPOL discharge log), DryBMS (30-element maturity heatmap with element drilldown), Management review (review cards + upcoming/recent split) |
+| `apps/web-shore/src/App.tsx` | Replaced ComingSoonPage stubs for /certificates, /safety, /qhse with real pages |
+| Design pattern | All tabs: Bearing CSS variables, empty states, API-connected (GET endpoints for each entity type), URL-tracked tab param, Spinner loading state |
+| Branch | `feat/phase1-ui-gaps` |
+
 ### 2026-05-16 — UI — Purchase page redesigned to match Bearing design
 
 | Item                                                  | Detail                                                                                                                                                                                                                                                                                                                                 |
@@ -318,9 +329,9 @@ Large batch of UI work implementing the Bearing design system across all Phase 1
 
 > Single, unambiguous next task for any fresh Claude Code session. Update this immediately when a task completes.
 
-**Phase 1 UI complete.** PR #21 (`feat/phase1-ui-gaps`) is open with Inventory 3-pane + Purchase redesign — merge when CI is green.
+**UI modules complete.** PR #21 (`feat/phase1-ui-gaps`) now includes Certificates (5 tabs), Safety (5 tabs, rewrite), and QHSE (5 tabs). FLGO is not yet designed — still shows ComingSoonPage stub.
 
-After merge: **Phase 1 verification** — run `pnpm run ci:full && pnpm run e2e:phase1 && pnpm run soak:sync` and work through `apps/docs/checklists/phase1.md`. After all checklist items are green, begin **P2-1 — Certificates** (expiry alerts, email/in-app notifications).
+Next: **Phase 1 verification** — run `pnpm run ci:full && pnpm run e2e:phase1 && pnpm run soak:sync` and work through `apps/docs/checklists/phase1.md`. After all checklist items are green, begin **P2-1 — Certificates backend** (schema, API, expiry alerts, email/in-app notifications).
 
 **Outstanding follow-up tickets (deferred, not blocking P1-4):**
 
