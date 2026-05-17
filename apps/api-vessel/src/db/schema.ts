@@ -1232,6 +1232,133 @@ export const capas = sqliteTable(
   ],
 );
 
+// ── Crewing (P2-4) ──────────────────────────────────────────────────────────
+
+export const CREW_MEMBER_STATUSES = ['ACTIVE', 'ON_LEAVE', 'SIGNED_OFF'] as const;
+export type CrewMemberStatus = (typeof CREW_MEMBER_STATUSES)[number];
+
+export const ROTATION_STATUSES = ['PLANNED', 'ACTIVE', 'COMPLETED', 'CANCELLED'] as const;
+export type RotationStatus = (typeof ROTATION_STATUSES)[number];
+
+export const crewMembers = sqliteTable(
+  'crew_members',
+  {
+    id: text('id').primaryKey(),
+    tenantId: text('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    vesselId: text('vessel_id')
+      .notNull()
+      .references(() => vessels.id),
+    firstName: text('first_name').notNull(),
+    lastName: text('last_name').notNull(),
+    rank: text('rank').notNull(),
+    nationality: text('nationality'),
+    dateOfBirth: text('date_of_birth'),
+    email: text('email'),
+    phone: text('phone'),
+    status: text('status', { enum: CREW_MEMBER_STATUSES }).notNull().default('ACTIVE'),
+    signOnDate: text('sign_on_date'),
+    signOffDate: text('sign_off_date'),
+    createdAt: text('created_at').notNull().default(nowIso),
+    updatedAt: text('updated_at').notNull().default(nowIso),
+    hlc: text('hlc'),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [
+    index('crew_members_tenant_vessel_idx').on(t.tenantId, t.vesselId),
+    index('crew_members_tenant_vessel_status_idx').on(t.tenantId, t.vesselId, t.status),
+  ],
+);
+
+export const rotations = sqliteTable(
+  'rotations',
+  {
+    id: text('id').primaryKey(),
+    tenantId: text('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    vesselId: text('vessel_id')
+      .notNull()
+      .references(() => vessels.id),
+    crewMemberId: text('crew_member_id')
+      .notNull()
+      .references(() => crewMembers.id),
+    plannedSignOn: text('planned_sign_on').notNull(),
+    plannedSignOff: text('planned_sign_off').notNull(),
+    actualSignOn: text('actual_sign_on'),
+    actualSignOff: text('actual_sign_off'),
+    status: text('status', { enum: ROTATION_STATUSES }).notNull().default('PLANNED'),
+    notes: text('notes'),
+    createdAt: text('created_at').notNull().default(nowIso),
+    updatedAt: text('updated_at').notNull().default(nowIso),
+    hlc: text('hlc'),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [
+    index('rotations_tenant_vessel_crew_idx').on(t.tenantId, t.vesselId, t.crewMemberId),
+    index('rotations_tenant_vessel_status_idx').on(t.tenantId, t.vesselId, t.status),
+  ],
+);
+
+export const restHourEntries = sqliteTable(
+  'rest_hour_entries',
+  {
+    id: text('id').primaryKey(),
+    tenantId: text('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    vesselId: text('vessel_id')
+      .notNull()
+      .references(() => vessels.id),
+    crewMemberId: text('crew_member_id')
+      .notNull()
+      .references(() => crewMembers.id),
+    date: text('date').notNull(),
+    hoursWorkedJson: text('hours_worked_json').notNull(),
+    mlcValid: integer('mlc_valid', { mode: 'boolean' }).notNull().default(true),
+    notes: text('notes'),
+    createdAt: text('created_at').notNull().default(nowIso),
+    updatedAt: text('updated_at').notNull().default(nowIso),
+    hlc: text('hlc'),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [
+    unique('rest_hour_entries_unique_day').on(t.tenantId, t.vesselId, t.crewMemberId, t.date),
+    index('rest_hour_entries_tenant_vessel_crew_idx').on(t.tenantId, t.vesselId, t.crewMemberId),
+  ],
+);
+
+export const crewCertificates = sqliteTable(
+  'crew_certificates',
+  {
+    id: text('id').primaryKey(),
+    tenantId: text('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    vesselId: text('vessel_id')
+      .notNull()
+      .references(() => vessels.id),
+    crewMemberId: text('crew_member_id')
+      .notNull()
+      .references(() => crewMembers.id),
+    certificateType: text('certificate_type').notNull(),
+    number: text('number'),
+    issuedAt: text('issued_at'),
+    expiresAt: text('expires_at'),
+    issuedBy: text('issued_by'),
+    notes: text('notes'),
+    createdAt: text('created_at').notNull().default(nowIso),
+    updatedAt: text('updated_at').notNull().default(nowIso),
+    hlc: text('hlc'),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [
+    index('crew_certificates_tenant_vessel_crew_idx').on(t.tenantId, t.vesselId, t.crewMemberId),
+    index('crew_certificates_tenant_expires_idx').on(t.tenantId, t.expiresAt),
+  ],
+);
+
 // Sync engine outbox. Pending entries have sent_at = null.
 export const outbox = sqliteTable(
   'outbox',

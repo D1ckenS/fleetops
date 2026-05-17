@@ -165,6 +165,10 @@ model Tenant {
   checklistInstances   ChecklistInstance[]
   findings             Finding[]
   capas                Capa[]
+  crewMembers          CrewMember[]
+  rotations            Rotation[]
+  restHourEntries      RestHourEntry[]
+  crewCertificates     CrewCertificate[]
 
   @@map("tenants")
 }
@@ -210,6 +214,10 @@ model Vessel {
   checklistInstances   ChecklistInstance[]
   findings             Finding[]
   capas                Capa[]
+  crewMembers          CrewMember[]
+  rotations            Rotation[]
+  restHourEntries      RestHourEntry[]
+  crewCertificates     CrewCertificate[]
 
   @@map("vessels")
 }
@@ -1330,6 +1338,129 @@ model Capa {
   @@index([tenantId, vesselId, status])
   @@index([tenantId, vesselId, findingId])
   @@map("capas")
+}
+
+// ── Crewing (P2-4) ────────────────────────────────────────────────────────────
+// All four entities are vessel-scoped and sync-aware.
+// RestHourEntry.mlcValid reflects MLC 2006 Regulation VIII/1 validation run at
+// save time — daily ≥10h rest AND weekly ≥77h rest. A save that would violate
+// MLC is rejected with 400 + violation details (enforced at application layer).
+
+enum CrewMemberStatus {
+  ACTIVE
+  ON_LEAVE
+  SIGNED_OFF
+}
+
+enum RotationStatus {
+  PLANNED
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+model CrewMember {
+  id          String           @id
+  tenantId    String           @map("tenant_id")
+  vesselId    String           @map("vessel_id")
+  firstName   String           @map("first_name")
+  lastName    String           @map("last_name")
+  rank        String
+  nationality String?
+  dateOfBirth DateTime?        @map("date_of_birth")
+  email       String?
+  phone       String?
+  status      CrewMemberStatus @default(ACTIVE)
+  signOnDate  DateTime?        @map("sign_on_date")
+  signOffDate DateTime?        @map("sign_off_date")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  hlc         String?
+  deletedAt   DateTime? @map("deleted_at")
+
+  tenant          Tenant          @relation(fields: [tenantId], references: [id])
+  vessel          Vessel          @relation(fields: [vesselId], references: [id])
+  rotations       Rotation[]
+  restHourEntries RestHourEntry[]
+  crewCertificates CrewCertificate[]
+
+  @@index([tenantId, vesselId])
+  @@index([tenantId, vesselId, status])
+  @@map("crew_members")
+}
+
+model Rotation {
+  id             String         @id
+  tenantId       String         @map("tenant_id")
+  vesselId       String         @map("vessel_id")
+  crewMemberId   String         @map("crew_member_id")
+  plannedSignOn  DateTime       @map("planned_sign_on")
+  plannedSignOff DateTime       @map("planned_sign_off")
+  actualSignOn   DateTime?      @map("actual_sign_on")
+  actualSignOff  DateTime?      @map("actual_sign_off")
+  status         RotationStatus @default(PLANNED)
+  notes          String?
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  hlc            String?
+  deletedAt      DateTime? @map("deleted_at")
+
+  tenant     Tenant     @relation(fields: [tenantId], references: [id])
+  vessel     Vessel     @relation(fields: [vesselId], references: [id])
+  crewMember CrewMember @relation(fields: [crewMemberId], references: [id])
+
+  @@index([tenantId, vesselId, crewMemberId])
+  @@index([tenantId, vesselId, status])
+  @@map("rotations")
+}
+
+model RestHourEntry {
+  id              String    @id
+  tenantId        String    @map("tenant_id")
+  vesselId        String    @map("vessel_id")
+  crewMemberId    String    @map("crew_member_id")
+  date            String    @map("date")
+  /// JSON: 24 booleans; index = hour of day (0=00:00, 23=23:00); true = worked
+  hoursWorkedJson String    @map("hours_worked_json")
+  mlcValid        Boolean   @default(true) @map("mlc_valid")
+  notes           String?
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  hlc             String?
+  deletedAt       DateTime? @map("deleted_at")
+
+  tenant     Tenant     @relation(fields: [tenantId], references: [id])
+  vessel     Vessel     @relation(fields: [vesselId], references: [id])
+  crewMember CrewMember @relation(fields: [crewMemberId], references: [id])
+
+  @@unique([tenantId, vesselId, crewMemberId, date])
+  @@index([tenantId, vesselId, crewMemberId])
+  @@map("rest_hour_entries")
+}
+
+model CrewCertificate {
+  id              String    @id
+  tenantId        String    @map("tenant_id")
+  vesselId        String    @map("vessel_id")
+  crewMemberId    String    @map("crew_member_id")
+  certificateType String    @map("certificate_type")
+  number          String?
+  issuedAt        DateTime? @map("issued_at")
+  expiresAt       DateTime? @map("expires_at")
+  issuedBy        String?   @map("issued_by")
+  notes           String?
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  hlc             String?
+  deletedAt       DateTime? @map("deleted_at")
+
+  tenant     Tenant     @relation(fields: [tenantId], references: [id])
+  vessel     Vessel     @relation(fields: [vesselId], references: [id])
+  crewMember CrewMember @relation(fields: [crewMemberId], references: [id])
+
+  @@index([tenantId, vesselId, crewMemberId])
+  @@index([tenantId, expiresAt])
+  @@map("crew_certificates")
 }
 
 // ── Sync engine tables ───────────────────────────────────────────────────────

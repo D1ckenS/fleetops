@@ -6,6 +6,10 @@ import { ChecklistInstanceModule } from './checklist-instance/checklist-instance
 import { ChecklistTemplateModule } from './checklist-template/checklist-template.module';
 import { FindingModule } from './finding/finding.module';
 import { QhseDocumentModule } from './qhse-document/qhse-document.module';
+import { CrewMemberModule } from './crew-member/crew-member.module';
+import { RotationModule } from './rotation/rotation.module';
+import { RestHourEntryModule } from './rest-hour-entry/rest-hour-entry.module';
+import { CrewCertificateModule } from './crew-certificate/crew-certificate.module';
 import { ApprovalFlowModule } from './approval-flow/approval-flow.module';
 import { DrillTypeModule } from './drill-type/drill-type.module';
 import { DrillModule } from './drill/drill.module';
@@ -85,6 +89,10 @@ import { VesselModule } from './vessel/vessel.module';
     ChecklistInstanceModule,
     FindingModule,
     CapaModule,
+    CrewMemberModule,
+    RotationModule,
+    RestHourEntryModule,
+    CrewCertificateModule,
   ],
 })
 export class AppModule {}
