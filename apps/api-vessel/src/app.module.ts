@@ -3,6 +3,8 @@ import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from 'nestjs-pino';
 import { ApprovalFlowModule } from './approval-flow/approval-flow.module';
 import { AuthModule } from './auth/auth.module';
+import { CertificateModule } from './certificate/certificate.module';
+import { CertificateTypeModule } from './certificate-type/certificate-type.module';
 import { BarcodeBindingModule } from './barcode-binding/barcode-binding.module';
 import { PurchaseOrderModule } from './purchase-order/purchase-order.module';
 import { QuoteModule } from './quote/quote.module';
@@ -61,6 +63,8 @@ import { VesselModule } from './vessel/vessel.module';
     RfqModule,
     QuoteModule,
     PurchaseOrderModule,
+    CertificateTypeModule,
+    CertificateModule,
   ],
 })
 export class AppModule {}

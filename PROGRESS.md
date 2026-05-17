@@ -8,14 +8,27 @@
 
 > Most-recent first. Format: `### YYYY-MM-DD — <task> — <summary>` then bullets.
 
-### 2026-05-17 — Phase 1 verification + tsconfig fix — All CI checks green
+### 2026-05-17 — P2-1 — Certificates backend (schema, API, expiry alerts, notifications)
 
 | Item | Detail |
 | ---- | ------ |
-| **TS5107 fix** | TypeScript 5.9.3 emits TS5107 for explicit `moduleResolution: node10/node`. Fixed by removing `moduleResolution: "NodeNext"` from `tsconfig.base.json` and dropping explicit `moduleResolution` from all CJS tsconfigs (api-shore, api-vessel, desktop-vessel, domain/build, sync-engine/build). TypeScript now derives node10 resolution implicitly from `module: CommonJS` — implicit default does not trigger TS5107. |
-| **Multer type fix** | `@types/multer@2.1.0` is a module file; its `declare global` augmentation only takes effect when imported. Added `/// <reference types="multer" />` to `job-history.controller.ts` and `job-history.service.ts` in api-shore. |
-| **CLAUDE.md §21** | Updated `ignoreDeprecations` note to document `moduleResolution: "node"` must NOT be explicit (use implicit default). |
-| **CI result** | `pnpm run ci:full` ✓; shore e2e → 100 ✓ (11 files); vessel e2e → 80 ✓ (10 files); `pnpm run soak:sync` → PASS (both phases) |
+| **Shore Prisma schema** | 2 new enums (`CertificateSubjectType`, `NotificationType`) + 4 new models: `CertificateType` (tenant-scoped catalog), `Certificate` (vessel-scoped, sync-aware, polymorphic: VESSEL/COMPONENT/CREW_MEMBER), `CertificateAttachment` (vessel-scoped, S3 key store), `Notification` (shore-only, in-app alerts). Migration `20260517003139_add_certificates_schema`. RLS policies on all 4 tables. |
+| **Vessel Drizzle schema** | Mirror of CertificateType, Certificate, CertificateAttachment. Migration `0006_kind_ogun.sql` applied. |
+| **Shore API** | `CertificateTypeModule` (CRUD), `CertificateModule` (CRUD + `GET ?expiringWithinDays=N` + `POST /certificates/:id/attachments` + `POST /certificates/check-expiry`), `NotificationModule` (`GET /notifications`, `PATCH /notifications/:id/read`). Registered in `AppModule`. |
+| **Vessel API** | `CertificateTypeModule` (CRUD, no sync), `CertificateModule` (CRUD, OutboxRecorder for sync). Registered in `AppModule`. |
+| **Expiry logic** | `CertificateService.checkExpiry()` finds certs expiring within any configured threshold (default [90,60,30,7]); creates one `Notification` per cert per threshold bucket (deduped by `certId:threshold`); logs email stub via pino (SMTP wired in P5). |
+| **StorageService** | Added generic `put(key, body, contentType)` method alongside existing `putJobHistoryPhoto`. |
+| **e2e tests** | Shore: 12 tests (112 total); vessel: 11 tests (88 total). Tests cover CRUD, expiry query, expiry notification creation, notification idempotency, RLS presence, sync outbox entries. |
+| **CI result** | `pnpm run ci:full` ✓; shore e2e → 112 ✓ (12 files); vessel e2e → 88 ✓ (11 files) |
+
+### 2026-05-17 — Phase 1 verification + tsconfig fix — All CI checks green
+
+| Item                | Detail                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **TS5107 fix**      | TypeScript 5.9.3 emits TS5107 for explicit `moduleResolution: node10/node`. Fixed by removing `moduleResolution: "NodeNext"` from `tsconfig.base.json` and dropping explicit `moduleResolution` from all CJS tsconfigs (api-shore, api-vessel, desktop-vessel, domain/build, sync-engine/build). TypeScript now derives node10 resolution implicitly from `module: CommonJS` — implicit default does not trigger TS5107. |
+| **Multer type fix** | `@types/multer@2.1.0` is a module file; its `declare global` augmentation only takes effect when imported. Added `/// <reference types="multer" />` to `job-history.controller.ts` and `job-history.service.ts` in api-shore.                                                                                                                                                                                            |
+| **CLAUDE.md §21**   | Updated `ignoreDeprecations` note to document `moduleResolution: "node"` must NOT be explicit (use implicit default).                                                                                                                                                                                                                                                                                                    |
+| **CI result**       | `pnpm run ci:full` ✓; shore e2e → 100 ✓ (11 files); vessel e2e → 80 ✓ (10 files); `pnpm run soak:sync` → PASS (both phases)                                                                                                                                                                                                                                                                                              |
 
 ### 2026-05-17 — UI — Certificates, Safety, QHSE pages implemented (Bearing design, API-connected)
 
@@ -338,9 +351,9 @@ Large batch of UI work implementing the Bearing design system across all Phase 1
 
 > Single, unambiguous next task for any fresh Claude Code session. Update this immediately when a task completes.
 
-**Phase 1 verification complete.** All CI checks green (ci:full ✓, shore e2e 100 ✓, vessel e2e 80 ✓, soak PASS). Phase 1 checklist at `apps/docs/checklists/phase1.md` requires manual smoke-test sign-off by lead engineer + QA (sections G–J need a live deployment).
+**P2-1 complete.** Certificates backend fully implemented: schema (shore Prisma + vessel Drizzle), CRUD APIs (both apps), expiry alert check with in-app Notification creation and email stub (SMTP deferred to P5), RLS policies, e2e tests. Shore: 112 ✓ (12 files). Vessel: 88 ✓ (11 files). ci:full ✓.
 
-Next: **P2-1 — Certificates backend** — schema (Certificate, CertificateType, CertificateAttachment on both shore Prisma + vessel Drizzle, sync-aware), API (CRUD + expiry alert query + email/in-app notification dispatch), e2e tests. See §9.4 in REFERENCE.md for acceptance criteria.
+Next: **P2-2 — Safety backend** — drill register, work permit lifecycle (schema, API, e2e for both apps). See §9.7 in REFERENCE.md for acceptance criteria (hot-work permit cannot be active without completed risk assessment).
 
 **Outstanding follow-up tickets (deferred, not blocking P1-4):**
 

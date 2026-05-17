@@ -46,6 +46,16 @@ enum StockMovementType {
   TRANSFER_OUT // sent to another location
 }
 
+enum CertificateSubjectType {
+  VESSEL
+  COMPONENT
+  CREW_MEMBER
+}
+
+enum NotificationType {
+  CERTIFICATE_EXPIRY
+}
+
 enum RequisitionStatus {
   DRAFT
   SUBMITTED
@@ -88,32 +98,36 @@ model Tenant {
   hlc       String?
   deletedAt DateTime? @map("deleted_at")
 
-  vessels             Vessel[]
-  users               User[]
-  masterComponents    MasterComponent[]
-  components          Component[]
-  jobs                Job[]
-  jobInstances        JobInstance[]
-  jobHistories        JobHistory[]
-  runningHourReadings RunningHourReading[]
-  partCategories      PartCategory[]
-  parts               Part[]
-  stockLocations      StockLocation[]
-  stockLevels         StockLevel[]
-  stockMovements      StockMovement[]
-  barcodeBindings     BarcodeBinding[]
-  suppliers           Supplier[]
-  approvalFlows       ApprovalFlow[]
-  approvalSteps       ApprovalStep[]
-  requisitions        Requisition[]
-  requisitionLines    RequisitionLine[]
-  rfqs                Rfq[]
-  quotes              Quote[]
-  quoteLines          QuoteLine[]
-  purchaseOrders      PurchaseOrder[]
-  poLines             POLine[]
-  goodsReceipts       GoodsReceipt[]
-  goodsReceiptLines   GoodsReceiptLine[]
+  vessels              Vessel[]
+  users                User[]
+  masterComponents     MasterComponent[]
+  components           Component[]
+  jobs                 Job[]
+  jobInstances         JobInstance[]
+  jobHistories         JobHistory[]
+  runningHourReadings  RunningHourReading[]
+  partCategories       PartCategory[]
+  parts                Part[]
+  stockLocations       StockLocation[]
+  stockLevels          StockLevel[]
+  stockMovements       StockMovement[]
+  barcodeBindings      BarcodeBinding[]
+  suppliers            Supplier[]
+  approvalFlows        ApprovalFlow[]
+  approvalSteps        ApprovalStep[]
+  requisitions         Requisition[]
+  requisitionLines     RequisitionLine[]
+  rfqs                 Rfq[]
+  quotes               Quote[]
+  quoteLines           QuoteLine[]
+  purchaseOrders       PurchaseOrder[]
+  poLines              POLine[]
+  goodsReceipts        GoodsReceipt[]
+  goodsReceiptLines    GoodsReceiptLine[]
+  certificateTypes     CertificateType[]
+  certificates         Certificate[]
+  certificateAttachments CertificateAttachment[]
+  notifications        Notification[]
 
   @@map("tenants")
 }
@@ -131,25 +145,27 @@ model Vessel {
   hlc       String?
   deletedAt DateTime? @map("deleted_at")
 
-  tenant              Tenant               @relation(fields: [tenantId], references: [id])
-  users               User[]
-  components          Component[]
-  jobs                Job[]
-  jobInstances        JobInstance[]
-  jobHistories        JobHistory[]
-  runningHourReadings RunningHourReading[]
-  stockLocations      StockLocation[]
-  stockLevels         StockLevel[]
-  stockMovements      StockMovement[]
-  requisitions        Requisition[]
-  requisitionLines    RequisitionLine[]
-  rfqs                Rfq[]
-  quotes              Quote[]
-  quoteLines          QuoteLine[]
-  purchaseOrders      PurchaseOrder[]
-  poLines             POLine[]
-  goodsReceipts       GoodsReceipt[]
-  goodsReceiptLines   GoodsReceiptLine[]
+  tenant               Tenant               @relation(fields: [tenantId], references: [id])
+  users                User[]
+  components           Component[]
+  jobs                 Job[]
+  jobInstances         JobInstance[]
+  jobHistories         JobHistory[]
+  runningHourReadings  RunningHourReading[]
+  stockLocations       StockLocation[]
+  stockLevels          StockLevel[]
+  stockMovements       StockMovement[]
+  requisitions         Requisition[]
+  requisitionLines     RequisitionLine[]
+  rfqs                 Rfq[]
+  quotes               Quote[]
+  quoteLines           QuoteLine[]
+  purchaseOrders       PurchaseOrder[]
+  poLines              POLine[]
+  goodsReceipts        GoodsReceipt[]
+  goodsReceiptLines    GoodsReceiptLine[]
+  certificates         Certificate[]
+  certificateAttachments CertificateAttachment[]
 
   @@map("vessels")
 }
@@ -846,6 +862,105 @@ model GoodsReceiptLine {
   @@index([tenantId, vesselId, receiptId])
   @@index([tenantId, vesselId, poLineId])
   @@map("goods_receipt_lines")
+}
+
+// ── Certificates (P2-1) ──────────────────────────────────────────────────────
+// Polymorphic: a Certificate can belong to a vessel, a component, or a crew
+// member. The subject is identified by subjectType + subjectId (soft FK).
+// CertificateType is the tenant-scoped catalog entry (fleet-wide, like Part).
+// Certificate and CertificateAttachment are vessel-scoped and sync-aware.
+
+model CertificateType {
+  id          String  @id
+  tenantId    String  @map("tenant_id")
+  name        String
+  description String?
+  /// JSON: [90, 60, 30, 7] — days before expiry to alert
+  alertDaysJson String? @map("alert_days_json")
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  tenant       Tenant        @relation(fields: [tenantId], references: [id])
+  certificates Certificate[]
+
+  @@index([tenantId])
+  @@map("certificate_types")
+}
+
+model Certificate {
+  id                String                 @id
+  tenantId          String                 @map("tenant_id")
+  vesselId          String?                @map("vessel_id")
+  certificateTypeId String                 @map("certificate_type_id")
+  subjectType       CertificateSubjectType @map("subject_type")
+  subjectId         String                 @map("subject_id")
+  number            String?
+  issuedAt          DateTime?              @map("issued_at")
+  expiresAt         DateTime?              @map("expires_at")
+  issuedBy          String?                @map("issued_by")
+  notes             String?
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  hlc       String?
+  deletedAt DateTime? @map("deleted_at")
+
+  tenant          Tenant                  @relation(fields: [tenantId], references: [id])
+  vessel          Vessel?                 @relation(fields: [vesselId], references: [id])
+  certificateType CertificateType         @relation(fields: [certificateTypeId], references: [id])
+  attachments     CertificateAttachment[]
+
+  @@index([tenantId, vesselId])
+  @@index([tenantId, subjectType, subjectId])
+  @@index([tenantId, expiresAt])
+  @@map("certificates")
+}
+
+model CertificateAttachment {
+  id            String @id
+  tenantId      String @map("tenant_id")
+  vesselId      String? @map("vessel_id")
+  certificateId String @map("certificate_id")
+  fileName      String @map("file_name")
+  storageKey    String @map("storage_key")
+  mimeType      String? @map("mime_type")
+  sizeBytes     Int?    @map("size_bytes")
+
+  uploadedAt DateTime  @default(now()) @map("uploaded_at")
+  hlc        String?
+  deletedAt  DateTime? @map("deleted_at")
+
+  tenant      Tenant      @relation(fields: [tenantId], references: [id])
+  vessel      Vessel?     @relation(fields: [vesselId], references: [id])
+  certificate Certificate @relation(fields: [certificateId], references: [id])
+
+  @@index([tenantId, certificateId])
+  @@map("certificate_attachments")
+}
+
+// ── Notifications (P2-1, shore-only) ────────────────────────────────────────
+// In-app alert records. Created by the expiry-check job when a Certificate
+// is approaching its expiresAt date. Not sync-aware (shore read-only).
+
+model Notification {
+  id       String           @id
+  tenantId String           @map("tenant_id")
+  vesselId String?          @map("vessel_id")
+  type     NotificationType
+  title    String
+  message  String
+  refId    String?          @map("ref_id")
+  readAt   DateTime?        @map("read_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, readAt])
+  @@index([tenantId, type, refId])
+  @@map("notifications")
 }
 
 // ── Sync engine tables ───────────────────────────────────────────────────────

@@ -814,6 +814,80 @@ export const goodsReceiptLines = sqliteTable(
   ],
 );
 
+// ── Certificates (P2-1) ──────────────────────────────────────────────────────
+
+export const CERTIFICATE_SUBJECT_TYPES = ['VESSEL', 'COMPONENT', 'CREW_MEMBER'] as const;
+export type CertificateSubjectType = (typeof CERTIFICATE_SUBJECT_TYPES)[number];
+
+export const certificateTypes = sqliteTable(
+  'certificate_types',
+  {
+    id: text('id').primaryKey(),
+    tenantId: text('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    name: text('name').notNull(),
+    description: text('description'),
+    alertDaysJson: text('alert_days_json'),
+    createdAt: text('created_at').notNull().default(nowIso),
+    updatedAt: text('updated_at').notNull().default(nowIso),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [index('certificate_types_tenant_idx').on(t.tenantId)],
+);
+
+export const certificates = sqliteTable(
+  'certificates',
+  {
+    id: text('id').primaryKey(),
+    tenantId: text('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    vesselId: text('vessel_id').references(() => vessels.id),
+    certificateTypeId: text('certificate_type_id')
+      .notNull()
+      .references(() => certificateTypes.id),
+    subjectType: text('subject_type', { enum: CERTIFICATE_SUBJECT_TYPES }).notNull(),
+    subjectId: text('subject_id').notNull(),
+    number: text('number'),
+    issuedAt: text('issued_at'),
+    expiresAt: text('expires_at'),
+    issuedBy: text('issued_by'),
+    notes: text('notes'),
+    createdAt: text('created_at').notNull().default(nowIso),
+    updatedAt: text('updated_at').notNull().default(nowIso),
+    hlc: text('hlc'),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [
+    index('certificates_tenant_vessel_idx').on(t.tenantId, t.vesselId),
+    index('certificates_tenant_subject_idx').on(t.tenantId, t.subjectType, t.subjectId),
+    index('certificates_tenant_expires_idx').on(t.tenantId, t.expiresAt),
+  ],
+);
+
+export const certificateAttachments = sqliteTable(
+  'certificate_attachments',
+  {
+    id: text('id').primaryKey(),
+    tenantId: text('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    vesselId: text('vessel_id').references(() => vessels.id),
+    certificateId: text('certificate_id')
+      .notNull()
+      .references(() => certificates.id),
+    fileName: text('file_name').notNull(),
+    storageKey: text('storage_key').notNull(),
+    mimeType: text('mime_type'),
+    sizeBytes: integer('size_bytes'),
+    uploadedAt: text('uploaded_at').notNull().default(nowIso),
+    hlc: text('hlc'),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [index('certificate_attachments_cert_idx').on(t.tenantId, t.certificateId)],
+);
+
 // Sync engine outbox. Pending entries have sent_at = null.
 export const outbox = sqliteTable(
   'outbox',

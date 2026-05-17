@@ -2,6 +2,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from 'nestjs-pino';
 import { ApprovalFlowModule } from './approval-flow/approval-flow.module';
+import { CertificateModule } from './certificate/certificate.module';
+import { CertificateTypeModule } from './certificate-type/certificate-type.module';
+import { NotificationModule } from './notification/notification.module';
 import { AuthModule } from './auth/auth.module';
 import { BarcodeBindingModule } from './barcode-binding/barcode-binding.module';
 import { ComponentModule } from './component/component.module';
@@ -61,6 +64,9 @@ import { VesselModule } from './vessel/vessel.module';
     RfqModule,
     QuoteModule,
     PurchaseOrderModule,
+    CertificateTypeModule,
+    CertificateModule,
+    NotificationModule,
   ],
 })
 export class AppModule {}
