@@ -170,6 +170,11 @@ model Tenant {
   restHourEntries      RestHourEntry[]
   crewCertificates     CrewCertificate[]
   auditEvents          AuditEvent[]
+  fuelProducts         FuelProduct[]
+  tanks                Tank[]
+  tankReadings         TankReading[]
+  bunkerDeliveryNotes  BunkerDeliveryNote[]
+  consumptionLogs      ConsumptionLog[]
 
   @@map("tenants")
 }
@@ -219,6 +224,10 @@ model Vessel {
   rotations            Rotation[]
   restHourEntries      RestHourEntry[]
   crewCertificates     CrewCertificate[]
+  tanks                Tank[]
+  tankReadings         TankReading[]
+  bunkerDeliveryNotes  BunkerDeliveryNote[]
+  consumptionLogs      ConsumptionLog[]
 
   @@map("vessels")
 }
@@ -1339,6 +1348,157 @@ model Capa {
   @@index([tenantId, vesselId, status])
   @@index([tenantId, vesselId, findingId])
   @@map("capas")
+}
+
+// ── FLGO (P3-1) ───────────────────────────────────────────────────────────────
+// FuelProduct: tenant-scoped catalog (HFO, MGO, LSMGO, LNG, etc.).
+// Tank: vessel-scoped configuration (capacity, product, frame/position).
+// TankReading: daily sounding — ROB in metric tons and volume.
+//   Drives IMO DCS / EU MRV reporting. All vessel-scoped + sync-aware.
+// BunkerDeliveryNote: fuel receipt record per BDN document.
+//   Stores quantity, density, sulphur content, grade.
+// ConsumptionLog: daily consumption per consumer (main engine, aux, boiler).
+
+enum TankType {
+  HFO     // Heavy Fuel Oil
+  LSFO    // Low-Sulphur Fuel Oil
+  MDO     // Marine Diesel Oil
+  MGO     // Marine Gas Oil
+  LSMGO   // Low-Sulphur MGO
+  LNG     // Liquefied Natural Gas
+  ULSFO   // Ultra-Low-Sulphur Fuel Oil
+  FRESH_WATER
+  BALLAST
+  OTHER
+}
+
+enum ConsumerType {
+  MAIN_ENGINE
+  AUX_ENGINE
+  BOILER
+  OTHER
+}
+
+model FuelProduct {
+  id           String    @id
+  tenantId     String    @map("tenant_id")
+  name         String
+  tankType     TankType  @map("tank_type")
+  sulphurPct   Decimal?  @map("sulphur_pct") @db.Decimal(5, 4)
+  densityKgM3  Decimal?  @map("density_kg_m3") @db.Decimal(8, 3)
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  hlc          String?
+  deletedAt    DateTime? @map("deleted_at")
+
+  tenant              Tenant               @relation(fields: [tenantId], references: [id])
+  tanks               Tank[]
+  bunkerDeliveryNotes BunkerDeliveryNote[]
+  consumptionLogs     ConsumptionLog[]
+
+  @@index([tenantId])
+  @@map("fuel_products")
+}
+
+model Tank {
+  id            String    @id
+  tenantId      String    @map("tenant_id")
+  vesselId      String    @map("vessel_id")
+  name          String
+  tankType      TankType  @map("tank_type")
+  fuelProductId String?   @map("fuel_product_id")
+  capacityM3    Decimal?  @map("capacity_m3") @db.Decimal(10, 3)
+  framePosition String?   @map("frame_position")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  hlc           String?
+  deletedAt     DateTime? @map("deleted_at")
+
+  tenant         Tenant        @relation(fields: [tenantId], references: [id])
+  vessel         Vessel        @relation(fields: [vesselId], references: [id])
+  fuelProduct    FuelProduct?  @relation(fields: [fuelProductId], references: [id])
+  readings       TankReading[]
+
+  @@index([tenantId, vesselId])
+  @@map("tanks")
+}
+
+model TankReading {
+  id            String    @id
+  tenantId      String    @map("tenant_id")
+  vesselId      String    @map("vessel_id")
+  tankId        String    @map("tank_id")
+  readingDate   String    @map("reading_date")   // YYYY-MM-DD
+  robMt         Decimal   @map("rob_mt") @db.Decimal(10, 3)   // Remaining On Board in metric tons
+  robM3         Decimal?  @map("rob_m3") @db.Decimal(10, 3)   // Volume in cubic metres
+  trim          Decimal?  @db.Decimal(5, 2)
+  notes         String?
+  recordedByUserId String? @map("recorded_by_user_id")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  hlc           String?
+  deletedAt     DateTime? @map("deleted_at")
+
+  tenant  Tenant @relation(fields: [tenantId], references: [id])
+  vessel  Vessel @relation(fields: [vesselId], references: [id])
+  tank    Tank   @relation(fields: [tankId], references: [id])
+
+  @@unique([tenantId, vesselId, tankId, readingDate])
+  @@index([tenantId, vesselId, readingDate])
+  @@map("tank_readings")
+}
+
+model BunkerDeliveryNote {
+  id               String      @id
+  tenantId         String      @map("tenant_id")
+  vesselId         String      @map("vessel_id")
+  fuelProductId    String?     @map("fuel_product_id")
+  bdnNumber        String?     @map("bdn_number")
+  deliveryDate     String      @map("delivery_date")   // YYYY-MM-DD
+  port             String?
+  supplierName     String?     @map("supplier_name")
+  quantityMt       Decimal     @map("quantity_mt") @db.Decimal(10, 3)
+  densityKgM3      Decimal?    @map("density_kg_m3") @db.Decimal(8, 3)
+  sulphurPct       Decimal?    @map("sulphur_pct") @db.Decimal(5, 4)
+  grade            String?
+  viscosity        Decimal?    @db.Decimal(8, 3)
+  notes            String?
+  createdAt        DateTime    @default(now()) @map("created_at")
+  updatedAt        DateTime    @updatedAt @map("updated_at")
+  hlc              String?
+  deletedAt        DateTime?   @map("deleted_at")
+
+  tenant      Tenant       @relation(fields: [tenantId], references: [id])
+  vessel      Vessel       @relation(fields: [vesselId], references: [id])
+  fuelProduct FuelProduct? @relation(fields: [fuelProductId], references: [id])
+
+  @@index([tenantId, vesselId, deliveryDate])
+  @@map("bunker_delivery_notes")
+}
+
+model ConsumptionLog {
+  id               String       @id
+  tenantId         String       @map("tenant_id")
+  vesselId         String       @map("vessel_id")
+  fuelProductId    String?      @map("fuel_product_id")
+  logDate          String       @map("log_date")    // YYYY-MM-DD
+  consumerType     ConsumerType @map("consumer_type")
+  consumerName     String?      @map("consumer_name")
+  consumptionMt    Decimal      @map("consumption_mt") @db.Decimal(10, 3)
+  voyageLeg        String?      @map("voyage_leg")
+  notes            String?
+  createdAt        DateTime     @default(now()) @map("created_at")
+  updatedAt        DateTime     @updatedAt @map("updated_at")
+  hlc              String?
+  deletedAt        DateTime?    @map("deleted_at")
+
+  tenant      Tenant       @relation(fields: [tenantId], references: [id])
+  vessel      Vessel       @relation(fields: [vesselId], references: [id])
+  fuelProduct FuelProduct? @relation(fields: [fuelProductId], references: [id])
+
+  @@index([tenantId, vesselId, logDate])
+  @@index([tenantId, vesselId, consumerType])
+  @@map("consumption_logs")
 }
 
 // ── Audit (P2-5) ──────────────────────────────────────────────────────────────

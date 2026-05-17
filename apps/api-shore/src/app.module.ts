@@ -7,6 +7,12 @@ import { ChecklistTemplateModule } from './checklist-template/checklist-template
 import { FindingModule } from './finding/finding.module';
 import { QhseDocumentModule } from './qhse-document/qhse-document.module';
 import { AuditEventModule } from './audit-event/audit-event.module';
+import { BunkerDeliveryNoteModule } from './bunker-delivery-note/bunker-delivery-note.module';
+import { ConsumptionLogModule } from './consumption-log/consumption-log.module';
+import { FlgoReportModule } from './flgo-report/flgo-report.module';
+import { FuelProductModule } from './fuel-product/fuel-product.module';
+import { TankModule } from './tank/tank.module';
+import { TankReadingModule } from './tank-reading/tank-reading.module';
 import { CrewMemberModule } from './crew-member/crew-member.module';
 import { RotationModule } from './rotation/rotation.module';
 import { RestHourEntryModule } from './rest-hour-entry/rest-hour-entry.module';
@@ -95,6 +101,12 @@ import { VesselModule } from './vessel/vessel.module';
     RestHourEntryModule,
     CrewCertificateModule,
     AuditEventModule,
+    FuelProductModule,
+    TankModule,
+    TankReadingModule,
+    BunkerDeliveryNoteModule,
+    ConsumptionLogModule,
+    FlgoReportModule,
   ],
 })
 export class AppModule {}

@@ -8,17 +8,31 @@
 
 > Most-recent first. Format: `### YYYY-MM-DD — <task> — <summary>` then bullets.
 
+### 2026-05-17 — P3-1 — FLGO (tanks, soundings, BDN, IMO DCS / EU MRV / CII)
+
+| Item                      | Detail |
+| ------------------------- | ------ |
+| **Shore Prisma schema**   | 2 new enums (`TankType` 10 values, `ConsumerType` 4 values) + 5 new models: `FuelProduct` (tenant-scoped catalog), `Tank` (vessel-scoped, sync-aware, capacity + frame position), `TankReading` (vessel-scoped, sync-aware, daily sounding in MT + M³, unique per tank+date), `BunkerDeliveryNote` (vessel-scoped, sync-aware, quantity/density/sulphur/grade), `ConsumptionLog` (vessel-scoped, sync-aware, per consumer type). Migration `20260517160801_add_flgo_schema`. RLS on all 5 tables. |
+| **Vessel Drizzle schema** | Mirror of all 5 tables. Migration `0010_glossy_nighthawk.sql` applied. |
+| **Shore API**             | 6 NestJS modules: `FuelProductModule` (CRUD), `TankModule` (CRUD, vesselId filter), `TankReadingModule` (CRUD, date-range filter), `BunkerDeliveryNoteModule` (CRUD, date-range filter), `ConsumptionLogModule` (CRUD, consumer type + date-range filter), `FlgoReportModule` (IMO DCS XML, EU MRV JSON summary, CII rating stub). |
+| **Vessel API**            | Mirror of first 5 modules. Vessel-scoped entities use OutboxRecorder. `FuelProduct` is tenant-scoped (no outbox). No FLGO report module on vessel — reports generated shore-side. |
+| **IMO DCS report**        | `GET /flgo-reports/:vesselId/imo-dcs?year=N` — XML (MARPOL Annex VI Reg 22A format): vessel IMO, reporting period, FuelConsumption per type, BunkerDeliveries per BDN. Acceptance criterion: year of soundings + BDNs → valid IMO DCS XML ✓ |
+| **EU MRV report**         | `GET /flgo-reports/:vesselId/eu-mrv?year=N` — JSON: total consumption MT, total CO2 MT (per IMO MEPC.1/Circ.795 emission factors), by-voyage-leg breakdown. |
+| **CII rating**            | `GET /flgo-reports/:vesselId/cii?year=N` — returns `PENDING_DISTANCE_DATA` (CII = CO2 / DWT×distance; voyage distance stored in P3-2+). CO2 total already computed. |
+| **e2e tests**             | Shore: 12 tests (174 total, 17 files); vessel: 9 tests (128 total, 15 files). Cover FuelProduct CRUD, Tank + TankReading creation, BDN with sulphur/density, multi-consumer logs, IMO DCS XML structure, EU MRV CO2 math, CII stub, outbox entries, RLS policy. |
+| **CI result**             | `pnpm -w run ci:full` ✓ (146 unit); shore e2e → 174 ✓ (17 files); vessel e2e → 128 ✓ (15 files, direct vitest run) |
+
 ### 2026-05-17 — P2-5 — DNV CG-0339 evidence pack (AuditEvent + immutability verification)
 
-| Item                      | Detail                                                                                                                                                                                                                                                                                                                                                     |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Shore Prisma schema**   | `AuditEvent` model (shore-only, not sync-aware): `id, tenantId, vesselId?, actorUserId?, action, entityType, entityId, metadata JSON, recordedAt`. Migration `20260517134208_add_audit_events`. RLS on table. |
-| **AuditEventModule**      | `AuditEventService.record()` — creates an `AuditEvent` row. `AuditEventService.findAll()` — filterable by `vesselId, entityType, action, limit`. `AuditEventService.getDnvEvidence(vesselId)` — builds the DNV CG-0339 evidence pack (queries JobHistory, AuditEvents, verifies `job_histories_immutable` trigger via `information_schema.triggers`). |
-| **JobHistoryService**     | Injects `AuditEventService`. After a successful sign-off tx commits, fires `audit.record({ action: 'JOB_SIGNED_OFF', entityType: 'JobHistory', ... })` fire-and-forget (non-blocking). |
-| **Evidence pack endpoint**| `GET /audit-events/dnv-evidence/:vesselId` returns `{ standard: 'DNV CG-0339', vessel, immutabilityVerification: { trigger, verified }, summary: { totalJobs, totalEvents }, jobHistories[], auditEvents[] }`. `verified: true` confirms the DB trigger is present. |
-| **Immutability verified** | `job_histories_immutable` BEFORE UPDATE/DELETE trigger confirmed present in the DB. e2e test proves a raw `UPDATE job_histories SET notes = '...'` raises an exception — the record cannot be tampered. |
-| **e2e tests**             | 5 tests in `audit-events.e2e.ts`: sign-off creates audit event, event has correct actor + entityType, evidence pack structure, immutability trigger rejection, RLS policy. Shore: 162 ✓ (16 files). ci:full ✓. |
-| **CI result**             | `pnpm -w run ci:full` ✓ (146 unit); shore e2e → 162 ✓ (16 files) |
+| Item                       | Detail                                                                                                                                                                                                                                                                                                                                                |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Shore Prisma schema**    | `AuditEvent` model (shore-only, not sync-aware): `id, tenantId, vesselId?, actorUserId?, action, entityType, entityId, metadata JSON, recordedAt`. Migration `20260517134208_add_audit_events`. RLS on table.                                                                                                                                         |
+| **AuditEventModule**       | `AuditEventService.record()` — creates an `AuditEvent` row. `AuditEventService.findAll()` — filterable by `vesselId, entityType, action, limit`. `AuditEventService.getDnvEvidence(vesselId)` — builds the DNV CG-0339 evidence pack (queries JobHistory, AuditEvents, verifies `job_histories_immutable` trigger via `information_schema.triggers`). |
+| **JobHistoryService**      | Injects `AuditEventService`. After a successful sign-off tx commits, fires `audit.record({ action: 'JOB_SIGNED_OFF', entityType: 'JobHistory', ... })` fire-and-forget (non-blocking).                                                                                                                                                                |
+| **Evidence pack endpoint** | `GET /audit-events/dnv-evidence/:vesselId` returns `{ standard: 'DNV CG-0339', vessel, immutabilityVerification: { trigger, verified }, summary: { totalJobs, totalEvents }, jobHistories[], auditEvents[] }`. `verified: true` confirms the DB trigger is present.                                                                                   |
+| **Immutability verified**  | `job_histories_immutable` BEFORE UPDATE/DELETE trigger confirmed present in the DB. e2e test proves a raw `UPDATE job_histories SET notes = '...'` raises an exception — the record cannot be tampered.                                                                                                                                               |
+| **e2e tests**              | 5 tests in `audit-events.e2e.ts`: sign-off creates audit event, event has correct actor + entityType, evidence pack structure, immutability trigger rejection, RLS policy. Shore: 162 ✓ (16 files). ci:full ✓.                                                                                                                                        |
+| **CI result**              | `pnpm -w run ci:full` ✓ (146 unit); shore e2e → 162 ✓ (16 files)                                                                                                                                                                                                                                                                                      |
 
 ### 2026-05-17 — P2-4 — Crewing backend (crew members, rotations, rest hours, MLC 2006 validation)
 
@@ -403,9 +417,9 @@ Large batch of UI work implementing the Bearing design system across all Phase 1
 
 **P2-5 complete.** DNV CG-0339 evidence pack implemented: AuditEvent model, job sign-off recording (JOB_SIGNED_OFF), evidence pack endpoint verifying the job_histories_immutable trigger. Immutability confirmed by e2e test. Shore: 162 ✓ (16 files). ci:full ✓.
 
-**Phase 2 complete.** P2-1 through P2-5 all done. Shore e2e: 162 ✓. Vessel e2e: 119 ✓. Unit: 146 ✓.
+**P3-1 complete.** FLGO fully implemented: FuelProduct + Tank + TankReading + BunkerDeliveryNote + ConsumptionLog schema on both shore (Prisma) and vessel (Drizzle). IMO DCS XML, EU MRV CO2 summary, and CII stub available at /flgo-reports. Shore: 174 ✓ (17 files). Vessel: 128 ✓ (15 files). ci:full ✓.
 
-Next: **P3-1 — FLGO** — tanks, soundings, BDN; IMO DCS / EU MRV / CII reports. See §9.6 in REFERENCE.md.
+Next: **P3-2 — Project planning (Gantt)** — dry-dock and refit project planning with Gantt chart. See §11 Phase 3 tasks in REFERENCE.md.
 
 **Outstanding follow-up tickets (deferred, not blocking P1-4):**
 

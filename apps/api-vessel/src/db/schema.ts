@@ -1232,6 +1232,154 @@ export const capas = sqliteTable(
   ],
 );
 
+// ── FLGO (P3-1) ─────────────────────────────────────────────────────────────
+
+export const TANK_TYPES = [
+  'HFO',
+  'LSFO',
+  'MDO',
+  'MGO',
+  'LSMGO',
+  'LNG',
+  'ULSFO',
+  'FRESH_WATER',
+  'BALLAST',
+  'OTHER',
+] as const;
+export type TankType = (typeof TANK_TYPES)[number];
+
+export const CONSUMER_TYPES = ['MAIN_ENGINE', 'AUX_ENGINE', 'BOILER', 'OTHER'] as const;
+export type ConsumerType = (typeof CONSUMER_TYPES)[number];
+
+export const fuelProducts = sqliteTable(
+  'fuel_products',
+  {
+    id: text('id').primaryKey(),
+    tenantId: text('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    name: text('name').notNull(),
+    tankType: text('tank_type', { enum: TANK_TYPES }).notNull(),
+    sulphurPct: numeric('sulphur_pct'),
+    densityKgM3: numeric('density_kg_m3'),
+    createdAt: text('created_at').notNull().default(nowIso),
+    updatedAt: text('updated_at').notNull().default(nowIso),
+    hlc: text('hlc'),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [index('fuel_products_tenant_idx').on(t.tenantId)],
+);
+
+export const tanks = sqliteTable(
+  'tanks',
+  {
+    id: text('id').primaryKey(),
+    tenantId: text('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    vesselId: text('vessel_id')
+      .notNull()
+      .references(() => vessels.id),
+    name: text('name').notNull(),
+    tankType: text('tank_type', { enum: TANK_TYPES }).notNull(),
+    fuelProductId: text('fuel_product_id').references(() => fuelProducts.id),
+    capacityM3: numeric('capacity_m3'),
+    framePosition: text('frame_position'),
+    createdAt: text('created_at').notNull().default(nowIso),
+    updatedAt: text('updated_at').notNull().default(nowIso),
+    hlc: text('hlc'),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [index('tanks_tenant_vessel_idx').on(t.tenantId, t.vesselId)],
+);
+
+export const tankReadings = sqliteTable(
+  'tank_readings',
+  {
+    id: text('id').primaryKey(),
+    tenantId: text('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    vesselId: text('vessel_id')
+      .notNull()
+      .references(() => vessels.id),
+    tankId: text('tank_id')
+      .notNull()
+      .references(() => tanks.id),
+    readingDate: text('reading_date').notNull(),
+    robMt: numeric('rob_mt').notNull(),
+    robM3: numeric('rob_m3'),
+    trim: numeric('trim'),
+    notes: text('notes'),
+    recordedByUserId: text('recorded_by_user_id'),
+    createdAt: text('created_at').notNull().default(nowIso),
+    updatedAt: text('updated_at').notNull().default(nowIso),
+    hlc: text('hlc'),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [
+    unique('tank_readings_unique_day').on(t.tenantId, t.vesselId, t.tankId, t.readingDate),
+    index('tank_readings_tenant_vessel_date_idx').on(t.tenantId, t.vesselId, t.readingDate),
+  ],
+);
+
+export const bunkerDeliveryNotes = sqliteTable(
+  'bunker_delivery_notes',
+  {
+    id: text('id').primaryKey(),
+    tenantId: text('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    vesselId: text('vessel_id')
+      .notNull()
+      .references(() => vessels.id),
+    fuelProductId: text('fuel_product_id').references(() => fuelProducts.id),
+    bdnNumber: text('bdn_number'),
+    deliveryDate: text('delivery_date').notNull(),
+    port: text('port'),
+    supplierName: text('supplier_name'),
+    quantityMt: numeric('quantity_mt').notNull(),
+    densityKgM3: numeric('density_kg_m3'),
+    sulphurPct: numeric('sulphur_pct'),
+    grade: text('grade'),
+    viscosity: numeric('viscosity'),
+    notes: text('notes'),
+    createdAt: text('created_at').notNull().default(nowIso),
+    updatedAt: text('updated_at').notNull().default(nowIso),
+    hlc: text('hlc'),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [index('bdn_tenant_vessel_date_idx').on(t.tenantId, t.vesselId, t.deliveryDate)],
+);
+
+export const consumptionLogs = sqliteTable(
+  'consumption_logs',
+  {
+    id: text('id').primaryKey(),
+    tenantId: text('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    vesselId: text('vessel_id')
+      .notNull()
+      .references(() => vessels.id),
+    fuelProductId: text('fuel_product_id').references(() => fuelProducts.id),
+    logDate: text('log_date').notNull(),
+    consumerType: text('consumer_type', { enum: CONSUMER_TYPES }).notNull(),
+    consumerName: text('consumer_name'),
+    consumptionMt: numeric('consumption_mt').notNull(),
+    voyageLeg: text('voyage_leg'),
+    notes: text('notes'),
+    createdAt: text('created_at').notNull().default(nowIso),
+    updatedAt: text('updated_at').notNull().default(nowIso),
+    hlc: text('hlc'),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [
+    index('consumption_logs_tenant_vessel_date_idx').on(t.tenantId, t.vesselId, t.logDate),
+    index('consumption_logs_tenant_vessel_consumer_idx').on(t.tenantId, t.vesselId, t.consumerType),
+  ],
+);
+
 // ── Crewing (P2-4) ──────────────────────────────────────────────────────────
 
 export const CREW_MEMBER_STATUSES = ['ACTIVE', 'ON_LEAVE', 'SIGNED_OFF'] as const;
