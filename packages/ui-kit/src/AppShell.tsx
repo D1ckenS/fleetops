@@ -16,8 +16,9 @@ interface AppShellProps {
   nav: NavItem[];
   currentPath: string;
   onNavClick: (href: string) => void;
-  userEmail?: string;
-  onLogout?: () => void;
+  userEmail?: string | undefined;
+  userDisplayName?: string | undefined; // shown instead of email prefix; falls back to email
+  onLogout?: () => void | undefined;
   children: ReactNode;
   // vessel / company context
   companyName?: string | undefined;
@@ -340,6 +341,7 @@ export function AppShell({
   currentPath,
   onNavClick,
   userEmail,
+  userDisplayName,
   onLogout,
   children,
   companyName,
@@ -483,7 +485,7 @@ export function AppShell({
                   margin: 0,
                 }}
               >
-                {userEmail.split('@')[0]}
+                {userDisplayName ?? userEmail?.split('@')[0]}
               </p>
               {onLogout && (
                 <button

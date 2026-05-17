@@ -9,6 +9,7 @@ export type JwtPayload = {
   tenantId: string | null; // null for SUPER_ADMIN
   vesselId?: string;
   email: string;
+  username?: string; // display name; falls back to email in the UI
   role: string;
   type: 'access' | 'refresh';
 };
@@ -82,6 +83,7 @@ export class AuthService {
     tenantId: string | null;
     vesselId?: string | null;
     email: string;
+    username?: string | null;
     role: string;
   }): LoginResult {
     const base = {
@@ -89,6 +91,7 @@ export class AuthService {
       tenantId: user.tenantId ?? null,
       ...(user.vesselId ? { vesselId: user.vesselId } : {}),
       email: user.email,
+      ...(user.username ? { username: user.username } : {}),
       role: user.role,
     };
 

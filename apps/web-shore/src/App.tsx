@@ -81,6 +81,7 @@ function ProtectedContent() {
       currentPath={location.pathname}
       onNavClick={(href) => navigate(href)}
       userEmail={user.email}
+      userDisplayName={user.username ?? undefined}
       onLogout={logout}
       companyName={isSuperAdmin ? 'Platform Admin' : companyName}
       vessels={isSuperAdmin ? [] : vessels}

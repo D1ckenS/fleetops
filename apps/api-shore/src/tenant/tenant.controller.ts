@@ -5,10 +5,15 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { requireRole } from '../auth/role.guard';
 import { CreateTenantDto } from './dto/create-tenant.dto';
 import { TenantService } from './tenant.service';
+import { UserService } from '../user/user.service';
+import { CreateUserDto } from '../user/dto/create-user.dto';
 
 @Controller('tenants')
 export class TenantController {
-  constructor(private readonly tenants: TenantService) {}
+  constructor(
+    private readonly tenants: TenantService,
+    private readonly users: UserService,
+  ) {}
 
   /** Bootstrap endpoint — open so the first admin can be created. */
   @Post()
@@ -35,5 +40,12 @@ export class TenantController {
   @UseGuards(JwtAuthGuard, requireRole('SUPER_ADMIN'))
   update(@Param('id') id: string, @Body() dto: { name?: string; shortName?: string | null }) {
     return this.tenants.update(id, dto);
+  }
+
+  /** SUPER_ADMIN: create a user (typically TENANT_ADMIN) inside a specific company. */
+  @Post(':id/users')
+  @UseGuards(JwtAuthGuard, requireRole('SUPER_ADMIN'))
+  createUserForTenant(@Param('id') tenantId: string, @Body() dto: CreateUserDto) {
+    return this.users.create(tenantId, dto);
   }
 }

@@ -181,6 +181,7 @@ function AddUserModal({
   onCreated: () => void;
 }) {
   const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState<Role>('OFFICER');
   const [vesselId, setVesselId] = useState<string>(defaultVesselId ?? '');
@@ -196,6 +197,7 @@ function AddUserModal({
     try {
       await api.post('/users', {
         email: email.trim(),
+        username: username.trim() || undefined,
         password,
         role,
         vesselId: vesselId || undefined,
@@ -233,6 +235,16 @@ function AddUserModal({
             onChange={(e) => setEmail(e.target.value)}
             placeholder="user@company.com"
             autoFocus
+          />
+        </div>
+        <div>
+          <label className="text-[11.5px] font-medium mb-1 block" style={{ color: 'var(--ink-2)' }}>
+            Username <span style={{ color: 'var(--ink-3)' }}>(shown in the sidebar)</span>
+          </label>
+          <Input
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="e.g. John"
           />
         </div>
         <div>

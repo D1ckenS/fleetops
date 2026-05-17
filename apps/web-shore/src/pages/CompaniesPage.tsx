@@ -207,6 +207,107 @@ function EditCompanyModal({
   );
 }
 
+// ─── Create admin modal ───────────────────────────────────────────────────────
+
+function CreateAdminModal({
+  company,
+  onClose,
+  onCreated,
+}: {
+  company: Company;
+  onClose: () => void;
+  onCreated: () => void;
+}) {
+  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [err, setErr] = useState('');
+
+  const submit = async () => {
+    if (!email.trim() || !password) {
+      setErr('Email and password are required');
+      return;
+    }
+    setSaving(true);
+    try {
+      await api.post(`/tenants/${company.id}/users`, {
+        email: email.trim(),
+        username: username.trim() || undefined,
+        password,
+        role: 'TENANT_ADMIN',
+      });
+      onCreated();
+      onClose();
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : 'Failed to create admin');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <Modal
+      open
+      title={`Create admin for ${company.shortName ?? company.name}`}
+      onClose={onClose}
+      size="sm"
+    >
+      <div className="flex flex-col gap-3 p-4">
+        <p className="text-[12px] m-0" style={{ color: 'var(--ink-3)' }}>
+          Creates a <strong>Tenant Admin</strong> account. This user can then log in and manage
+          vessels and users for their company.
+        </p>
+        <div>
+          <label className="text-[11.5px] font-medium mb-1 block" style={{ color: 'var(--ink-2)' }}>
+            Email *
+          </label>
+          <Input
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="admin@company.com"
+            autoFocus
+          />
+        </div>
+        <div>
+          <label className="text-[11.5px] font-medium mb-1 block" style={{ color: 'var(--ink-2)' }}>
+            Username <span style={{ color: 'var(--ink-3)' }}>(shown in the sidebar)</span>
+          </label>
+          <Input
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="e.g. John"
+          />
+        </div>
+        <div>
+          <label className="text-[11.5px] font-medium mb-1 block" style={{ color: 'var(--ink-2)' }}>
+            Password *
+          </label>
+          <Input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Min 8 characters"
+          />
+        </div>
+        {err && (
+          <p className="text-[11.5px] m-0" style={{ color: 'var(--sig-red)' }}>
+            {err}
+          </p>
+        )}
+        <div className="flex justify-end gap-2 pt-1">
+          <Button variant="secondary" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button onClick={submit} loading={saving}>
+            Create admin
+          </Button>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
 // ─── Main page ────────────────────────────────────────────────────────────────
 
 export function CompaniesPage() {
@@ -214,6 +315,7 @@ export function CompaniesPage() {
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
   const [edit, setEdit] = useState<Company | null>(null);
+  const [createAdmin, setCreateAdmin] = useState<Company | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -258,7 +360,7 @@ export function CompaniesPage() {
           <div
             className="grid gap-4 px-4 py-2 text-[10.5px] font-semibold uppercase tracking-widest"
             style={{
-              gridTemplateColumns: '1fr 120px 80px 80px 120px 60px',
+              gridTemplateColumns: '1fr 120px 80px 80px 120px 140px',
               background: 'var(--surface-sunk)',
               color: 'var(--ink-3)',
               borderBottom: '1px solid var(--hairline)',
@@ -283,7 +385,7 @@ export function CompaniesPage() {
               key={c.id}
               className="grid gap-4 px-4 py-3 items-center"
               style={{
-                gridTemplateColumns: '1fr 120px 80px 80px 120px 60px',
+                gridTemplateColumns: '1fr 120px 80px 80px 120px 140px',
                 borderTop: i === 0 ? 'none' : '1px solid var(--hairline)',
               }}
             >
@@ -321,18 +423,32 @@ export function CompaniesPage() {
               <span className="font-mono text-[11px]" style={{ color: 'var(--ink-3)' }}>
                 {new Date(c.createdAt).toLocaleDateString('en-GB')}
               </span>
-              <button
-                onClick={() => setEdit(c)}
-                className="text-[11.5px] px-2.5 py-1 rounded-1 border justify-self-end"
-                style={{
-                  background: 'var(--surface)',
-                  borderColor: 'var(--border)',
-                  cursor: 'pointer',
-                  color: 'var(--ink-2)',
-                }}
-              >
-                Edit
-              </button>
+              <div className="flex gap-1.5 justify-end">
+                <button
+                  onClick={() => setCreateAdmin(c)}
+                  className="text-[11px] px-2 py-1 rounded-1 font-medium"
+                  style={{
+                    background: 'var(--navy)',
+                    color: '#fff',
+                    border: 'none',
+                    cursor: 'pointer',
+                  }}
+                >
+                  + Admin
+                </button>
+                <button
+                  onClick={() => setEdit(c)}
+                  className="text-[11.5px] px-2.5 py-1 rounded-1 border"
+                  style={{
+                    background: 'var(--surface)',
+                    borderColor: 'var(--border)',
+                    cursor: 'pointer',
+                    color: 'var(--ink-2)',
+                  }}
+                >
+                  Edit
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -340,6 +456,13 @@ export function CompaniesPage() {
 
       {showCreate && <CreateCompanyModal onClose={() => setShowCreate(false)} onCreated={load} />}
       {edit && <EditCompanyModal company={edit} onClose={() => setEdit(null)} onSaved={load} />}
+      {createAdmin && (
+        <CreateAdminModal
+          company={createAdmin}
+          onClose={() => setCreateAdmin(null)}
+          onCreated={load}
+        />
+      )}
     </div>
   );
 }
