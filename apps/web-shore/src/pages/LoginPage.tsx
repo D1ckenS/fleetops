@@ -14,7 +14,7 @@ export function LoginPage() {
 
   const [isPlatformAdmin, setIsPlatformAdmin] = useState(false);
   const [tenantId, setTenantId] = useState('');
-  const [email, setEmail] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -24,10 +24,9 @@ export function LoginPage() {
     setError(null);
     setLoading(true);
     try {
-      const body = isPlatformAdmin ? { email, password } : { tenantId, email, password };
+      const body = isPlatformAdmin ? { identifier, password } : { tenantId, identifier, password };
       const res = await api.post<LoginResult>('/auth/login', body);
       login(res.access_token);
-      // SUPER_ADMIN lands on /companies; everyone else on /dashboard
       navigate(isPlatformAdmin ? '/companies' : '/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
@@ -58,12 +57,11 @@ export function LoginPage() {
             />
           )}
           <Input
-            id="email"
-            type="email"
-            label="Email"
-            placeholder="you@company.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            id="identifier"
+            label="Username or email"
+            placeholder="john or john@company.com"
+            value={identifier}
+            onChange={(e) => setIdentifier(e.target.value)}
             required
             autoFocus={isPlatformAdmin}
           />
@@ -87,8 +85,8 @@ export function LoginPage() {
               setIsPlatformAdmin((p) => !p);
               setError(null);
             }}
-            className="w-full text-center text-xs text-slate-400 hover:text-slate-600 pt-1"
             style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
+            className="w-full text-center text-xs text-slate-400 hover:text-slate-600 pt-1"
           >
             {isPlatformAdmin ? '← Back to company login' : 'Platform admin login'}
           </button>

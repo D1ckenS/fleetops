@@ -30,10 +30,18 @@ export class TenantService {
             id: userId,
             tenantId,
             email: dto.admin.email,
+            username: dto.admin.username,
             passwordHash,
             role: 'TENANT_ADMIN',
           },
-          select: { id: true, email: true, role: true, tenantId: true, createdAt: true },
+          select: {
+            id: true,
+            email: true,
+            username: true,
+            role: true,
+            tenantId: true,
+            createdAt: true,
+          },
         });
         return { tenant, admin };
       });

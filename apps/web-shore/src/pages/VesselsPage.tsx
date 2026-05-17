@@ -239,12 +239,13 @@ function AddUserModal({
         </div>
         <div>
           <label className="text-[11.5px] font-medium mb-1 block" style={{ color: 'var(--ink-2)' }}>
-            Username <span style={{ color: 'var(--ink-3)' }}>(shown in the sidebar)</span>
+            Username * <span style={{ color: 'var(--ink-3)' }}>(used to log in)</span>
           </label>
           <Input
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="e.g. John"
+            required
           />
         </div>
         <div>

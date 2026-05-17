@@ -52,6 +52,35 @@ export class UserService {
     return user;
   }
 
+  /** Looks up a user by email OR username within a tenant. */
+  async findByIdentifier(tenantId: string, identifier: string) {
+    const user = await this.prisma.withTenant(tenantId, (tx) =>
+      tx.user.findFirst({
+        where: {
+          tenantId,
+          deletedAt: null,
+          OR: [{ email: identifier }, { username: identifier }],
+        },
+      }),
+    );
+    if (!user) throw new NotFoundException(`User ${identifier} not found`);
+    return user;
+  }
+
+  /** Looks up a SUPER_ADMIN by email or username (no tenant). */
+  async findSuperAdminByIdentifier(identifier: string) {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        role: 'SUPER_ADMIN',
+        tenantId: null,
+        deletedAt: null,
+        OR: [{ email: identifier }, { username: identifier }],
+      },
+    });
+    if (!user) throw new NotFoundException(`Super admin ${identifier} not found`);
+    return user;
+  }
+
   findAll(tenantId: string) {
     return this.prisma.withTenant(tenantId, (tx) =>
       tx.user.findMany({
@@ -119,7 +148,7 @@ export class UserService {
   }
 
   /** Creates a SUPER_ADMIN with no tenant. Bypasses withTenant(). */
-  async createSuperAdmin(email: string, password: string, username?: string) {
+  async createSuperAdmin(email: string, password: string, username: string) {
     const existing = await this.prisma.user.findFirst({
       where: { email, role: 'SUPER_ADMIN', tenantId: null },
     });

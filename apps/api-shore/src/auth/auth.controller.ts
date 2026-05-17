@@ -14,7 +14,7 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   login(@Body() dto: LoginDto) {
-    return this.auth.login(dto.tenantId ?? null, dto.email, dto.password);
+    return this.auth.login(dto.tenantId ?? null, dto.identifier, dto.password);
   }
 
   @Post('refresh')
@@ -31,12 +31,12 @@ export class AuthController {
   @Post('bootstrap-super-admin')
   @HttpCode(HttpStatus.CREATED)
   async bootstrapSuperAdmin(
-    @Body() dto: { bootstrapKey: string; email: string; password: string },
+    @Body() dto: { bootstrapKey: string; email: string; username: string; password: string },
   ) {
     const envKey = process.env['PLATFORM_BOOTSTRAP_KEY'];
     if (!envKey || dto.bootstrapKey !== envKey) {
       throw new ForbiddenException('Invalid bootstrap key');
     }
-    return this.users.createSuperAdmin(dto.email, dto.password);
+    return this.users.createSuperAdmin(dto.email, dto.password, dto.username);
   }
 }

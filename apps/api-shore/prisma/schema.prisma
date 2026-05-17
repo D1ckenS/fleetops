@@ -227,6 +227,7 @@ model User {
   vessel Vessel? @relation(fields: [vesselId], references: [id])
 
   @@unique([tenantId, email])
+  @@unique([tenantId, username])
   @@map("users")
 }
 

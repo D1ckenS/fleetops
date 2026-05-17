@@ -31,15 +31,15 @@ export class AuthService {
     private readonly jwt: JwtService,
   ) {}
 
-  async login(tenantId: string | null, email: string, password: string): Promise<LoginResult> {
+  async login(tenantId: string | null, identifier: string, password: string): Promise<LoginResult> {
     let user;
     try {
       if (!tenantId) {
-        // No tenantId supplied → must be SUPER_ADMIN login
-        user = await this.users.findSuperAdminByEmail(email);
+        // No tenantId → SUPER_ADMIN login by email or username
+        user = await this.users.findSuperAdminByIdentifier(identifier);
         if (user.role !== 'SUPER_ADMIN') throw new Error('Not a super admin');
       } else {
-        user = await this.users.findByEmail(tenantId, email);
+        user = await this.users.findByIdentifier(tenantId, identifier);
       }
     } catch {
       throw new UnauthorizedException('Invalid credentials');
@@ -68,9 +68,9 @@ export class AuthService {
     let user;
     try {
       if (!payload.tenantId) {
-        user = await this.users.findSuperAdminByEmail(payload.email);
+        user = await this.users.findSuperAdminByIdentifier(payload.email);
       } else {
-        user = await this.users.findByEmail(payload.tenantId, payload.email);
+        user = await this.users.findByIdentifier(payload.tenantId, payload.email);
       }
     } catch {
       throw new UnauthorizedException('User no longer exists');

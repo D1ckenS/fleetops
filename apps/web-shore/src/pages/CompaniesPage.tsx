@@ -25,13 +25,14 @@ function CreateCompanyModal({
   const [name, setName] = useState('');
   const [shortName, setShortName] = useState('');
   const [adminEmail, setAdminEmail] = useState('');
+  const [adminUsername, setAdminUsername] = useState('');
   const [adminPassword, setAdminPassword] = useState('');
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState('');
 
   const submit = async () => {
-    if (!name.trim() || !adminEmail.trim() || !adminPassword) {
-      setErr('Company name, admin email and password are all required');
+    if (!name.trim() || !adminEmail.trim() || !adminUsername.trim() || !adminPassword) {
+      setErr('Company name, admin email, username and password are all required');
       return;
     }
     setSaving(true);
@@ -39,7 +40,11 @@ function CreateCompanyModal({
       await api.post<unknown>('/tenants', {
         name: name.trim(),
         shortName: shortName.trim() || undefined,
-        admin: { email: adminEmail.trim(), password: adminPassword },
+        admin: {
+          email: adminEmail.trim(),
+          username: adminUsername.trim(),
+          password: adminPassword,
+        },
       });
       onCreated();
       onClose();
@@ -98,6 +103,19 @@ function CreateCompanyModal({
               value={adminEmail}
               onChange={(e) => setAdminEmail(e.target.value)}
               placeholder="admin@company.com"
+            />
+          </div>
+          <div>
+            <label
+              className="text-[11.5px] font-medium mb-1 block"
+              style={{ color: 'var(--ink-2)' }}
+            >
+              Username *
+            </label>
+            <Input
+              value={adminUsername}
+              onChange={(e) => setAdminUsername(e.target.value)}
+              placeholder="e.g. Admin"
             />
           </div>
           <div>
@@ -271,12 +289,13 @@ function CreateAdminModal({
         </div>
         <div>
           <label className="text-[11.5px] font-medium mb-1 block" style={{ color: 'var(--ink-2)' }}>
-            Username <span style={{ color: 'var(--ink-3)' }}>(shown in the sidebar)</span>
+            Username * <span style={{ color: 'var(--ink-3)' }}>(used to log in)</span>
           </label>
           <Input
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="e.g. John"
+            required
           />
         </div>
         <div>
