@@ -348,7 +348,7 @@ export function CompaniesPage() {
   }, [load]);
 
   return (
-    <div style={{ maxWidth: 800 }}>
+    <div style={{ maxWidth: '1000px' }}>
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <div>
@@ -379,7 +379,7 @@ export function CompaniesPage() {
           <div
             className="grid gap-4 px-4 py-2 text-[10.5px] font-semibold uppercase tracking-widest"
             style={{
-              gridTemplateColumns: '1fr 120px 80px 80px 120px 140px',
+              gridTemplateColumns: 'minmax(200px, 1fr) 130px 90px 90px 110px 150px',
               background: 'var(--surface-sunk)',
               color: 'var(--ink-3)',
               borderBottom: '1px solid var(--hairline)',
@@ -390,7 +390,7 @@ export function CompaniesPage() {
             <span style={{ textAlign: 'right' }}>Vessels</span>
             <span style={{ textAlign: 'right' }}>Users</span>
             <span>Created</span>
-            <span />
+            <span>Action</span>
           </div>
 
           {companies.length === 0 && (
@@ -404,7 +404,7 @@ export function CompaniesPage() {
               key={c.id}
               className="grid gap-4 px-4 py-3 items-center"
               style={{
-                gridTemplateColumns: '1fr 120px 80px 80px 120px 140px',
+                gridTemplateColumns: 'minmax(200px, 1fr) 130px 90px 90px 110px 150px',
                 borderTop: i === 0 ? 'none' : '1px solid var(--hairline)',
               }}
             >
@@ -442,7 +442,7 @@ export function CompaniesPage() {
               <span className="font-mono text-[11px]" style={{ color: 'var(--ink-3)' }}>
                 {new Date(c.createdAt).toLocaleDateString('en-GB')}
               </span>
-              <div className="flex gap-1.5 justify-end">
+              <div className="flex gap-1.5 justify-start">
                 <button
                   onClick={() => setCreateAdmin(c)}
                   className="text-[11px] px-2 py-1 rounded-1 font-medium"
