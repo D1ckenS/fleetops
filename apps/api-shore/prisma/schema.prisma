@@ -177,6 +177,8 @@ model Tenant {
   consumptionLogs      ConsumptionLog[]
   projects             Project[]
   projectTasks         ProjectTask[]
+  budgets              Budget[]
+  budgetLines          BudgetLine[]
 
   @@map("tenants")
 }
@@ -232,6 +234,7 @@ model Vessel {
   consumptionLogs      ConsumptionLog[]
   projects             Project[]
   projectTasks         ProjectTask[]
+  budgets              Budget[]
 
   @@map("vessels")
 }
@@ -1726,6 +1729,56 @@ model ProjectTask {
 // One Outbox + one SyncRecord per (tenant, vessel) namespace. The shore runs
 // one SyncEngine per pair (ADR 0002 §9). Both tables carry tenantId + vesselId
 // so the per-engine adapter scopes its reads/writes.
+
+// ── Budget / BudgetLine ──────────────────────────────────────────────────────
+// Tenant-scoped. vesselId is optional — null means a fleet-wide budget.
+// RLS applied in migration.
+
+enum BudgetCategory {
+  MAINTENANCE
+  SPARES
+  PROVISIONS
+  PORT_DUES
+  CREW
+  INSURANCE
+  FUEL
+  OTHER
+}
+
+model Budget {
+  id        String    @id
+  tenantId  String    @map("tenant_id")
+  vesselId  String?   @map("vessel_id")
+  year      Int
+  name      String
+  currency  String    @default("EUR")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  tenant    Tenant       @relation(fields: [tenantId], references: [id])
+  vessel    Vessel?      @relation(fields: [vesselId], references: [id])
+  lines     BudgetLine[]
+
+  @@index([tenantId, year])
+  @@map("budgets")
+}
+
+model BudgetLine {
+  id             String         @id
+  tenantId       String         @map("tenant_id")
+  budgetId       String         @map("budget_id")
+  category       BudgetCategory
+  budgetedAmount Decimal        @map("budgeted_amount") @db.Decimal(12, 2)
+  currency       String         @default("EUR")
+  notes          String?
+
+  tenant  Tenant @relation(fields: [tenantId], references: [id])
+  budget  Budget @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+
+  @@map("budget_lines")
+}
+
+// ── Outbox / SyncRecord ───────────────────────────────────────────────────────
 
 model Outbox {
   id         String    @id

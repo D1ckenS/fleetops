@@ -13,7 +13,7 @@ import { SafetyPage } from './pages/SafetyPage.js';
 import { QHSEPage } from './pages/QHSEPage.js';
 import { VesselsPage } from './pages/VesselsPage.js';
 import { CompaniesPage } from './pages/CompaniesPage.js';
-import { ComingSoonPage } from './pages/ComingSoonPage.js';
+import { FlgoPage } from './pages/FlgoPage.js';
 import type { NavItem } from '@fleetops/ui-kit';
 
 // ─── Role helpers ─────────────────────────────────────────────────────────────
@@ -211,7 +211,7 @@ function ProtectedContent() {
           path="flgo"
           element={
             <RequireVessel>
-              <ComingSoonPage module="FLGO" phase="Phase 3 (P3-1)" />
+              <FlgoPage />
             </RequireVessel>
           }
         />

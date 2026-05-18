@@ -8,6 +8,18 @@
 
 > Most-recent first. Format: `### YYYY-MM-DD — <task> — <summary>` then bullets.
 
+### 2026-05-18 — P4-1 — Start (Fleetview) dashboard; budgets vs actuals
+
+| Item | Detail |
+|---|---|
+| **Prisma schema** | `BudgetCategory` enum (8 values) + `Budget` + `BudgetLine` models. Migrations `20260518070931_add_budget_schema` (tables + FKs + index) and `20260518070941_add_budget_schema` (RLS policies on both tables) applied. Relations added to Tenant and Vessel. |
+| **BudgetModule (shore)** | CRUD for `Budget` (`GET /budgets`, `POST`, `GET /:id`, `PATCH /:id`, `DELETE /:id`) with vessel-scoped or fleet-wide budgets (vesselId nullable). Sub-resource `BudgetLine` via `POST /budgets/:id/lines`, `PATCH /budgets/:id/lines/:lineId`, `DELETE /budgets/:id/lines/:lineId`. |
+| **FleetviewModule (shore)** | 3 endpoints: `GET /fleetview/summary` — fleet KPIs (total vessels, overdue jobs, expiring certs, pending approvals, open findings) + per-vessel status rows with counts from groupBy aggregation; `GET /fleetview/worklist?limit=N` — cross-vessel items sorted by severity (overdue jobs → pending approvals → expiring certs → open findings); `GET /fleetview/budget-actuals?year=N` — budgets with per-line breakdown + actuals from PO sum per vessel/year. |
+| **DashboardPage rewrite (web)** | Full Fleetview: 5-tile fleet KPI strip (vessels, overdue, expiring, pending, findings); fleet table with per-vessel status pills (red overdue, amber due, amber certs, blue approvals, neutral findings) + "All clear" green badge when clean; clicking a vessel row selects it in VesselContext; budget vs actuals section (progress bars per budget, pct color: green→amber@70%→red@90%); worklist panel (severity-tagged items with vessel + date). No RequireVessel guard — fleet-level view. |
+| **FlgoPage (web)** | New FLGO web page replacing ComingSoonPage stub: 3 tabs (Tanks, Soundings, BDN) connected to existing P3-1 API endpoints. Tanks tab shows type, capacity, latest ROB; Soundings tab shows date-sorted readings; BDN tab shows delivery history. ComingSoonPage import removed from App.tsx. |
+| **e2e tests** | Shore: 13 new tests in `budget-fleetview.e2e.ts` — Budget CRUD (create fleet-wide, create vessel-scoped, add line, add second line, list with lines, update line, patch budget name, delete line, RLS policy presence), Fleetview (summary structure, worklist items, budget-actuals, zero-counts for clean vessel). Shore: 200 ✓ (20 files). ci:full ✓ (146 unit). |
+| **CI result** | `pnpm -w run ci:full` ✓ (146 unit); shore e2e → 200 ✓ (20 files); vessel e2e → 128 ✓ (15 files, unchanged) |
+
 ### 2026-05-18 — P3-2 through P3-5 — Operational depth (Gantt, multi-step approvals, RFQ comparison, mobile parity)
 
 | Item                                | Detail                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
@@ -432,7 +444,9 @@ Large batch of UI work implementing the Bearing design system across all Phase 1
 
 **Phase 3 complete (P3-1 through P3-5).** All operational depth tasks implemented: FLGO, Gantt project planning, multi-step approvals, RFQ comparison with PO conversion, and mobile feature parity (7 modules). Shore: 187 ✓ (19 files). Vessel: 128 ✓ (15 files). ci:full ✓.
 
-Next: **P4-1 — Start (Fleetview) dashboard** — fleet map/list with per-vessel status pills, budgets vs actuals, worklist aggregator. See §11 Phase 4 tasks in REFERENCE.md.
+**P4-1 complete.** Fleetview dashboard implemented: fleet KPI strip, per-vessel status pills, budget vs actuals with progress bars, cross-vessel worklist. FlgoPage created (replaces ComingSoonPage stub). Shore: 200 ✓ (20 files). ci:full ✓.
+
+Next: **P4-2 — Integrations** — 2BA, Nareto, OCIMF, accounting connector, Microsoft Entra SSO. See §11 Phase 4 tasks in REFERENCE.md.
 
 **Outstanding follow-up tickets (deferred, not blocking P1-4):**
 
