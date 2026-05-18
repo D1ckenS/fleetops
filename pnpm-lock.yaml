@@ -284,6 +284,9 @@ importers:
       '@fleetops/ui-kit':
         specifier: workspace:*
         version: link:../../packages/ui-kit
+      '@superset-ui/embedded-sdk':
+        specifier: ^0.3.0
+        version: 0.3.0
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -2301,6 +2304,12 @@ packages:
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
 
+  '@superset-ui/embedded-sdk@0.3.0':
+    resolution: {integrity: sha512-Q1ttlQy5H69pvJ29K5mY3/7awzwmOgTyEa/IzGwIZKlz0/dpV8GT/6zPic8C88TMJpkt5cDlpj8B1aUZm+K7Qg==}
+
+  '@superset-ui/switchboard@0.20.3':
+    resolution: {integrity: sha512-qEMXFwdRLfXug4gXXdBEGpFtBWZoxdZkCJLBVxj1IR8cQvSqjkWAQOzSSYYdcIeREWqi8iP+iK6apNV1ZQCKcA==}
+
   '@swc/core-darwin-arm64@1.15.33':
     resolution: {integrity: sha512-N+L0uXhuO7FIfzqwgxmzv0zIpV0qEp8wPX3QQs2p4atjMoywup2JTeDlXPw+z9pWJGCae3JjM+tZ6myclI+2gA==}
     engines: {node: '>=10'}
@@ -4244,6 +4253,10 @@ packages:
 
   jws@4.0.1:
     resolution: {integrity: sha512-EKI/M/yqPncGUUh44xz0PxSidXFr/+r0pA70+gIYhjv+et7yxM+s29Y+VGDkovRofQem0fs7Uvf4+YmAdyRduA==}
+
+  jwt-decode@4.0.0:
+    resolution: {integrity: sha512-+KJGIyHgkGuIq3IEBNftfhW/LfWhXUIY6OmyVWjliu5KH1y0fw7VQ8YndE2O4qZdMSd9SqbnC8GOcZEy0Om7sA==}
+    engines: {node: '>=18'}
 
   keyv@4.5.4:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}
@@ -8000,6 +8013,13 @@ snapshots:
 
   '@standard-schema/spec@1.1.0': {}
 
+  '@superset-ui/embedded-sdk@0.3.0':
+    dependencies:
+      '@superset-ui/switchboard': 0.20.3
+      jwt-decode: 4.0.0
+
+  '@superset-ui/switchboard@0.20.3': {}
+
   '@swc/core-darwin-arm64@1.15.33':
     optional: true
 
@@ -10195,6 +10215,8 @@ snapshots:
     dependencies:
       jwa: 2.0.1
       safe-buffer: 5.2.1
+
+  jwt-decode@4.0.0: {}
 
   keyv@4.5.4:
     dependencies:

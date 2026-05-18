@@ -80,6 +80,7 @@ Pin to these versions. When you bump, update this section in the same commit.
 | Property testing | fast-check                                                     | `4.7.0`                                                                |
 | Script runner    | tsx                                                            | `4.21.0`                                                               |
 | Excel export     | exceljs                                                        | `4.x`                                                                  |
+| BI embed SDK     | @superset-ui/embedded-sdk                                      | `0.x (latest)`                                                         |
 | BI / dashboards  | Apache Superset (later phase)                                  | `4.x`                                                                  |
 
 **Rule:** If a package is not listed, justify the addition in the commit message and add it here.

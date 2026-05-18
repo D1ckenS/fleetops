@@ -185,6 +185,7 @@ model Tenant {
   ocimfInspections        OcimfInspection[]
   classSocietyConnectors  ClassSocietyConnector[]
   classSocietySubmissions ClassSocietySubmission[]
+  biDashboards            BiDashboard[]
 
   @@map("tenants")
 }
@@ -1954,6 +1955,28 @@ model ClassSocietySubmission {
 
   @@index([tenantId, vesselId, society])
   @@map("class_society_submissions")
+}
+
+// ── BI Dashboards ─────────────────────────────────────────────────────────────
+// Tenant-managed registry of Superset dashboards to expose in the Analytics module.
+// The actual dashboards are created in Superset; we store their UUID + metadata here.
+
+model BiDashboard {
+  id                  String    @id
+  tenantId            String    @map("tenant_id")
+  supersetDashboardId String    @map("superset_dashboard_id")
+  title               String
+  description         String?
+  category            String?
+  sortOrder           Int       @default(0) @map("sort_order")
+  enabled             Boolean   @default(true)
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+
+  tenant              Tenant    @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, enabled])
+  @@map("bi_dashboards")
 }
 
 // ── Outbox / SyncRecord ───────────────────────────────────────────────────────
