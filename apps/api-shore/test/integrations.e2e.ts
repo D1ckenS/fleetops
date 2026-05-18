@@ -65,37 +65,59 @@ afterAll(async () => {
 // ── SSO config ────────────────────────────────────────────────────────────────
 
 describe('SSO config', () => {
-  it('returns no config when not configured', async () => {
+  it('returns empty list when not configured', async () => {
     const res = await request(app.getHttpServer())
-      .get('/api/v1/auth/oidc/config')
+      .get('/api/v1/auth/oidc/configs')
       .set('Authorization', `Bearer ${token}`);
     expect(res.status).toBe(200);
-    // NestJS serializes null as empty body → parsed as {}; or actual null
-    expect(!res.body || !res.body.entraClientId).toBe(true);
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body.length).toBe(0);
   });
 
-  it('upserts SSO config', async () => {
+  it('upserts Entra SSO config', async () => {
     const res = await request(app.getHttpServer())
       .post('/api/v1/auth/oidc/config')
       .set('Authorization', `Bearer ${token}`)
       .send({
-        entraClientId: 'test-client-id',
-        entraTenantId: 'test-directory-id',
+        provider: 'ENTRA',
+        discoveryUrl: 'https://login.microsoftonline.com/test-directory-id/v2.0',
+        clientId: 'test-entra-client-id',
         clientSecret: 'test-secret',
         redirectUri: 'https://shore.fleetops.test/auth/callback',
         enabled: true,
       });
     expect(res.status).toBe(201);
-    expect(res.body.entraClientId).toBe('test-client-id');
+    expect(res.body.clientId).toBe('test-entra-client-id');
+    expect(res.body.provider).toBe('ENTRA');
     expect(res.body.tenantId).toBe(tenantId);
   });
 
-  it('reads back the saved SSO config', async () => {
+  it('upserts Google SSO config', async () => {
     const res = await request(app.getHttpServer())
-      .get('/api/v1/auth/oidc/config')
+      .post('/api/v1/auth/oidc/config')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        provider: 'GOOGLE',
+        discoveryUrl: 'https://accounts.google.com',
+        clientId: 'test-google-client-id.apps.googleusercontent.com',
+        clientSecret: 'test-google-secret',
+        redirectUri: 'https://shore.fleetops.test/auth/callback',
+        enabled: true,
+      });
+    expect(res.status).toBe(201);
+    expect(res.body.provider).toBe('GOOGLE');
+  });
+
+  it('reads back both SSO configs', async () => {
+    const res = await request(app.getHttpServer())
+      .get('/api/v1/auth/oidc/configs')
       .set('Authorization', `Bearer ${token}`);
     expect(res.status).toBe(200);
-    expect(res.body.entraClientId).toBe('test-client-id');
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body.length).toBe(2);
+    const providers = (res.body as { provider: string }[]).map((c) => c.provider);
+    expect(providers).toContain('ENTRA');
+    expect(providers).toContain('GOOGLE');
   });
 
   it('beginLogin returns 503 when external IDP is unreachable in test env', async () => {

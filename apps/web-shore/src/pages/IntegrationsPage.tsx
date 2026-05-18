@@ -4,12 +4,17 @@ import { api } from '../api/client.js';
 // ── Types ────────────────────────────────────────────────────────────────────
 
 interface SsoConfig {
-  entraClientId: string;
-  entraTenantId: string;
+  provider: 'ENTRA' | 'GOOGLE';
+  discoveryUrl: string;
+  clientId: string;
   clientSecret: string;
   redirectUri: string;
   enabled: boolean;
 }
+
+const GOOGLE_DISCOVERY_URL = 'https://accounts.google.com';
+const DEFAULT_REDIRECT_URI =
+  typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : '';
 
 interface TechLibraryConfig {
   provider: 'TWO_BA' | 'NARETO';
@@ -145,38 +150,23 @@ function StatusBadge({ ok }: { ok: boolean }) {
 // ── SSO Tab ──────────────────────────────────────────────────────────────────
 
 function SsoTab() {
-  const [cfg, setCfg] = useState<Partial<SsoConfig>>({});
-  const [saving, setSaving] = useState(false);
-  const [msg, setMsg] = useState<string | null>(null);
+  const [configs, setConfigs] = useState<SsoConfig[]>([]);
 
   useEffect(() => {
     api
-      .get<SsoConfig | null>('/auth/oidc/config')
-      .then((c) => {
-        if (c) setCfg(c);
-      })
+      .get<SsoConfig[]>('/auth/oidc/configs')
+      .then((cs) => setConfigs(Array.isArray(cs) ? cs : []))
       .catch(() => {});
   }, []);
 
-  async function save() {
-    setSaving(true);
-    setMsg(null);
-    try {
-      await api.post('/auth/oidc/config', cfg);
-      setMsg('SSO configuration saved.');
-    } catch (e) {
-      setMsg(e instanceof Error ? e.message : 'Save failed');
-    } finally {
-      setSaving(false);
-    }
-  }
+  const entra = configs.find((c) => c.provider === 'ENTRA');
+  const google = configs.find((c) => c.provider === 'GOOGLE');
 
   return (
     <>
       <SectionCard title="Microsoft Entra SSO">
         <p style={{ fontSize: 12.5, color: '#41546A', marginBottom: 16 }}>
-          Allow users to sign in with their Microsoft account. Create an app registration in your
-          Azure tenant and paste the credentials below.{' '}
+          Allow users to sign in with their Microsoft / Azure AD account.{' '}
           <a
             href="https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app"
             target="_blank"
@@ -186,67 +176,143 @@ function SsoTab() {
             Microsoft docs ↗
           </a>
         </p>
-        <LabeledInput
-          label="Application (Client) ID"
-          value={cfg.entraClientId ?? ''}
-          onChange={(v) => setCfg((c) => ({ ...c, entraClientId: v }))}
-          placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        <ProviderForm
+          providerKey="ENTRA"
+          initial={entra}
+          buildDiscoveryUrl={(dirId) =>
+            dirId ? `https://login.microsoftonline.com/${dirId}/v2.0` : ''
+          }
         />
-        <LabeledInput
-          label="Directory (Tenant) ID"
-          value={cfg.entraTenantId ?? ''}
-          onChange={(v) => setCfg((c) => ({ ...c, entraTenantId: v }))}
-          placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-          hint='Use "common" to allow any Microsoft account.'
-        />
-        <LabeledInput
-          label="Client Secret"
-          type="password"
-          value={cfg.clientSecret ?? ''}
-          onChange={(v) => setCfg((c) => ({ ...c, clientSecret: v }))}
-          placeholder="Enter client secret value"
-        />
-        <LabeledInput
-          label="Redirect URI"
-          value={cfg.redirectUri ?? `${window.location.origin}/auth/callback`}
-          onChange={(v) => setCfg((c) => ({ ...c, redirectUri: v }))}
-          placeholder={`${window.location.origin}/auth/callback`}
-          hint="Must match the redirect URI registered in your Entra app exactly."
-        />
-        {msg && (
-          <p
-            style={{
-              fontSize: 12,
-              color: msg.includes('failed') || msg.includes('error') ? '#AB382E' : '#2F7D4F',
-              marginBottom: 12,
-            }}
+      </SectionCard>
+
+      <SectionCard title="Google SSO">
+        <p style={{ fontSize: 12.5, color: '#41546A', marginBottom: 16 }}>
+          Allow users to sign in with their Google account. Create an OAuth 2.0 Web Application
+          client in Google Cloud Console.{' '}
+          <a
+            href="https://developers.google.com/identity/openid-connect/openid-connect#appsetup"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: '#1F5B9D' }}
           >
-            {msg}
-          </p>
-        )}
-        <SaveBtn loading={saving} onClick={save} />
+            Google docs ↗
+          </a>
+        </p>
+        <ProviderForm providerKey="GOOGLE" initial={google} discoveryUrl={GOOGLE_DISCOVERY_URL} />
       </SectionCard>
 
       <SectionCard title="How SSO login works">
         <ol
-          style={{
-            fontSize: 12.5,
-            color: '#41546A',
-            lineHeight: 1.7,
-            paddingLeft: 18,
-            margin: 0,
-          }}
+          style={{ fontSize: 12.5, color: '#41546A', lineHeight: 1.7, paddingLeft: 18, margin: 0 }}
         >
-          <li>User visits the login page and enters the Organisation ID.</li>
-          <li>User clicks "Sign in with Microsoft."</li>
-          <li>FleetOps redirects to Microsoft login.</li>
-          <li>After authentication Microsoft redirects back to the Redirect URI above.</li>
-          <li>
-            FleetOps issues a session — new users are provisioned automatically with CREW role.
-          </li>
+          <li>User enters the Organisation ID on the login page.</li>
+          <li>User clicks "Sign in with Microsoft" or "Sign in with Google."</li>
+          <li>FleetOps redirects to the chosen provider's login page.</li>
+          <li>After authentication the provider redirects back to the Redirect URI above.</li>
+          <li>FleetOps issues a session — new users are auto-provisioned with CREW role.</li>
         </ol>
       </SectionCard>
     </>
+  );
+}
+
+// ── Reusable provider form ────────────────────────────────────────────────────
+
+function ProviderForm({
+  providerKey,
+  initial,
+  discoveryUrl: fixedDiscoveryUrl,
+  buildDiscoveryUrl,
+}: {
+  providerKey: 'ENTRA' | 'GOOGLE';
+  initial: SsoConfig | undefined;
+  discoveryUrl?: string | undefined;
+  buildDiscoveryUrl?: ((dirId: string) => string) | undefined;
+}) {
+  const [clientId, setClientId] = useState(initial?.clientId ?? '');
+  const [clientSecret, setClientSecret] = useState(initial?.clientSecret ?? '');
+  const [redirectUri, setRedirectUri] = useState(initial?.redirectUri ?? DEFAULT_REDIRECT_URI);
+  const [dirId, setDirId] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+
+  async function save() {
+    setSaving(true);
+    setMsg(null);
+    try {
+      const discoveryUrl = fixedDiscoveryUrl ?? (buildDiscoveryUrl ? buildDiscoveryUrl(dirId) : '');
+      if (!discoveryUrl) {
+        setMsg('Enter the Directory (Tenant) ID to construct the discovery URL.');
+        return;
+      }
+      await api.post('/auth/oidc/config', {
+        provider: providerKey,
+        discoveryUrl,
+        clientId,
+        clientSecret,
+        redirectUri,
+        enabled: true,
+      });
+      setMsg('Saved.');
+    } catch (e) {
+      setMsg(e instanceof Error ? e.message : 'Save failed');
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div>
+      {buildDiscoveryUrl && (
+        <LabeledInput
+          label="Directory (Tenant) ID"
+          value={dirId}
+          onChange={setDirId}
+          placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+          hint='Use "common" to allow any Microsoft account.'
+        />
+      )}
+      <LabeledInput
+        label="Client ID"
+        value={clientId}
+        onChange={setClientId}
+        placeholder={
+          providerKey === 'GOOGLE'
+            ? '123456789-abc.apps.googleusercontent.com'
+            : 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
+        }
+      />
+      <LabeledInput
+        label="Client Secret"
+        type="password"
+        value={clientSecret}
+        onChange={setClientSecret}
+        placeholder="Your OAuth client secret"
+      />
+      <LabeledInput
+        label="Redirect URI"
+        value={redirectUri}
+        onChange={setRedirectUri}
+        placeholder={DEFAULT_REDIRECT_URI}
+        hint="Must match the redirect URI in your provider's app settings exactly."
+      />
+      <div
+        style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 4, marginBottom: 8 }}
+      >
+        <StatusBadge ok={Boolean(clientId && clientSecret)} />
+        {msg && (
+          <span
+            style={{
+              fontSize: 12,
+              color: msg === 'Saved.' ? '#2F7D4F' : '#AB382E',
+            }}
+          >
+            {msg}
+          </span>
+        )}
+      </div>
+      <SaveBtn loading={saving} onClick={save} />
+    </div>
   );
 }
 

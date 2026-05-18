@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
-import { IsBoolean, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsEnum, IsOptional, IsString, IsUrl } from 'class-validator';
+import { SsoProvider } from '@prisma/client';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { AuthCtx } from './auth-ctx.decorator';
 import type { AuthContext } from './auth-context';
@@ -14,11 +15,14 @@ class OidcCallbackDto {
 }
 
 class UpsertSsoConfigDto {
-  @IsString()
-  entraClientId!: string;
+  @IsEnum(SsoProvider)
+  provider!: SsoProvider;
+
+  @IsUrl({ require_tld: false })
+  discoveryUrl!: string;
 
   @IsString()
-  entraTenantId!: string;
+  clientId!: string;
 
   @IsString()
   clientSecret!: string;
@@ -35,10 +39,11 @@ class UpsertSsoConfigDto {
 export class OidcController {
   constructor(private readonly oidc: OidcService) {}
 
-  /** Begin the OIDC login flow. Returns the IDP authorization URL + state. */
+  /** Begin OIDC login. Returns the IDP authorization URL + state JWT. */
   @Get('login')
-  beginLogin(@Query('tenantId') tenantId: string) {
-    return this.oidc.beginLogin(tenantId);
+  beginLogin(@Query('tenantId') tenantId: string, @Query('provider') provider?: string) {
+    const p = provider === 'GOOGLE' ? SsoProvider.GOOGLE : SsoProvider.ENTRA;
+    return this.oidc.beginLogin(tenantId, p);
   }
 
   /** Complete the OIDC flow. Exchange code+state for FleetOps JWT pair. */
@@ -47,14 +52,14 @@ export class OidcController {
     return this.oidc.completeLogin(dto.code, dto.state);
   }
 
-  /** Get current SSO config for the caller's tenant (admins only). */
+  /** Get all SSO configs for the caller's tenant. */
   @UseGuards(JwtAuthGuard)
-  @Get('config')
-  getConfig(@AuthCtx() auth: AuthContext) {
-    return this.oidc.getSsoConfig(auth.tenantId!);
+  @Get('configs')
+  getConfigs(@AuthCtx() auth: AuthContext) {
+    return this.oidc.getSsoConfigs(auth.tenantId!);
   }
 
-  /** Upsert SSO config for the caller's tenant (admins only). */
+  /** Upsert an SSO config for a specific provider. */
   @UseGuards(JwtAuthGuard)
   @Post('config')
   upsertConfig(@AuthCtx() auth: AuthContext, @Body() dto: UpsertSsoConfigDto) {

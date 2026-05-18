@@ -179,7 +179,7 @@ model Tenant {
   projectTasks         ProjectTask[]
   budgets              Budget[]
   budgetLines          BudgetLine[]
-  ssoConfig            TenantSsoConfig?
+  ssoConfigs           TenantSsoConfig[]
   techLibraryConnector TechLibraryConnector?
   accountingConnector  AccountingConnector?
   ocimfInspections     OcimfInspection[]
@@ -1783,22 +1783,29 @@ model BudgetLine {
   @@map("budget_lines")
 }
 
-// ── SSO: Tenant Entra config ─────────────────────────────────────────────────
-// One row per tenant. clientSecret stored in plaintext (encrypt at rest in prod).
+// ── SSO: Tenant SSO config ───────────────────────────────────────────────────
+// One row per (tenant, provider). clientSecret stored in plaintext (encrypt at rest in prod).
+
+enum SsoProvider {
+  ENTRA
+  GOOGLE
+}
 
 model TenantSsoConfig {
-  id             String    @id
-  tenantId       String    @unique @map("tenant_id")
-  entraClientId  String    @map("entra_client_id")
-  entraTenantId  String    @map("entra_tenant_id")
-  clientSecret   String    @map("client_secret")
-  redirectUri    String    @map("redirect_uri")
-  enabled        Boolean   @default(true)
-  createdAt      DateTime  @default(now()) @map("created_at")
-  updatedAt      DateTime  @updatedAt @map("updated_at")
+  id            String      @id
+  tenantId      String      @map("tenant_id")
+  provider      SsoProvider @default(ENTRA)
+  discoveryUrl  String      @map("discovery_url")
+  clientId      String      @map("client_id")
+  clientSecret  String      @map("client_secret")
+  redirectUri   String      @map("redirect_uri")
+  enabled       Boolean     @default(true)
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
 
-  tenant         Tenant    @relation(fields: [tenantId], references: [id])
+  tenant        Tenant      @relation(fields: [tenantId], references: [id])
 
+  @@unique([tenantId, provider])
   @@map("tenant_sso_configs")
 }
 

@@ -18,7 +18,7 @@ export function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [ssoLoading, setSsoLoading] = useState(false);
+  const [ssoLoading, setSsoLoading] = useState<'microsoft' | 'google' | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -36,21 +36,21 @@ export function LoginPage() {
     }
   }
 
-  async function handleSsoLogin() {
+  async function handleSsoLogin(provider: 'ENTRA' | 'GOOGLE') {
     if (!tenantId.trim()) {
       setError('Enter your Organisation ID to use SSO login.');
       return;
     }
     setError(null);
-    setSsoLoading(true);
+    setSsoLoading(provider === 'GOOGLE' ? 'google' : 'microsoft');
     try {
       const res = await api.get<{ authorizationUrl: string; state: string }>(
-        `/auth/oidc/login?tenantId=${encodeURIComponent(tenantId)}`,
+        `/auth/oidc/login?tenantId=${encodeURIComponent(tenantId)}&provider=${provider}`,
       );
       window.location.href = res.authorizationUrl;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'SSO login failed');
-      setSsoLoading(false);
+      setSsoLoading(null);
     }
   }
 
@@ -115,15 +115,15 @@ export function LoginPage() {
               </div>
               <button
                 type="button"
-                onClick={handleSsoLogin}
-                disabled={ssoLoading}
+                onClick={() => handleSsoLogin('ENTRA')}
+                disabled={ssoLoading !== null}
                 style={{
                   width: '100%',
                   padding: '9px 16px',
                   border: '1px solid #e2e8f0',
                   borderRadius: 8,
                   background: '#fff',
-                  cursor: ssoLoading ? 'not-allowed' : 'pointer',
+                  cursor: ssoLoading !== null ? 'not-allowed' : 'pointer',
                   fontFamily: 'inherit',
                   fontSize: 13,
                   fontWeight: 500,
@@ -132,7 +132,7 @@ export function LoginPage() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: 8,
-                  opacity: ssoLoading ? 0.7 : 1,
+                  opacity: ssoLoading !== null ? 0.7 : 1,
                 }}
               >
                 <svg width="16" height="16" viewBox="0 0 23 23" fill="none">
@@ -141,7 +141,49 @@ export function LoginPage() {
                   <path d="M1 12h10v10H1z" fill="#00a4ef" />
                   <path d="M12 12h10v10H12z" fill="#ffb900" />
                 </svg>
-                {ssoLoading ? 'Redirecting…' : 'Sign in with Microsoft'}
+                {ssoLoading === 'microsoft' ? 'Redirecting…' : 'Sign in with Microsoft'}
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSsoLogin('GOOGLE')}
+                disabled={ssoLoading !== null}
+                style={{
+                  width: '100%',
+                  padding: '9px 16px',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: 8,
+                  background: '#fff',
+                  cursor: ssoLoading !== null ? 'not-allowed' : 'pointer',
+                  fontFamily: 'inherit',
+                  fontSize: 13,
+                  fontWeight: 500,
+                  color: '#1a1a2e',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 8,
+                  opacity: ssoLoading !== null ? 0.7 : 1,
+                }}
+              >
+                <svg width="16" height="16" viewBox="0 0 48 48" fill="none">
+                  <path
+                    d="M43.6 20.5H42V20H24v8h11.3C33.7 32.9 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.5 6.5 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.4-.4-3.5z"
+                    fill="#FFC107"
+                  />
+                  <path
+                    d="M6.3 14.7l6.6 4.8C14.7 16.1 19 13 24 13c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.5 7.1 29.5 4.6 24 4.6 16.3 4.6 9.7 8.7 6.3 14.7z"
+                    fill="#FF3D00"
+                  />
+                  <path
+                    d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.3C29.3 35.3 26.8 36 24 36c-5.2 0-9.6-3.1-11.3-7.5l-6.6 5.1C9.6 40 16.3 44 24 44z"
+                    fill="#4CAF50"
+                  />
+                  <path
+                    d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.4 4.2-4.4 5.5l6.2 5.3C36.9 39.3 44 34 44 24c0-1.2-.1-2.4-.4-3.5z"
+                    fill="#1976D2"
+                  />
+                </svg>
+                {ssoLoading === 'google' ? 'Redirecting…' : 'Sign in with Google'}
               </button>
             </>
           )}

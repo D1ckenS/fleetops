@@ -7,6 +7,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { generators, Issuer } from 'openid-client';
 import type { Client } from 'openid-client';
+import { SsoProvider } from '@prisma/client';
 import { newId } from '@fleetops/domain';
 import { AuthService } from './auth.service';
 import { PrismaService } from '../prisma/prisma.service';
@@ -15,12 +16,12 @@ import { UserService } from '../user/user.service';
 interface OidcStatePayload {
   type: 'oidc_state';
   tenantId: string;
+  provider: SsoProvider;
   codeVerifier: string;
   nonce: string;
 }
 
-// Cache discovered OIDC clients keyed by Entra tenant ID — avoids repeated HTTP
-// discovery calls on every login attempt.
+// Cache discovered OIDC clients keyed by discoveryUrl:clientId.
 const clientCache = new Map<string, Client>();
 
 @Injectable()
@@ -34,11 +35,14 @@ export class OidcService {
     private readonly jwt: JwtService,
   ) {}
 
-  async beginLogin(fleetopsTenantId: string): Promise<{ authorizationUrl: string; state: string }> {
-    const config = await this.loadConfig(fleetopsTenantId);
+  async beginLogin(
+    fleetopsTenantId: string,
+    provider: SsoProvider = SsoProvider.ENTRA,
+  ): Promise<{ authorizationUrl: string; state: string }> {
+    const config = await this.loadConfig(fleetopsTenantId, provider);
     const client = await this.getClient(
-      config.entraClientId,
-      config.entraTenantId,
+      config.discoveryUrl,
+      config.clientId,
       config.clientSecret,
       config.redirectUri,
     );
@@ -50,6 +54,7 @@ export class OidcService {
     const statePayload: OidcStatePayload = {
       type: 'oidc_state',
       tenantId: fleetopsTenantId,
+      provider,
       codeVerifier,
       nonce,
     };
@@ -78,11 +83,11 @@ export class OidcService {
       throw new UnauthorizedException('Unexpected token type in OIDC state');
     }
 
-    const { tenantId, codeVerifier, nonce } = statePayload;
-    const config = await this.loadConfig(tenantId);
+    const { tenantId, provider, codeVerifier, nonce } = statePayload;
+    const config = await this.loadConfig(tenantId, provider);
     const client = await this.getClient(
-      config.entraClientId,
-      config.entraTenantId,
+      config.discoveryUrl,
+      config.clientId,
       config.clientSecret,
       config.redirectUri,
     );
@@ -95,7 +100,7 @@ export class OidcService {
 
     const claims = tokenSet.claims();
     const email = (claims['email'] ?? claims['preferred_username']) as string | undefined;
-    if (!email) throw new UnauthorizedException('No email claim in Microsoft ID token');
+    if (!email) throw new UnauthorizedException('No email claim in ID token');
 
     // Find existing user or provision a new SSO-only user (no password).
     let user: {
@@ -116,66 +121,69 @@ export class OidcService {
           data: { id, tenantId, email, username, passwordHash: null, role: 'CREW' },
         }),
       );
-      this.logger.log({ msg: 'SSO: provisioned new user', tenantId, email });
+      this.logger.log({ msg: 'SSO: provisioned new user', tenantId, provider, email });
     }
 
     return this.auth.issueTokens(user);
   }
 
-  // ── Config & client helpers ────────────────────────────────────────────────
+  // ── Config helpers ─────────────────────────────────────────────────────────
 
-  async getSsoConfig(tenantId: string) {
+  async getSsoConfigs(tenantId: string) {
     try {
-      return await this.loadConfig(tenantId);
+      return await this.prisma.withTenant(tenantId, (tx) =>
+        tx.tenantSsoConfig.findMany({ where: { tenantId } }),
+      );
     } catch {
-      return null;
+      return [];
     }
   }
 
   async upsertSsoConfig(
     tenantId: string,
     dto: {
-      entraClientId: string;
-      entraTenantId: string;
+      provider: SsoProvider;
+      discoveryUrl: string;
+      clientId: string;
       clientSecret: string;
       redirectUri: string;
       enabled?: boolean;
     },
   ) {
     // Invalidate cached client when config changes.
-    clientCache.delete(dto.entraTenantId);
+    clientCache.delete(`${dto.discoveryUrl}:${dto.clientId}`);
 
     return this.prisma.withTenant(tenantId, (tx) =>
       tx.tenantSsoConfig.upsert({
-        where: { tenantId },
+        where: { tenantId_provider: { tenantId, provider: dto.provider } },
         create: { id: newId(), tenantId, ...dto, enabled: dto.enabled ?? true },
         update: { ...dto },
       }),
     );
   }
 
-  private async loadConfig(tenantId: string) {
+  private async loadConfig(tenantId: string, provider: SsoProvider) {
     const config = await this.prisma.withTenant(tenantId, (tx) =>
-      tx.tenantSsoConfig.findFirst({ where: { tenantId, enabled: true } }),
+      tx.tenantSsoConfig.findFirst({ where: { tenantId, provider, enabled: true } }),
     );
     if (!config) {
       throw new ServiceUnavailableException(
-        'SSO is not configured for this tenant. Set up Microsoft Entra credentials in the Integrations settings.',
+        `SSO is not configured for provider ${provider}. Configure it in Integrations settings.`,
       );
     }
     return config;
   }
 
   private async getClient(
+    discoveryUrl: string,
     clientId: string,
-    entraTenantId: string,
     clientSecret: string,
     redirectUri: string,
   ): Promise<Client> {
-    const cacheKey = `${entraTenantId}:${clientId}`;
+    const cacheKey = `${discoveryUrl}:${clientId}`;
     if (clientCache.has(cacheKey)) return clientCache.get(cacheKey)!;
 
-    const issuer = await Issuer.discover(`https://login.microsoftonline.com/${entraTenantId}/v2.0`);
+    const issuer = await Issuer.discover(discoveryUrl);
     const client = new issuer.Client({
       client_id: clientId,
       client_secret: clientSecret,
