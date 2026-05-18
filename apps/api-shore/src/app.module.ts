@@ -18,6 +18,7 @@ import { RotationModule } from './rotation/rotation.module';
 import { RestHourEntryModule } from './rest-hour-entry/rest-hour-entry.module';
 import { CrewCertificateModule } from './crew-certificate/crew-certificate.module';
 import { ApprovalFlowModule } from './approval-flow/approval-flow.module';
+import { ProjectModule } from './project/project.module';
 import { DrillTypeModule } from './drill-type/drill-type.module';
 import { DrillModule } from './drill/drill.module';
 import { PermitTemplateModule } from './permit-template/permit-template.module';
@@ -107,6 +108,7 @@ import { VesselModule } from './vessel/vessel.module';
     BunkerDeliveryNoteModule,
     ConsumptionLogModule,
     FlgoReportModule,
+    ProjectModule,
   ],
 })
 export class AppModule {}

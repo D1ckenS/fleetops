@@ -554,6 +554,7 @@ export const requisitions = sqliteTable(
     requestedByUserId: text('requested_by_user_id'),
     requestedAt: text('requested_at').notNull(),
     approvalFlowId: text('approval_flow_id').references(() => approvalFlows.id),
+    currentStepOrder: integer('current_step_order').notNull().default(0),
     approvedByUserId: text('approved_by_user_id'),
     approvedAt: text('approved_at'),
     rejectedByUserId: text('rejected_by_user_id'),
@@ -1505,6 +1506,72 @@ export const crewCertificates = sqliteTable(
     index('crew_certificates_tenant_vessel_crew_idx').on(t.tenantId, t.vesselId, t.crewMemberId),
     index('crew_certificates_tenant_expires_idx').on(t.tenantId, t.expiresAt),
   ],
+);
+
+// ── Project planning (P3-2) ──────────────────────────────────────────────────
+
+export const PROJECT_STATUSES = [
+  'PLANNING',
+  'ACTIVE',
+  'ON_HOLD',
+  'COMPLETED',
+  'CANCELLED',
+] as const;
+export type ProjectStatus = (typeof PROJECT_STATUSES)[number];
+
+export const PROJECT_TASK_STATUSES = ['TODO', 'IN_PROGRESS', 'DONE', 'BLOCKED'] as const;
+export type ProjectTaskStatus = (typeof PROJECT_TASK_STATUSES)[number];
+
+export const projects = sqliteTable(
+  'projects',
+  {
+    id: text('id').primaryKey(),
+    tenantId: text('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    vesselId: text('vessel_id')
+      .notNull()
+      .references(() => vessels.id),
+    title: text('title').notNull(),
+    description: text('description'),
+    status: text('status', { enum: PROJECT_STATUSES }).notNull().default('PLANNING'),
+    startDate: text('start_date'),
+    endDate: text('end_date'),
+    hlc: text('hlc'),
+    createdAt: text('created_at').notNull().default(nowIso),
+    updatedAt: text('updated_at').notNull().default(nowIso),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [index('projects_tenant_vessel_status_idx').on(t.tenantId, t.vesselId, t.status)],
+);
+
+export const projectTasks = sqliteTable(
+  'project_tasks',
+  {
+    id: text('id').primaryKey(),
+    tenantId: text('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    vesselId: text('vessel_id')
+      .notNull()
+      .references(() => vessels.id),
+    projectId: text('project_id')
+      .notNull()
+      .references(() => projects.id),
+    title: text('title').notNull(),
+    description: text('description'),
+    status: text('status', { enum: PROJECT_TASK_STATUSES }).notNull().default('TODO'),
+    startDate: text('start_date'),
+    endDate: text('end_date'),
+    plannedDays: integer('planned_days'),
+    predecessorId: text('predecessor_id'),
+    assignedToRole: text('assigned_to_role'),
+    hlc: text('hlc'),
+    createdAt: text('created_at').notNull().default(nowIso),
+    updatedAt: text('updated_at').notNull().default(nowIso),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [index('project_tasks_tenant_vessel_project_idx').on(t.tenantId, t.vesselId, t.projectId)],
 );
 
 // Sync engine outbox. Pending entries have sent_at = null.

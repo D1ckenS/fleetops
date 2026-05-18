@@ -12,6 +12,7 @@ import { RestHourEntryModule } from './rest-hour-entry/rest-hour-entry.module';
 import { CrewCertificateModule } from './crew-certificate/crew-certificate.module';
 import { BunkerDeliveryNoteModule } from './bunker-delivery-note/bunker-delivery-note.module';
 import { ConsumptionLogModule } from './consumption-log/consumption-log.module';
+import { ProjectModule } from './project/project.module';
 import { FuelProductModule } from './fuel-product/fuel-product.module';
 import { TankModule } from './tank/tank.module';
 import { TankReadingModule } from './tank-reading/tank-reading.module';
@@ -101,6 +102,7 @@ import { VesselModule } from './vessel/vessel.module';
     TankReadingModule,
     BunkerDeliveryNoteModule,
     ConsumptionLogModule,
+    ProjectModule,
   ],
 })
 export class AppModule {}
