@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { api } from '../api/client.js';
 import { useAuth } from '../context/AuthContext.js';
 import { useVessel } from '../context/VesselContext.js';
@@ -161,6 +162,7 @@ function StatusPill({
 // ── Main page ────────────────────────────────────────────────────────────────
 
 export function DashboardPage() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { setSelectedVesselId } = useVessel();
   const [summary, setSummary] = useState<FleetSummary | null>(null);
@@ -188,9 +190,16 @@ export function DashboardPage() {
 
   const greeting = () => {
     const h = new Date().getHours();
-    if (h < 12) return 'Good morning';
-    if (h < 17) return 'Good afternoon';
-    return 'Good evening';
+    if (h < 12) return t('dashboard.greeting_morning');
+    if (h < 17) return t('dashboard.greeting_afternoon');
+    return t('dashboard.greeting_evening');
+  };
+
+  const worklistTypeLabel: Record<string, string> = {
+    JOB_OVERDUE: t('dashboard.type_overdue'),
+    REQUISITION_PENDING: t('dashboard.type_approval'),
+    CERT_EXPIRING: t('dashboard.type_cert'),
+    FINDING_OPEN: t('dashboard.type_finding'),
   };
 
   const fleet = summary?.fleet;
@@ -235,7 +244,7 @@ export function DashboardPage() {
             marginBottom: 24,
           }}
         >
-          Loading fleet data…
+          {t('dashboard.loading')}
         </div>
       ) : (
         <>
@@ -249,34 +258,44 @@ export function DashboardPage() {
             }}
           >
             <KpiTile
-              label="Vessels"
+              label={t('dashboard.vessels_in_fleet')}
               value={fleet?.totalVessels ?? 0}
               tone="neutral"
-              sub="in fleet"
+              sub={t('dashboard.in_fleet')}
             />
             <KpiTile
-              label="Overdue jobs"
+              label={t('dashboard.overdue_jobs')}
               value={fleet?.overdueJobs ?? 0}
               tone={(fleet?.overdueJobs ?? 0) > 0 ? 'red' : 'green'}
-              sub={(fleet?.overdueJobs ?? 0) > 0 ? 'Needs attention' : 'All clear'}
+              sub={
+                (fleet?.overdueJobs ?? 0) > 0
+                  ? t('dashboard.needs_attention')
+                  : t('dashboard.all_clear')
+              }
             />
             <KpiTile
-              label="Expiring certs"
+              label={t('dashboard.expiring_certs')}
               value={fleet?.expiringCerts ?? 0}
               tone={(fleet?.expiringCerts ?? 0) > 0 ? 'amber' : 'green'}
-              sub="within 30 days"
+              sub={t('dashboard.within_30_days')}
             />
             <KpiTile
-              label="Pending approvals"
+              label={t('dashboard.pending_approvals')}
               value={fleet?.pendingApprovals ?? 0}
               tone={(fleet?.pendingApprovals ?? 0) > 0 ? 'amber' : 'green'}
-              sub={(fleet?.pendingApprovals ?? 0) > 0 ? 'Review' : 'All clear'}
+              sub={
+                (fleet?.pendingApprovals ?? 0) > 0
+                  ? t('dashboard.review')
+                  : t('dashboard.all_clear')
+              }
             />
             <KpiTile
-              label="Open findings"
+              label={t('dashboard.open_findings')}
               value={fleet?.openFindings ?? 0}
               tone={(fleet?.openFindings ?? 0) > 0 ? 'amber' : 'green'}
-              sub={(fleet?.openFindings ?? 0) > 0 ? 'Review' : 'All clear'}
+              sub={
+                (fleet?.openFindings ?? 0) > 0 ? t('dashboard.review') : t('dashboard.all_clear')
+              }
             />
           </div>
 
@@ -305,11 +324,13 @@ export function DashboardPage() {
                   }}
                 >
                   <span style={{ fontSize: 12.5, fontWeight: 600, color: '#0A1F33', flex: 1 }}>
-                    Fleet
+                    {t('dashboard.fleet')}
                   </span>
                   <span style={{ fontSize: 11, color: '#8893A0' }}>
-                    {summary?.vessels.length ?? 0} vessel
-                    {(summary?.vessels.length ?? 0) !== 1 ? 's' : ''}
+                    {summary?.vessels.length ?? 0}{' '}
+                    {(summary?.vessels.length ?? 0) !== 1
+                      ? t('dashboard.vessels')
+                      : t('dashboard.vessel')}
                   </span>
                 </div>
 
@@ -332,7 +353,7 @@ export function DashboardPage() {
                       textTransform: 'uppercase',
                     }}
                   >
-                    Vessel
+                    {t('dashboard.vessel')}
                   </span>
                   <span
                     style={{
@@ -343,7 +364,7 @@ export function DashboardPage() {
                       textTransform: 'uppercase',
                     }}
                   >
-                    Status
+                    {t('dashboard.status')}
                   </span>
                 </div>
 
@@ -422,21 +443,33 @@ export function DashboardPage() {
                               borderRadius: 99,
                             }}
                           >
-                            All clear
+                            {t('dashboard.all_clear')}
                           </span>
                         ) : (
                           <>
-                            <StatusPill count={v.status.overdueJobs} label="overdue" tone="red" />
-                            <StatusPill count={v.status.dueThisWeek} label="due" tone="amber" />
-                            <StatusPill count={v.status.expiringCerts} label="certs" tone="amber" />
+                            <StatusPill
+                              count={v.status.overdueJobs}
+                              label={t('dashboard.overdue')}
+                              tone="red"
+                            />
+                            <StatusPill
+                              count={v.status.dueThisWeek}
+                              label={t('dashboard.due')}
+                              tone="amber"
+                            />
+                            <StatusPill
+                              count={v.status.expiringCerts}
+                              label={t('dashboard.certs')}
+                              tone="amber"
+                            />
                             <StatusPill
                               count={v.status.pendingApprovals}
-                              label="approvals"
+                              label={t('dashboard.approvals')}
                               tone="blue"
                             />
                             <StatusPill
                               count={v.status.openFindings}
-                              label="findings"
+                              label={t('dashboard.findings')}
                               tone="neutral"
                             />
                           </>
@@ -465,7 +498,7 @@ export function DashboardPage() {
                     }}
                   >
                     <span style={{ fontSize: 12.5, fontWeight: 600, color: '#0A1F33' }}>
-                      Budget vs Actuals — {year}
+                      {t('dashboard.budget_vs_actuals')} — {year}
                     </span>
                   </div>
                   {budgetData.budgets.map((b) => {
@@ -516,7 +549,8 @@ export function DashboardPage() {
                           />
                         </div>
                         <div style={{ fontSize: 10.5, color: '#8893A0', marginTop: 4 }}>
-                          {pct.toFixed(0)}% consumed
+                          {pct.toFixed(0)}
+                          {t('dashboard.pct_consumed')}
                         </div>
                       </div>
                     );
@@ -545,8 +579,12 @@ export function DashboardPage() {
                   justifyContent: 'space-between',
                 }}
               >
-                <span style={{ fontSize: 12.5, fontWeight: 600, color: '#0A1F33' }}>Worklist</span>
-                <span style={{ fontSize: 11, color: '#8893A0' }}>{worklist.length} items</span>
+                <span style={{ fontSize: 12.5, fontWeight: 600, color: '#0A1F33' }}>
+                  {t('dashboard.worklist')}
+                </span>
+                <span style={{ fontSize: 11, color: '#8893A0' }}>
+                  {worklist.length} {t('dashboard.items')}
+                </span>
               </div>
 
               {worklist.length === 0 ? (
@@ -558,17 +596,12 @@ export function DashboardPage() {
                     fontSize: 12,
                   }}
                 >
-                  All clear — nothing needs attention
+                  {t('dashboard.nothing_needs_attention')}
                 </div>
               ) : (
                 worklist.map((item) => {
                   const { bg, fg } = SIG[item.severity];
-                  const typeLabel: Record<string, string> = {
-                    JOB_OVERDUE: 'Overdue',
-                    REQUISITION_PENDING: 'Approval',
-                    CERT_EXPIRING: 'Cert',
-                    FINDING_OPEN: 'Finding',
-                  };
+                  const typeLabel = worklistTypeLabel;
                   return (
                     <div
                       key={item.entityId}

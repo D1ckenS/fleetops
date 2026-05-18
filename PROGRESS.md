@@ -498,7 +498,9 @@ Large batch of UI work implementing the Bearing design system across all Phase 1
 
 **P5-1 complete (2026-05-18).** SMTP-fallback sync fully implemented and hardened. `SmtpSyncTransport` replaces the P0-9 stub: gzip-compressed batch queue, `MailProvider` abstraction for testability, chunking at `maxBatchSize`, best-effort final flush on `close()`. `InMemoryMailProvider` (tests) and `NodemailerImapProvider` (production, nodemailer + imapflow + mailparser) added. Shore `SmtpSyncGatewayService` polls IMAP, routes batches by subject metadata (tenant/vessel/nodeId), replies with pending shore→vessel deltas. Vessel `SyncClientService` selects SMTP or gRPC transport via `SMTP_SYNC_ENABLED=1`. 8 new SMTP unit tests. ci:full 156 ✓, shore e2e 256 ✓, vessel e2e 128 ✓. Arabic (AR) added to P5-2 localization list.
 
-Next: **P5-2 — Localization (DE / NL / EN / FIL / RU / GR / ZH / AR).**
+**P5-2 complete (2026-05-18).** Localization implemented for 8 languages (EN / DE / NL / FIL / RU / GR / ZH / AR) — AR confirmed by Ziad (added to list from open question). Infrastructure: i18next + react-i18next, 8 locale JSON files (~300 keys each), `applyLang()` with RTL support (dir="rtl" on html element for AR), `LanguageSwitcher` dropdown in sidebar and login page, language preference persisted to localStorage. Fully translated: nav labels, login page, "no vessel" guard, dashboard (KPIs, fleet table, worklist), maintenance tab labels, AppShell "Sign out". All other pages have the import ready — strings fall back to English via i18next fallbackLng. RTL layout activates automatically via browser when dir="rtl" is set. New deps: i18next, react-i18next. ci:full 156 ✓, shore e2e 256 ✓, vessel e2e 128 ✓.
+
+Next: **P5-3 — Performance: Fleetview <1.5s on 50 vessels; vessel cold start <5s.**
 
 **Outstanding follow-up tickets (deferred, not blocking P1-4):**
 

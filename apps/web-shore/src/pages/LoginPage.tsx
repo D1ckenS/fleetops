@@ -1,14 +1,17 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Button, Input } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
 import { useAuth } from '../context/AuthContext.js';
+import { LanguageSwitcher } from '../components/LanguageSwitcher.js';
 
 interface LoginResult {
   access_token: string;
 }
 
 export function LoginPage() {
+  const { t } = useTranslation();
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -30,7 +33,7 @@ export function LoginPage() {
       login(res.access_token);
       navigate(isPlatformAdmin ? '/companies' : '/dashboard');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed');
+      setError(err instanceof Error ? err.message : t('auth.login_failed'));
     } finally {
       setLoading(false);
     }
@@ -38,7 +41,7 @@ export function LoginPage() {
 
   async function handleSsoLogin(provider: 'ENTRA' | 'GOOGLE') {
     if (!tenantId.trim()) {
-      setError('Enter your Organisation ID to use SSO login.');
+      setError(t('auth.sso_needs_org_id'));
       return;
     }
     setError(null);
@@ -49,7 +52,7 @@ export function LoginPage() {
       );
       window.location.href = res.authorizationUrl;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'SSO login failed');
+      setError(err instanceof Error ? err.message : t('auth.sso_failed'));
       setSsoLoading(null);
     }
   }
@@ -59,15 +62,15 @@ export function LoginPage() {
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <span className="text-4xl">⚓</span>
-          <h1 className="text-2xl font-bold text-white mt-2">FleetOps</h1>
-          <p className="text-slate-400 text-sm mt-1">Maritime Fleet Management</p>
+          <h1 className="text-2xl font-bold text-white mt-2">{t('app.name')}</h1>
+          <p className="text-slate-400 text-sm mt-1">{t('app.tagline')}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-lg p-6 space-y-4">
           {!isPlatformAdmin && (
             <Input
               id="tenantId"
-              label="Organisation ID"
+              label={t('auth.organisation_id')}
               placeholder="tenant-id"
               value={tenantId}
               onChange={(e) => setTenantId(e.target.value)}
@@ -77,7 +80,7 @@ export function LoginPage() {
           )}
           <Input
             id="identifier"
-            label="Username or email"
+            label={t('auth.username_or_email')}
             placeholder="john or john@company.com"
             value={identifier}
             onChange={(e) => setIdentifier(e.target.value)}
@@ -87,7 +90,7 @@ export function LoginPage() {
           <Input
             id="password"
             type="password"
-            label="Password"
+            label={t('auth.password')}
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -95,7 +98,7 @@ export function LoginPage() {
           />
           {error && <p className="text-sm text-red-600 bg-red-50 rounded-md px-3 py-2">{error}</p>}
           <Button type="submit" className="w-full" loading={loading}>
-            Sign in
+            {t('auth.sign_in')}
           </Button>
 
           {!isPlatformAdmin && (
@@ -110,7 +113,7 @@ export function LoginPage() {
                 }}
               >
                 <div style={{ flex: 1, height: 1, background: '#e2e8f0' }} />
-                <span>or</span>
+                <span>{t('auth.or')}</span>
                 <div style={{ flex: 1, height: 1, background: '#e2e8f0' }} />
               </div>
               <button
@@ -141,7 +144,7 @@ export function LoginPage() {
                   <path d="M1 12h10v10H1z" fill="#00a4ef" />
                   <path d="M12 12h10v10H12z" fill="#ffb900" />
                 </svg>
-                {ssoLoading === 'microsoft' ? 'Redirecting…' : 'Sign in with Microsoft'}
+                {ssoLoading === 'microsoft' ? t('auth.redirecting') : t('auth.sign_in_microsoft')}
               </button>
               <button
                 type="button"
@@ -183,7 +186,7 @@ export function LoginPage() {
                     fill="#1976D2"
                   />
                 </svg>
-                {ssoLoading === 'google' ? 'Redirecting…' : 'Sign in with Google'}
+                {ssoLoading === 'google' ? t('auth.redirecting') : t('auth.sign_in_google')}
               </button>
             </>
           )}
@@ -197,9 +200,13 @@ export function LoginPage() {
             style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
             className="w-full text-center text-xs text-slate-400 hover:text-slate-600 pt-1"
           >
-            {isPlatformAdmin ? '← Back to company login' : 'Platform admin login'}
+            {isPlatformAdmin ? t('auth.back_to_company_login') : t('auth.platform_admin_login')}
           </button>
         </form>
+
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}>
+          <LanguageSwitcher />
+        </div>
       </div>
     </div>
   );

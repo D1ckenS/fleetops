@@ -85,6 +85,8 @@ Pin to these versions. When you bump, update this section in the same commit.
 | SMTP send        | nodemailer                                                     | `^6.9.0`                                                               |
 | IMAP receive     | imapflow                                                       | `^1.0.0`                                                               |
 | MIME parse       | mailparser                                                     | `^3.7.0`                                                               |
+| i18n core        | i18next                                                        | `^24.0.0`                                                              |
+| i18n React       | react-i18next                                                  | `^15.0.0`                                                              |
 
 **Rule:** If a package is not listed, justify the addition in the commit message and add it here.
 

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import { Badge, Button, Spinner } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
@@ -22,13 +23,13 @@ type MaintenanceTab =
   | 'running-hours'
   | 'projects';
 
-const TABS: { id: MaintenanceTab; label: string }[] = [
-  { id: 'components', label: 'Components' },
-  { id: 'jobs', label: 'Jobs' },
-  { id: 'history', label: 'History' },
-  { id: 'templates', label: 'Templates' },
-  { id: 'running-hours', label: 'Running Hours' },
-  { id: 'projects', label: 'Projects' },
+const TAB_IDS: MaintenanceTab[] = [
+  'components',
+  'jobs',
+  'history',
+  'templates',
+  'running-hours',
+  'projects',
 ];
 
 type Component = ComponentItem;
@@ -202,6 +203,16 @@ type Modal =
   | { kind: 'instance'; jobId: string; componentId: string };
 
 export function ComponentsPage() {
+  const { t } = useTranslation();
+  const tabLabels: Record<MaintenanceTab, string> = {
+    components: t('maintenance.tab_components'),
+    jobs: t('maintenance.tab_jobs'),
+    history: t('maintenance.tab_history'),
+    templates: t('maintenance.tab_templates'),
+    'running-hours': t('maintenance.tab_running_hours'),
+    projects: t('maintenance.tab_projects'),
+  };
+  const TABS = TAB_IDS.map((id) => ({ id, label: tabLabels[id] }));
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab: MaintenanceTab = (searchParams.get('tab') as MaintenanceTab) ?? 'components';
 
@@ -321,9 +332,13 @@ export function ComponentsPage() {
               <h1 className="text-xl font-bold text-slate-900" style={{ display: 'none' }}>
                 Components
               </h1>
-              <p className="text-sm text-slate-500 mt-0.5">Equipment hierarchy for this vessel</p>
+              <p className="text-sm text-slate-500 mt-0.5">
+                {t('maintenance.equipment_hierarchy')}
+              </p>
             </div>
-            <Button onClick={() => setModal({ kind: 'component' })}>+ New Component</Button>
+            <Button onClick={() => setModal({ kind: 'component' })}>
+              {t('maintenance.new_component')}
+            </Button>
           </div>
 
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
@@ -335,7 +350,7 @@ export function ComponentsPage() {
             {error && <div className="p-6 text-sm text-red-600">{error}</div>}
             {!loading && !error && components.length === 0 && (
               <div className="p-8 text-center text-slate-500 text-sm">
-                No components yet.{' '}
+                {t('maintenance.no_components')}{' '}
                 <button
                   className="text-blue-600 hover:underline"
                   onClick={() => setModal({ kind: 'component' })}

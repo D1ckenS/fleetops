@@ -19,6 +19,7 @@ interface AppShellProps {
   userEmail?: string | undefined;
   userDisplayName?: string | undefined; // shown instead of email prefix; falls back to email
   onLogout?: () => void | undefined;
+  logoutLabel?: string | undefined;
   children: ReactNode;
   // vessel / company context
   companyName?: string | undefined;
@@ -26,6 +27,8 @@ interface AppShellProps {
   selectedVesselId?: string | null | undefined;
   onVesselChange?: ((id: string | null) => void) | undefined;
   isVesselLocked?: boolean | undefined;
+  /** Extra content rendered at the bottom of the sidebar, above the account block. */
+  sidebarFooterContent?: ReactNode | undefined;
 }
 
 function BearingMark({ size = 20 }: { size?: number }) {
@@ -190,12 +193,14 @@ export function AppShell({
   userEmail,
   userDisplayName,
   onLogout,
+  logoutLabel = 'Sign out',
   children,
   companyName,
   vessels,
   selectedVesselId,
   onVesselChange,
   isVesselLocked,
+  sidebarFooterContent,
 }: AppShellProps) {
   const anyActive = nav.some((item) =>
     item.href === '/' ? currentPath === '/' : currentPath.startsWith(item.href),
@@ -308,6 +313,13 @@ export function AppShell({
           })}
         </nav>
 
+        {/* Extra sidebar footer content (e.g. language switcher) */}
+        {sidebarFooterContent && (
+          <div style={{ padding: '8px 12px', borderTop: '1px solid #EEEBE2' }}>
+            {sidebarFooterContent}
+          </div>
+        )}
+
         {/* Account block */}
         {userEmail && (
           <div
@@ -354,7 +366,7 @@ export function AppShell({
                     e.currentTarget.style.color = '#8893A0';
                   }}
                 >
-                  Sign out
+                  {logoutLabel}
                 </button>
               )}
             </div>
