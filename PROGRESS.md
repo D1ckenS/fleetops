@@ -496,7 +496,9 @@ Large batch of UI work implementing the Bearing design system across all Phase 1
 
 **Phase 4 complete (P4-1 through P4-5).** All Fleet & Integration tasks done: Fleetview dashboard, integrations (SSO/2BA/OCIMF/accounting/class societies/BI), DNV type-approval audit, ISO 27001 readiness review. Shore: 256 ✓ (24 files). ci:full ✓.
 
-Next: **P5-1 — SMTP-fallback sync hardened and audited** — See §11 Phase 5 tasks in REFERENCE.md.
+**P5-1 complete (2026-05-18).** SMTP-fallback sync fully implemented and hardened. `SmtpSyncTransport` replaces the P0-9 stub: gzip-compressed batch queue, `MailProvider` abstraction for testability, chunking at `maxBatchSize`, best-effort final flush on `close()`. `InMemoryMailProvider` (tests) and `NodemailerImapProvider` (production, nodemailer + imapflow + mailparser) added. Shore `SmtpSyncGatewayService` polls IMAP, routes batches by subject metadata (tenant/vessel/nodeId), replies with pending shore→vessel deltas. Vessel `SyncClientService` selects SMTP or gRPC transport via `SMTP_SYNC_ENABLED=1`. 8 new SMTP unit tests. ci:full 156 ✓, shore e2e 256 ✓, vessel e2e 128 ✓. Arabic (AR) added to P5-2 localization list.
+
+Next: **P5-2 — Localization (DE / NL / EN / FIL / RU / GR / ZH / AR).**
 
 **Outstanding follow-up tickets (deferred, not blocking P1-4):**
 
