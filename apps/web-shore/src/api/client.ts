@@ -4,13 +4,22 @@ function getToken(): string | null {
   return localStorage.getItem('access_token');
 }
 
+// Vessel selection is persisted in localStorage by VesselContext and read here
+// so tenant-wide roles (TENANT_ADMIN, PURCHASE_MANAGER) can operate on a specific vessel.
+const VESSEL_STORAGE_KEY = 'fleetops_selected_vessel';
+function getSelectedVesselId(): string | null {
+  return localStorage.getItem(VESSEL_STORAGE_KEY);
+}
+
 async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
   const token = getToken();
+  const vesselId = getSelectedVesselId();
   const hasBody = body !== undefined;
   const res = await fetch(`${BASE}${path}`, {
     method,
     headers: {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(vesselId ? { 'X-Vessel-Id': vesselId } : {}),
       ...(hasBody ? { 'Content-Type': 'application/json' } : {}),
     },
     ...(hasBody ? { body: JSON.stringify(body) } : {}),
@@ -50,9 +59,13 @@ export const api = {
 
   postForm: async <T>(path: string, form: FormData): Promise<T> => {
     const token = getToken();
+    const vesselId = getSelectedVesselId();
     const res = await fetch(`${BASE}${path}`, {
       method: 'POST',
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(vesselId ? { 'X-Vessel-Id': vesselId } : {}),
+      },
       body: form,
     });
     if (!res.ok) {

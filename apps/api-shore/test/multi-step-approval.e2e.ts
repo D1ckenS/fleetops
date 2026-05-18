@@ -34,12 +34,38 @@ beforeAll(async () => {
 
   const hash = await bcrypt.hash('TestP@ss!1', 12);
   await prisma.tenant.create({ data: { id: tenantId, name: 'multistep-approval-test' } });
-  await prisma.vessel.create({ data: { id: vesselId, tenantId, name: 'MV Approval', imoNumber: '9999002' } });
+  await prisma.vessel.create({
+    data: { id: vesselId, tenantId, name: 'MV Approval', imoNumber: '9999002' },
+  });
   await prisma.user.createMany({
     data: [
-      { id: adminId, tenantId, vesselId, email: 'admin@msa.test', username: 'msa-admin', passwordHash: hash, role: 'TENANT_ADMIN' },
-      { id: masterId, tenantId, vesselId, email: 'master@msa.test', username: 'msa-master', passwordHash: hash, role: 'MASTER' },
-      { id: pmId, tenantId, vesselId, email: 'pm@msa.test', username: 'msa-pm', passwordHash: hash, role: 'PURCHASE_MANAGER' },
+      {
+        id: adminId,
+        tenantId,
+        vesselId,
+        email: 'admin@msa.test',
+        username: 'msa-admin',
+        passwordHash: hash,
+        role: 'TENANT_ADMIN',
+      },
+      {
+        id: masterId,
+        tenantId,
+        vesselId,
+        email: 'master@msa.test',
+        username: 'msa-master',
+        passwordHash: hash,
+        role: 'MASTER',
+      },
+      {
+        id: pmId,
+        tenantId,
+        vesselId,
+        email: 'pm@msa.test',
+        username: 'msa-pm',
+        passwordHash: hash,
+        role: 'PURCHASE_MANAGER',
+      },
     ],
   });
 

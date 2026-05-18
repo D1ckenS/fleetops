@@ -30,9 +30,19 @@ beforeAll(async () => {
 
   const hash = await bcrypt.hash('TestP@ss!1', 12);
   await prisma.tenant.create({ data: { id: tenantId, name: 'project-api-test' } });
-  await prisma.vessel.create({ data: { id: vesselId, tenantId, name: 'MV Test', imoNumber: '9999001' } });
+  await prisma.vessel.create({
+    data: { id: vesselId, tenantId, name: 'MV Test', imoNumber: '9999001' },
+  });
   await prisma.user.create({
-    data: { id: userId, tenantId, vesselId, email: 'project@test.shore', username: 'projuser', passwordHash: hash, role: 'CHIEF_ENGINEER' },
+    data: {
+      id: userId,
+      tenantId,
+      vesselId,
+      email: 'project@test.shore',
+      username: 'projuser',
+      passwordHash: hash,
+      role: 'CHIEF_ENGINEER',
+    },
   });
 
   const res = await request(app.getHttpServer())
@@ -58,7 +68,12 @@ describe('P3-2 Project planning e2e (shore)', () => {
     const res = await request(app.getHttpServer())
       .post('/api/v1/projects')
       .set('Authorization', `Bearer ${token}`)
-      .send({ vesselId, title: 'Annual Dry Dock 2026', startDate: '2026-06-01', endDate: '2026-06-21' })
+      .send({
+        vesselId,
+        title: 'Annual Dry Dock 2026',
+        startDate: '2026-06-01',
+        endDate: '2026-06-21',
+      })
       .expect(201);
     projectId = res.body.id as string;
     expect(res.body.title).toBe('Annual Dry Dock 2026');
@@ -87,7 +102,13 @@ describe('P3-2 Project planning e2e (shore)', () => {
     const res = await request(app.getHttpServer())
       .post(`/api/v1/projects/${projectId}/tasks`)
       .set('Authorization', `Bearer ${token}`)
-      .send({ title: 'Hull cleaning', startDate: '2026-06-01', endDate: '2026-06-05', plannedDays: 5, assignedToRole: 'CHIEF_ENGINEER' })
+      .send({
+        title: 'Hull cleaning',
+        startDate: '2026-06-01',
+        endDate: '2026-06-05',
+        plannedDays: 5,
+        assignedToRole: 'CHIEF_ENGINEER',
+      })
       .expect(201);
     taskId = res.body.id as string;
     expect(res.body.title).toBe('Hull cleaning');
