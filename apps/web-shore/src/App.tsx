@@ -17,6 +17,7 @@ import { IntegrationsPage } from './pages/IntegrationsPage.js';
 import { OidcCallbackPage } from './pages/OidcCallbackPage.js';
 import { FlgoPage } from './pages/FlgoPage.js';
 import { BiPage } from './pages/BiPage.js';
+import { CompliancePage } from './pages/CompliancePage.js';
 import type { NavItem } from '@fleetops/ui-kit';
 
 // ─── Role helpers ─────────────────────────────────────────────────────────────
@@ -125,6 +126,7 @@ function ProtectedContent() {
         { label: 'Crewing', href: '/crewing', code: 'CW' },
         { label: 'FLGO', href: '/flgo', code: 'FL' },
         { label: 'Analytics', href: '/analytics', code: 'BI' },
+        { label: 'Compliance', href: '/compliance', code: 'CP' },
       ];
 
   const adminNav: NavItem[] = [
@@ -223,6 +225,7 @@ function ProtectedContent() {
           }
         />
         <Route path="analytics" element={<BiPage />} />
+        <Route path="compliance" element={<CompliancePage />} />
         <Route
           path="vessels"
           element={
