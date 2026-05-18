@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Button, Input, Modal, Select, TextArea } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
-import { TypicalPartsList, partsToJson, type TypicalPart } from './TypicalPartsList.js';
+import { TypicalPartsList, type TypicalPart } from './TypicalPartsList.js';
+import { partsToJson } from './partsUtils.js';
 
 interface Props {
   open: boolean;

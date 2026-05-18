@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Badge, Button, Input, Modal, Select, Spinner } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
-import { useVessel } from '../context/VesselContext.js';
+import { useVessel } from '../context/useVessel.js';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 

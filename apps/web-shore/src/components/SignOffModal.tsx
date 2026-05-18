@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button, Input, Modal, Select, TextArea } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
-import { partsFromJson, type TypicalPart } from './TypicalPartsList.js';
+import { type TypicalPart } from './TypicalPartsList.js';
+import { partsFromJson } from './partsUtils.js';
 
 interface Part {
   id: string;

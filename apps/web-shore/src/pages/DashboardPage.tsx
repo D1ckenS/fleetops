@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../api/client.js';
 import { useAuth } from '../context/AuthContext.js';
-import { useVessel } from '../context/VesselContext.js';
+import { useVessel } from '../context/useVessel.js';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 

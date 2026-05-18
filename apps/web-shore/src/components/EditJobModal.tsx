@@ -1,12 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Button, Input, Modal, Select, TextArea } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
-import {
-  TypicalPartsList,
-  partsToJson,
-  partsFromJson,
-  type TypicalPart,
-} from './TypicalPartsList.js';
+import { TypicalPartsList, type TypicalPart } from './TypicalPartsList.js';
+import { partsToJson, partsFromJson } from './partsUtils.js';
 
 export interface Job {
   id: string;
