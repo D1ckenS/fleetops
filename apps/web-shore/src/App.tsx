@@ -21,6 +21,7 @@ import { OidcCallbackPage } from './pages/OidcCallbackPage.js';
 import { FlgoPage } from './pages/FlgoPage.js';
 import { BiPage } from './pages/BiPage.js';
 import { CompliancePage } from './pages/CompliancePage.js';
+import { ProfilePage } from './pages/ProfilePage.js';
 import type { NavItem } from '@fleetops/ui-kit';
 
 // ─── Role helpers ─────────────────────────────────────────────────────────────
@@ -152,8 +153,13 @@ function ProtectedContent() {
       currentPath={location.pathname}
       onNavClick={(href) => navigate(href)}
       userEmail={user.email}
-      userDisplayName={user.username ?? undefined}
+      userDisplayName={
+        user.firstName
+          ? `${user.firstName}${user.lastName ? ' ' + user.lastName : ''}`
+          : (user.username ?? undefined)
+      }
       onLogout={logout}
+      onProfileClick={() => navigate('/profile')}
       logoutLabel={t('auth.sign_out')}
       companyName={isSuperAdmin ? t('nav.platform_admin') : companyName}
       vessels={isSuperAdmin ? [] : vessels}
@@ -255,6 +261,7 @@ function ProtectedContent() {
             </RequireRole>
           }
         />
+        <Route path="profile" element={<ProfilePage />} />
         <Route
           path="*"
           element={<Navigate to={isSuperAdmin ? 'companies' : 'dashboard'} replace />}

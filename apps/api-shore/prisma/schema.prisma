@@ -259,6 +259,8 @@ model User {
   vesselId     String?   @map("vessel_id")
   email        String
   username     String?   @map("username")
+  firstName    String?   @map("first_name")
+  lastName     String?   @map("last_name")
   passwordHash String?   @map("password_hash")
   role         Role      @default(OFFICER)
   createdAt    DateTime  @default(now()) @map("created_at")

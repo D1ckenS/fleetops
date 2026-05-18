@@ -7,6 +7,8 @@ interface JwtPayload {
   vesselId?: string;
   email: string;
   username?: string; // display name; falls back to email in the UI
+  firstName?: string;
+  lastName?: string;
   role: string;
 }
 

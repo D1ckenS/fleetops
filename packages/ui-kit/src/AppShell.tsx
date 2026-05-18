@@ -19,6 +19,7 @@ interface AppShellProps {
   userEmail?: string | undefined;
   userDisplayName?: string | undefined; // shown instead of email prefix; falls back to email
   onLogout?: () => void | undefined;
+  onProfileClick?: () => void | undefined;
   logoutLabel?: string | undefined;
   children: ReactNode;
   // vessel / company context
@@ -193,6 +194,7 @@ export function AppShell({
   userEmail,
   userDisplayName,
   onLogout,
+  onProfileClick,
   logoutLabel = 'Sign out',
   children,
   companyName,
@@ -331,7 +333,21 @@ export function AppShell({
               gap: 8,
             }}
           >
-            <Initials email={userEmail} />
+            <button
+              onClick={onProfileClick}
+              disabled={!onProfileClick}
+              style={{
+                background: 'none',
+                border: 'none',
+                padding: 0,
+                cursor: onProfileClick ? 'pointer' : 'default',
+                flexShrink: 0,
+                borderRadius: 6,
+              }}
+              title="Edit profile"
+            >
+              <Initials email={userEmail} />
+            </button>
             <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
               <p
                 style={{
