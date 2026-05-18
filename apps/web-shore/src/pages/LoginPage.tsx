@@ -205,7 +205,7 @@ export function LoginPage() {
         </form>
 
         <div style={{ marginTop: 16, width: 220, marginInline: 'auto' }}>
-          <LanguageSwitcher size="md" />
+          <LanguageSwitcher size="md" placement="top" />
         </div>
       </div>
     </div>
