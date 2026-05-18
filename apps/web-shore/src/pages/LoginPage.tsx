@@ -204,8 +204,8 @@ export function LoginPage() {
           </button>
         </form>
 
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}>
-          <LanguageSwitcher />
+        <div style={{ marginTop: 16, width: 220, marginInline: 'auto' }}>
+          <LanguageSwitcher size="md" />
         </div>
       </div>
     </div>
