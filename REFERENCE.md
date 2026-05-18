@@ -79,6 +79,7 @@ Pin to these versions. When you bump, update this section in the same commit.
 | Testing          | Vitest, Playwright (e2e), flutter_test                         | `vitest 4.x`, Playwright/flutter_test latest stable                    |
 | Property testing | fast-check                                                     | `4.7.0`                                                                |
 | Script runner    | tsx                                                            | `4.21.0`                                                               |
+| Excel export     | exceljs                                                        | `4.x`                                                                  |
 | BI / dashboards  | Apache Superset (later phase)                                  | `4.x`                                                                  |
 
 **Rule:** If a package is not listed, justify the addition in the commit message and add it here.

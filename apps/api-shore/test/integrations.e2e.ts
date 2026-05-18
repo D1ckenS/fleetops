@@ -263,4 +263,25 @@ describe('Accounting connector', () => {
     expect(res.header['content-type']).toMatch(/application\/xml/);
     expect(res.text).toContain('ExactOnlineImport');
   });
+
+  it('exports POs as XLSX (returns valid OOXML binary with correct content-type)', async () => {
+    const res = await request(app.getHttpServer())
+      .get('/api/v1/accounting/export-pos?from=2026-01-01&to=2026-01-01&format=xlsx')
+      .set('Authorization', `Bearer ${token}`)
+      .buffer(true)
+      .parse((res, callback) => {
+        const chunks: Buffer[] = [];
+        res.on('data', (chunk: Buffer) => chunks.push(chunk));
+        res.on('end', () => callback(null, Buffer.concat(chunks)));
+      });
+    expect(res.status).toBe(200);
+    expect(res.header['content-type']).toMatch(
+      /application\/vnd\.openxmlformats-officedocument\.spreadsheetml\.sheet/,
+    );
+    expect(res.header['content-disposition']).toContain('purchase-orders.xlsx');
+    // XLSX files begin with the PK ZIP magic bytes (0x50 0x4B)
+    const buf = res.body as Buffer;
+    expect(buf[0]).toBe(0x50); // 'P'
+    expect(buf[1]).toBe(0x4b); // 'K'
+  });
 });

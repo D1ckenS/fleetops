@@ -32,7 +32,7 @@ export class AccountingController {
     return this.svc.upsertConfig(auth, dto);
   }
 
-  /** Export purchase orders in CSV or Exact Online XML format. */
+  /** Export purchase orders as CSV, Exact Online XML, or Excel (XLSX). */
   @Get('export-pos')
   async exportPos(
     @AuthCtx() auth: AuthContext,
@@ -42,7 +42,7 @@ export class AccountingController {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     @Res() res: any,
   ) {
-    const fmt = format === 'exact' ? 'exact' : 'csv';
+    const fmt = format === 'exact' ? 'exact' : format === 'xlsx' ? 'xlsx' : 'csv';
     const content = await this.svc.exportPos(
       auth,
       from ?? new Date(new Date().getFullYear(), 0, 1).toISOString().split('T')[0]!,
@@ -50,7 +50,13 @@ export class AccountingController {
       fmt,
     );
 
-    if (fmt === 'csv') {
+    if (fmt === 'xlsx') {
+      res.setHeader(
+        'Content-Type',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      );
+      res.setHeader('Content-Disposition', 'attachment; filename="purchase-orders.xlsx"');
+    } else if (fmt === 'csv') {
       res.setHeader('Content-Type', 'text/csv');
       res.setHeader('Content-Disposition', 'attachment; filename="purchase-orders.csv"');
     } else {

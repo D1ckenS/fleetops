@@ -424,7 +424,7 @@ function AccountingTab() {
   const [msg, setMsg] = useState<string | null>(null);
   const [exportFrom, setExportFrom] = useState(() => `${new Date().getFullYear()}-01-01`);
   const [exportTo, setExportTo] = useState(() => new Date().toISOString().split('T')[0]!);
-  const [exportFormat, setExportFormat] = useState<'csv' | 'exact'>('csv');
+  const [exportFormat, setExportFormat] = useState<'csv' | 'exact' | 'xlsx'>('xlsx');
 
   useEffect(() => {
     api
@@ -454,7 +454,12 @@ function AccountingTab() {
     const url = `/api/v1/accounting/export-pos?${params}`;
     const a = document.createElement('a');
     a.href = url;
-    a.download = exportFormat === 'csv' ? 'purchase-orders.csv' : 'purchase-orders-exact.xml';
+    a.download =
+      exportFormat === 'xlsx'
+        ? 'purchase-orders.xlsx'
+        : exportFormat === 'csv'
+          ? 'purchase-orders.csv'
+          : 'purchase-orders-exact.xml';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -595,7 +600,7 @@ function AccountingTab() {
             </label>
             <select
               value={exportFormat}
-              onChange={(e) => setExportFormat(e.target.value as 'csv' | 'exact')}
+              onChange={(e) => setExportFormat(e.target.value as 'csv' | 'exact' | 'xlsx')}
               style={{
                 padding: '7px 10px',
                 border: '1px solid #E5E3DA',
@@ -604,6 +609,7 @@ function AccountingTab() {
                 color: '#0A1F33',
               }}
             >
+              <option value="xlsx">Excel (.xlsx)</option>
               <option value="csv">CSV</option>
               <option value="exact">Exact Online XML</option>
             </select>
