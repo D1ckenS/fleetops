@@ -86,13 +86,24 @@ function ModBadge({
   );
 }
 
-function Initials({ email }: { email: string }) {
-  const name = email.split('@')[0] ?? '';
-  const parts = name.split(/[._-]/);
-  const letters =
-    parts.length >= 2 && parts[0] && parts[1]
-      ? (parts[0][0] ?? '') + (parts[1][0] ?? '')
-      : name.slice(0, 2);
+function Initials({ email, displayName }: { email: string; displayName?: string | undefined }) {
+  let letters: string;
+  if (displayName) {
+    const parts = displayName.trim().split(/\s+/);
+    const first = parts[0] ?? '';
+    const last = parts[parts.length - 1] ?? '';
+    letters =
+      parts.length >= 2 && first && last
+        ? (first[0] ?? '') + (last[0] ?? '')
+        : first.slice(0, 2);
+  } else {
+    const name = email.split('@')[0] ?? '';
+    const parts = name.split(/[._-]/);
+    letters =
+      parts.length >= 2 && parts[0] && parts[1]
+        ? (parts[0][0] ?? '') + (parts[1][0] ?? '')
+        : name.slice(0, 2);
+  }
   return (
     <div
       style={{
@@ -346,7 +357,7 @@ export function AppShell({
               }}
               title="Edit profile"
             >
-              <Initials email={userEmail} />
+              <Initials email={userEmail} displayName={userDisplayName ?? undefined} />
             </button>
             <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
               <p
