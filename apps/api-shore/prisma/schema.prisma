@@ -179,10 +179,12 @@ model Tenant {
   projectTasks         ProjectTask[]
   budgets              Budget[]
   budgetLines          BudgetLine[]
-  ssoConfigs           TenantSsoConfig[]
-  techLibraryConnector TechLibraryConnector?
-  accountingConnector  AccountingConnector?
-  ocimfInspections     OcimfInspection[]
+  ssoConfigs              TenantSsoConfig[]
+  techLibraryConnector    TechLibraryConnector?
+  accountingConnector     AccountingConnector?
+  ocimfInspections        OcimfInspection[]
+  classSocietyConnectors  ClassSocietyConnector[]
+  classSocietySubmissions ClassSocietySubmission[]
 
   @@map("tenants")
 }
@@ -238,8 +240,9 @@ model Vessel {
   consumptionLogs      ConsumptionLog[]
   projects             Project[]
   projectTasks         ProjectTask[]
-  budgets              Budget[]
-  ocimfInspections     OcimfInspection[]
+  budgets                  Budget[]
+  ocimfInspections         OcimfInspection[]
+  classSocietySubmissions  ClassSocietySubmission[]
 
   @@map("vessels")
 }
@@ -1884,6 +1887,73 @@ model AccountingConnector {
   tenant    Tenant              @relation(fields: [tenantId], references: [id])
 
   @@map("accounting_connectors")
+}
+
+// ── Class Society Connectors ──────────────────────────────────────────────────
+
+enum ClassSociety {
+  DNV
+  ABS
+  LR
+  RINA
+  BV
+  NK
+}
+
+enum ClassSocietyReportType {
+  PMS_EVIDENCE
+  CERTIFICATES
+  FINDINGS
+  SURVEY_STATUS
+}
+
+enum ClassSocietySubmissionStatus {
+  DRAFT
+  SUBMITTED
+  ACCEPTED
+  REJECTED
+  ERROR
+}
+
+model ClassSocietyConnector {
+  id                  String      @id
+  tenantId            String      @map("tenant_id")
+  society             ClassSociety
+  apiKey              String?     @map("api_key")
+  apiEndpoint         String?     @map("api_endpoint")
+  vesselRegistrations Json        @map("vessel_registrations") @default("{}")
+  enabled             Boolean     @default(true)
+  createdAt           DateTime    @default(now()) @map("created_at")
+  updatedAt           DateTime    @updatedAt @map("updated_at")
+
+  tenant              Tenant                  @relation(fields: [tenantId], references: [id])
+  submissions         ClassSocietySubmission[]
+
+  @@unique([tenantId, society])
+  @@map("class_society_connectors")
+}
+
+model ClassSocietySubmission {
+  id              String                        @id
+  tenantId        String                        @map("tenant_id")
+  vesselId        String                        @map("vessel_id")
+  connectorId     String                        @map("connector_id")
+  society         ClassSociety
+  reportType      ClassSocietyReportType        @map("report_type")
+  status          ClassSocietySubmissionStatus  @default(DRAFT)
+  payloadJson     Json?                         @map("payload_json")
+  submittedAt     DateTime?                     @map("submitted_at")
+  responseCode    Int?                          @map("response_code")
+  responseMessage String?                       @map("response_message")
+  createdAt       DateTime                      @default(now()) @map("created_at")
+  updatedAt       DateTime                      @updatedAt @map("updated_at")
+
+  tenant          Tenant                        @relation(fields: [tenantId], references: [id])
+  vessel          Vessel                        @relation(fields: [vesselId], references: [id])
+  connector       ClassSocietyConnector         @relation(fields: [connectorId], references: [id])
+
+  @@index([tenantId, vesselId, society])
+  @@map("class_society_submissions")
 }
 
 // ── Outbox / SyncRecord ───────────────────────────────────────────────────────

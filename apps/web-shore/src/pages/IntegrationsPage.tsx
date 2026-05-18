@@ -28,7 +28,26 @@ interface AccountingConfig {
   enabled: boolean;
 }
 
-type Tab = 'sso' | 'tech-library' | 'accounting';
+type Tab = 'sso' | 'tech-library' | 'accounting' | 'class-societies';
+
+const CLASS_SOCIETIES = ['DNV', 'ABS', 'LR', 'RINA', 'BV', 'NK'] as const;
+type ClassSociety = (typeof CLASS_SOCIETIES)[number];
+const SOCIETY_NAMES: Record<ClassSociety, string> = {
+  DNV: 'DNV',
+  ABS: 'ABS',
+  LR: "Lloyd's Register",
+  RINA: 'RINA',
+  BV: 'Bureau Veritas',
+  NK: 'Nippon Kaiji Kyokai',
+};
+const REPORT_TYPES = ['PMS_EVIDENCE', 'CERTIFICATES', 'FINDINGS', 'SURVEY_STATUS'] as const;
+type ReportType = (typeof REPORT_TYPES)[number];
+const REPORT_LABELS: Record<ReportType, string> = {
+  PMS_EVIDENCE: 'PMS Evidence (CG-0339)',
+  CERTIFICATES: 'Certificate Status',
+  FINDINGS: 'Findings & CAPA',
+  SURVEY_STATUS: 'Survey Status',
+};
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -637,15 +656,421 @@ function AccountingTab() {
   );
 }
 
+// ── Class Societies Tab ───────────────────────────────────────────────────────
+
+interface ClassConnector {
+  id: string;
+  society: ClassSociety;
+  apiKey: string | null;
+  apiEndpoint: string | null;
+  vesselRegistrations: Record<string, string>;
+  enabled: boolean;
+}
+
+interface ClassSubmission {
+  id: string;
+  society: ClassSociety;
+  reportType: ReportType;
+  status: string;
+  submittedAt: string | null;
+  responseCode: number | null;
+  responseMessage: string | null;
+  createdAt: string;
+}
+
+function ClassSocietiesTab() {
+  const [connectors, setConnectors] = useState<ClassConnector[]>([]);
+  const [submissions, setSubmissions] = useState<ClassSubmission[]>([]);
+  const [activeSociety, setActiveSociety] = useState<ClassSociety>('DNV');
+  const [editApi, setEditApi] = useState('');
+  const [editEndpoint, setEditEndpoint] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [selectedVesselId, setSelectedVesselId] = useState('');
+  const [selectedReport, setSelectedReport] = useState<ReportType>('PMS_EVIDENCE');
+  const [msg, setMsg] = useState<string | null>(null);
+  const [vessels, setVessels] = useState<{ id: string; name: string }[]>([]);
+
+  useEffect(() => {
+    Promise.all([
+      api.get<ClassConnector[]>('/class-society/connectors').catch(() => []),
+      api.get<ClassSubmission[]>('/class-society/submissions').catch(() => []),
+      api.get<{ id: string; name: string }[]>('/vessels').catch(() => []),
+    ]).then(([c, s, v]) => {
+      setConnectors(Array.isArray(c) ? c : []);
+      setSubmissions(Array.isArray(s) ? s : []);
+      setVessels(Array.isArray(v) ? v : []);
+      if (Array.isArray(v) && v.length > 0) setSelectedVesselId(v[0]!.id);
+    });
+  }, []);
+
+  const active = connectors.find((c) => c.society === activeSociety);
+
+  useEffect(() => {
+    setEditApi(active?.apiKey ?? '');
+    setEditEndpoint(active?.apiEndpoint ?? '');
+  }, [activeSociety, active]);
+
+  async function saveConnector() {
+    setSaving(true);
+    setMsg(null);
+    try {
+      const saved = await api.post<ClassConnector>('/class-society/connectors', {
+        society: activeSociety,
+        apiKey: editApi || null,
+        apiEndpoint: editEndpoint || null,
+        enabled: true,
+      });
+      setConnectors((prev) => {
+        const idx = prev.findIndex((c) => c.society === activeSociety);
+        return idx >= 0 ? prev.map((c, i) => (i === idx ? saved : c)) : [...prev, saved];
+      });
+      setMsg('Saved.');
+    } catch (e) {
+      setMsg(e instanceof Error ? e.message : 'Save failed');
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function submit(doSubmit: boolean) {
+    if (!selectedVesselId) {
+      setMsg('Select a vessel first.');
+      return;
+    }
+    setSubmitting(true);
+    setMsg(null);
+    try {
+      const rec = await api.post<ClassSubmission>('/class-society/submit', {
+        vesselId: selectedVesselId,
+        society: activeSociety,
+        reportType: selectedReport,
+        submit: doSubmit,
+      });
+      setSubmissions((prev) => [rec, ...prev]);
+      setMsg(
+        doSubmit
+          ? `Submitted — status: ${rec.status}${rec.responseCode ? ` (HTTP ${rec.responseCode})` : ''}`
+          : 'Report package saved as DRAFT.',
+      );
+    } catch (e) {
+      setMsg(e instanceof Error ? e.message : 'Failed');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  function downloadExport() {
+    if (!selectedVesselId) return;
+    const params = new URLSearchParams({
+      vesselId: selectedVesselId,
+      society: activeSociety,
+      reportType: selectedReport,
+    });
+    const a = document.createElement('a');
+    a.href = `/api/v1/class-society/export?${params}`;
+    a.download = `${activeSociety.toLowerCase()}-report.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+
+  const STATUS_COLOR: Record<string, { bg: string; fg: string }> = {
+    DRAFT: { bg: '#F4F2EC', fg: '#41546A' },
+    SUBMITTED: { bg: '#DFE8F4', fg: '#1F5B9D' },
+    ACCEPTED: { bg: '#E2EEE6', fg: '#2F7D4F' },
+    REJECTED: { bg: '#F2DDD8', fg: '#AB382E' },
+    ERROR: { bg: '#F2DDD8', fg: '#AB382E' },
+  };
+
+  return (
+    <div
+      style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 16, alignItems: 'start' }}
+    >
+      {/* Society selector */}
+      <div
+        style={{
+          background: '#fff',
+          border: '1px solid #E5E3DA',
+          borderRadius: 10,
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          style={{
+            padding: '9px 12px',
+            background: '#F4F2EC',
+            borderBottom: '1px solid #EEEBE2',
+            fontSize: 10.5,
+            fontWeight: 600,
+            color: '#8893A0',
+            letterSpacing: '0.06em',
+            textTransform: 'uppercase',
+          }}
+        >
+          Society
+        </div>
+        {CLASS_SOCIETIES.map((s) => {
+          const configured = connectors.some((c) => c.society === s && c.apiKey);
+          return (
+            <button
+              key={s}
+              onClick={() => setActiveSociety(s)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                width: '100%',
+                padding: '9px 12px',
+                borderTop: '1px solid #EEEBE2',
+                border: 'none',
+                background: activeSociety === s ? '#EFEDE6' : '#fff',
+                cursor: 'pointer',
+                textAlign: 'left',
+              }}
+            >
+              <span style={{ fontSize: 12.5, fontWeight: 500, color: '#0A1F33' }}>{s}</span>
+              {configured && (
+                <span
+                  style={{
+                    width: 6,
+                    height: 6,
+                    borderRadius: '50%',
+                    background: '#2F7D4F',
+                    flexShrink: 0,
+                  }}
+                />
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Right panel */}
+      <div>
+        <SectionCard title={`${activeSociety} — ${SOCIETY_NAMES[activeSociety]}`}>
+          <p style={{ fontSize: 12.5, color: '#41546A', marginBottom: 14 }}>
+            Configure API credentials to enable direct submission to {SOCIETY_NAMES[activeSociety]}
+            's digital platform. Without credentials, reports can still be exported as JSON for
+            manual upload.
+          </p>
+          <LabeledInput
+            label="API Key"
+            type="password"
+            value={editApi}
+            onChange={setEditApi}
+            placeholder={`Your ${activeSociety} platform API key`}
+          />
+          <LabeledInput
+            label="API Endpoint (optional)"
+            value={editEndpoint}
+            onChange={setEditEndpoint}
+            placeholder="Leave blank to use default"
+          />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
+            <StatusBadge ok={Boolean(active?.apiKey)} />
+            {msg && (
+              <span
+                style={{
+                  fontSize: 12,
+                  color:
+                    msg === 'Saved.' || msg.includes('DRAFT') || msg.includes('status')
+                      ? '#2F7D4F'
+                      : '#AB382E',
+                }}
+              >
+                {msg}
+              </span>
+            )}
+          </div>
+          <SaveBtn loading={saving} onClick={saveConnector} />
+        </SectionCard>
+
+        <SectionCard title="Submit a Report">
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 14 }}>
+            <div>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: '#41546A',
+                  marginBottom: 5,
+                  letterSpacing: '0.05em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                Vessel
+              </label>
+              <select
+                value={selectedVesselId}
+                onChange={(e) => setSelectedVesselId(e.target.value)}
+                style={{
+                  padding: '7px 10px',
+                  border: '1px solid #E5E3DA',
+                  borderRadius: 6,
+                  fontSize: 13,
+                  color: '#0A1F33',
+                }}
+              >
+                {vessels.map((v) => (
+                  <option key={v.id} value={v.id}>
+                    {v.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: '#41546A',
+                  marginBottom: 5,
+                  letterSpacing: '0.05em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                Report type
+              </label>
+              <select
+                value={selectedReport}
+                onChange={(e) => setSelectedReport(e.target.value as ReportType)}
+                style={{
+                  padding: '7px 10px',
+                  border: '1px solid #E5E3DA',
+                  borderRadius: 6,
+                  fontSize: 13,
+                  color: '#0A1F33',
+                }}
+              >
+                {REPORT_TYPES.map((r) => (
+                  <option key={r} value={r}>
+                    {REPORT_LABELS[r]}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <button
+              onClick={() => submit(true)}
+              disabled={submitting || !active?.apiKey}
+              title={!active?.apiKey ? 'Configure API key first' : undefined}
+              style={{
+                padding: '8px 18px',
+                background: '#0A1F33',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 7,
+                fontSize: 12.5,
+                fontWeight: 500,
+                cursor: submitting || !active?.apiKey ? 'not-allowed' : 'pointer',
+                opacity: submitting || !active?.apiKey ? 0.5 : 1,
+              }}
+            >
+              {submitting ? 'Submitting…' : `Submit to ${activeSociety}`}
+            </button>
+            <button
+              onClick={() => submit(false)}
+              disabled={submitting}
+              style={{
+                padding: '8px 18px',
+                background: 'transparent',
+                color: '#0A1F33',
+                border: '1px solid #E5E3DA',
+                borderRadius: 7,
+                fontSize: 12.5,
+                fontWeight: 500,
+                cursor: submitting ? 'not-allowed' : 'pointer',
+              }}
+            >
+              Save as draft
+            </button>
+            <button
+              onClick={downloadExport}
+              disabled={!selectedVesselId}
+              style={{
+                padding: '8px 18px',
+                background: 'transparent',
+                color: '#41546A',
+                border: '1px solid #E5E3DA',
+                borderRadius: 7,
+                fontSize: 12.5,
+                cursor: !selectedVesselId ? 'not-allowed' : 'pointer',
+              }}
+            >
+              Download JSON
+            </button>
+          </div>
+        </SectionCard>
+
+        {/* Submission history */}
+        {submissions.filter((s) => s.society === activeSociety).length > 0 && (
+          <SectionCard title="Submission History">
+            {submissions
+              .filter((s) => s.society === activeSociety)
+              .slice(0, 20)
+              .map((s) => {
+                const col = STATUS_COLOR[s.status] ?? STATUS_COLOR.DRAFT!;
+                return (
+                  <div
+                    key={s.id}
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr auto auto',
+                      alignItems: 'center',
+                      gap: 12,
+                      padding: '9px 0',
+                      borderBottom: '1px solid #EEEBE2',
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontSize: 12.5, color: '#0A1F33', fontWeight: 500 }}>
+                        {REPORT_LABELS[s.reportType] ?? s.reportType}
+                      </div>
+                      <div style={{ fontSize: 11, color: '#8893A0' }}>
+                        {new Date(s.createdAt).toLocaleDateString('en-GB', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                        })}
+                        {s.responseCode ? ` · HTTP ${s.responseCode}` : ''}
+                      </div>
+                    </div>
+                    <span
+                      style={{
+                        background: col.bg,
+                        color: col.fg,
+                        fontSize: 10.5,
+                        fontWeight: 600,
+                        padding: '2px 8px',
+                        borderRadius: 4,
+                      }}
+                    >
+                      {s.status}
+                    </span>
+                  </div>
+                );
+              })}
+          </SectionCard>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
 export function IntegrationsPage() {
   const [tab, setTab] = useState<Tab>('sso');
 
   const tabs: { key: Tab; label: string }[] = [
-    { key: 'sso', label: 'Microsoft Entra SSO' },
+    { key: 'sso', label: 'SSO' },
     { key: 'tech-library', label: '2BA / Nareto' },
     { key: 'accounting', label: 'Accounting' },
+    { key: 'class-societies', label: 'Class Societies' },
   ];
 
   return (
@@ -698,6 +1123,7 @@ export function IntegrationsPage() {
       {tab === 'sso' && <SsoTab />}
       {tab === 'tech-library' && <TechLibraryTab />}
       {tab === 'accounting' && <AccountingTab />}
+      {tab === 'class-societies' && <ClassSocietiesTab />}
     </div>
   );
 }

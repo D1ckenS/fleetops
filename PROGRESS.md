@@ -8,6 +8,18 @@
 
 > Most-recent first. Format: `### YYYY-MM-DD — <task> — <summary>` then bullets.
 
+### 2026-05-18 — P4-3 — Class-society e-reporting connectors (DNV Veracity, ABS, LR ClassDirect)
+
+| Item | Detail |
+|---|---|
+| **Prisma schema** | 3 new enums (`ClassSociety`: DNV/ABS/LR/RINA/BV/NK, `ClassSocietyReportType`: PMS_EVIDENCE/CERTIFICATES/FINDINGS/SURVEY_STATUS, `ClassSocietySubmissionStatus`: DRAFT/SUBMITTED/ACCEPTED/REJECTED/ERROR) + 2 new models: `ClassSocietyConnector` (per tenant×society, API key + endpoint + vessel registration numbers JSON), `ClassSocietySubmission` (per-submission history: payload, status, HTTP response code/message). Migration `20260518090000_add_class_society_schema` applied directly via psql + registered in `_prisma_migrations`. RLS on both tables. |
+| **ClassSocietyModule** | `GET /class-society/connectors` — list all configured connectors. `POST /class-society/connectors` — upsert connector (idempotent by society). `GET /class-society/submissions?vesselId=X&society=Y` — submission history. `POST /class-society/submit` — build report payload + optionally POST to society API (15s timeout, stores status + response). `GET /class-society/export?vesselId=X&society=Y&reportType=Z` — download payload as JSON without creating a submission record. |
+| **Report builders (4 types)** | **PMS_EVIDENCE**: queries JobHistory + AuditEvents; wraps in DNV CG-0339 compatible JSON (`standard: "DNV CG-0339"`, `immutabilityMechanism: "database_trigger_job_histories_immutable"`, full job history + audit trail). **CERTIFICATES**: queries Certificate + CertificateType; includes expiry stats (total/expiringSoon/expired) + records. **FINDINGS**: queries Finding + Capa; includes open/total counts + records. **SURVEY_STATUS**: queries overdue + due-within-90d JobInstances + component count. All builders share common envelope (society, reportType, vessel, generatedAt, source). |
+| **Default endpoints** | DNV: `api.veracity.com`, ABS: `services.eagle.org`, LR: `api.classdirect.lr.org`, RINA, BV, NK stubs. Submission falls back to DRAFT if no credentials configured. |
+| **Web** | IntegrationsPage "Class Societies" tab (4th tab, SSO relabelled to "SSO"): left society selector rail (6 buttons, green dot when API key set), right panel with API key + endpoint config + vessel/report-type submit buttons (Submit, Save as draft, Download JSON) + submission history log (status badges, HTTP code, date). |
+| **e2e tests** | Shore: 14 new tests in `class-society.e2e.ts` — connector CRUD (empty list, DNV upsert, ABS upsert, list both, idempotent update), 4 report types as DRAFT (PMS/CERTS/FINDINGS/SURVEY), list history, payload structure verification via DB, submit attempt (ERROR in test env), export JSON (content-type + vessel envelope), RLS policy check. Shore: 233 ✓ (22 files). ci:full ✓ (146 unit). |
+| **CI result** | `pnpm -w run ci:full` ✓ (146 unit); shore e2e → 233 ✓ (22 files); vessel e2e → 128 ✓ (15 files, unchanged) |
+
 ### 2026-05-18 — P4-2 — Integrations (Microsoft Entra SSO, 2BA/Nareto, OCIMF, accounting connector)
 
 | Item                        | Detail                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
@@ -459,7 +471,9 @@ Large batch of UI work implementing the Bearing design system across all Phase 1
 
 **P4-2 complete.** Four integrations implemented: Microsoft Entra SSO (full PKCE OIDC flow), 2BA/Nareto tech library connector (proxy lookup), OCIMF inspection tracking, accounting PO export (CSV + Exact Online XML). Login page SSO button + callback page + IntegrationsPage admin UI. Shore: 217 ✓ (21 files). ci:full ✓.
 
-Next: **P4-3 — Class-society e-reporting connectors** — DNV Veracity, ABS, LR ClassDirect. See §11 Phase 4 tasks in REFERENCE.md.
+**P4-3 complete.** Class-society connectors implemented for DNV/ABS/LR/RINA/BV/NK. Four report types (PMS evidence, certificates, findings, survey status) with live API submission + JSON export. Shore: 233 ✓ (22 files). ci:full ✓.
+
+Next: **P4-4 — BI: embed Apache Superset** — See §11 Phase 4 tasks in REFERENCE.md.
 
 **Outstanding follow-up tickets (deferred, not blocking P1-4):**
 
