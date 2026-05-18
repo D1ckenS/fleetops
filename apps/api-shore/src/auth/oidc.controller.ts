@@ -1,5 +1,8 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
-import { IsString } from 'class-validator';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
+import { JwtAuthGuard } from './jwt-auth.guard';
+import { AuthCtx } from './auth-ctx.decorator';
+import type { AuthContext } from './auth-context';
 import { OidcService } from './oidc.service';
 
 class OidcCallbackDto {
@@ -10,21 +13,51 @@ class OidcCallbackDto {
   state!: string;
 }
 
+class UpsertSsoConfigDto {
+  @IsString()
+  entraClientId!: string;
+
+  @IsString()
+  entraTenantId!: string;
+
+  @IsString()
+  clientSecret!: string;
+
+  @IsString()
+  redirectUri!: string;
+
+  @IsOptional()
+  @IsBoolean()
+  enabled?: boolean;
+}
+
 @Controller('auth/oidc')
 export class OidcController {
   constructor(private readonly oidc: OidcService) {}
 
-  /** Begin the OIDC login flow. Returns the IDP authorization URL the
-   *  client should redirect the user to. */
+  /** Begin the OIDC login flow. Returns the IDP authorization URL + state. */
   @Get('login')
-  beginLogin() {
-    return this.oidc.beginLogin();
+  beginLogin(@Query('tenantId') tenantId: string) {
+    return this.oidc.beginLogin(tenantId);
   }
 
-  /** Complete the OIDC login flow. The IDP posts the auth code + state
-   *  back to this endpoint; we exchange and mint a shore JWT pair. */
+  /** Complete the OIDC flow. Exchange code+state for FleetOps JWT pair. */
   @Post('callback')
-  async callback(@Body() dto: OidcCallbackDto) {
+  callback(@Body() dto: OidcCallbackDto) {
     return this.oidc.completeLogin(dto.code, dto.state);
+  }
+
+  /** Get current SSO config for the caller's tenant (admins only). */
+  @UseGuards(JwtAuthGuard)
+  @Get('config')
+  getConfig(@AuthCtx() auth: AuthContext) {
+    return this.oidc.getSsoConfig(auth.tenantId!);
+  }
+
+  /** Upsert SSO config for the caller's tenant (admins only). */
+  @UseGuards(JwtAuthGuard)
+  @Post('config')
+  upsertConfig(@AuthCtx() auth: AuthContext, @Body() dto: UpsertSsoConfigDto) {
+    return this.oidc.upsertSsoConfig(auth.tenantId!, dto);
   }
 }

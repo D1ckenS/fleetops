@@ -13,6 +13,8 @@ import { SafetyPage } from './pages/SafetyPage.js';
 import { QHSEPage } from './pages/QHSEPage.js';
 import { VesselsPage } from './pages/VesselsPage.js';
 import { CompaniesPage } from './pages/CompaniesPage.js';
+import { IntegrationsPage } from './pages/IntegrationsPage.js';
+import { OidcCallbackPage } from './pages/OidcCallbackPage.js';
 import { FlgoPage } from './pages/FlgoPage.js';
 import type { NavItem } from '@fleetops/ui-kit';
 
@@ -125,7 +127,10 @@ function ProtectedContent() {
 
   const adminNav: NavItem[] = [
     ...(isRole(role, VESSEL_ADMIN_ROLES)
-      ? [{ label: 'Vessels & Users', href: '/vessels', code: 'VS' }]
+      ? [
+          { label: 'Vessels & Users', href: '/vessels', code: 'VS' },
+          { label: 'Integrations', href: '/integrations', code: 'IT' },
+        ]
       : []),
     ...(isRole(role, SUPER_ADMIN_ONLY)
       ? [{ label: 'Companies', href: '/companies', code: 'CO' }]
@@ -224,6 +229,14 @@ function ProtectedContent() {
           }
         />
         <Route
+          path="integrations"
+          element={
+            <RequireRole roles={VESSEL_ADMIN_ROLES}>
+              <IntegrationsPage />
+            </RequireRole>
+          }
+        />
+        <Route
           path="companies"
           element={
             <RequireRole roles={SUPER_ADMIN_ONLY}>
@@ -255,6 +268,8 @@ export function App() {
   return (
     <Routes>
       <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <LoginPage />} />
+      {/* OIDC callback — public route, no auth required */}
+      <Route path="/auth/callback" element={<OidcCallbackPage />} />
       <Route path="/*" element={<ProtectedLayout />} />
     </Routes>
   );

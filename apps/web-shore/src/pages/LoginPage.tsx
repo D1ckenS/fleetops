@@ -18,6 +18,7 @@ export function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [ssoLoading, setSsoLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -32,6 +33,24 @@ export function LoginPage() {
       setError(err instanceof Error ? err.message : 'Login failed');
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleSsoLogin() {
+    if (!tenantId.trim()) {
+      setError('Enter your Organisation ID to use SSO login.');
+      return;
+    }
+    setError(null);
+    setSsoLoading(true);
+    try {
+      const res = await api.get<{ authorizationUrl: string; state: string }>(
+        `/auth/oidc/login?tenantId=${encodeURIComponent(tenantId)}`,
+      );
+      window.location.href = res.authorizationUrl;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'SSO login failed');
+      setSsoLoading(false);
     }
   }
 
@@ -78,6 +97,54 @@ export function LoginPage() {
           <Button type="submit" className="w-full" loading={loading}>
             Sign in
           </Button>
+
+          {!isPlatformAdmin && (
+            <>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  color: '#94a3b8',
+                  fontSize: 11,
+                }}
+              >
+                <div style={{ flex: 1, height: 1, background: '#e2e8f0' }} />
+                <span>or</span>
+                <div style={{ flex: 1, height: 1, background: '#e2e8f0' }} />
+              </div>
+              <button
+                type="button"
+                onClick={handleSsoLogin}
+                disabled={ssoLoading}
+                style={{
+                  width: '100%',
+                  padding: '9px 16px',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: 8,
+                  background: '#fff',
+                  cursor: ssoLoading ? 'not-allowed' : 'pointer',
+                  fontFamily: 'inherit',
+                  fontSize: 13,
+                  fontWeight: 500,
+                  color: '#1a1a2e',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 8,
+                  opacity: ssoLoading ? 0.7 : 1,
+                }}
+              >
+                <svg width="16" height="16" viewBox="0 0 23 23" fill="none">
+                  <path d="M1 1h10v10H1z" fill="#f25022" />
+                  <path d="M12 1h10v10H12z" fill="#7fba00" />
+                  <path d="M1 12h10v10H1z" fill="#00a4ef" />
+                  <path d="M12 12h10v10H12z" fill="#ffb900" />
+                </svg>
+                {ssoLoading ? 'Redirecting…' : 'Sign in with Microsoft'}
+              </button>
+            </>
+          )}
 
           <button
             type="button"

@@ -78,7 +78,7 @@ export class AuthService {
     return this.issueTokens(user);
   }
 
-  private issueTokens(user: {
+  issueTokens(user: {
     id: string;
     tenantId: string | null;
     vesselId?: string | null;

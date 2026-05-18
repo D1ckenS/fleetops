@@ -8,6 +8,19 @@
 
 > Most-recent first. Format: `### YYYY-MM-DD — <task> — <summary>` then bullets.
 
+### 2026-05-18 — P4-2 — Integrations (Microsoft Entra SSO, 2BA/Nareto, OCIMF, accounting connector)
+
+| Item | Detail |
+|---|---|
+| **Prisma schema** | 4 new models: `TenantSsoConfig` (one per tenant; entraClientId, entraTenantId, clientSecret, redirectUri), `TechLibraryConnector` (2BA/NARETO enum, apiKey, endpoint), `OcimfInspection` (vessel-scoped, inspectionType SIRE/CDI/TMSA, date, inspector, port, reportNumber, overallScore, observationsJson), `AccountingConnector` (provider EXACT/SAP/TWINFIELD/NETSUITE/CSV, config JSON). 3 new enums. Migration `20260518073608_add_integrations_schema` with RLS on all 4 tables. `openid-client@5.x` installed in api-shore. |
+| **Microsoft Entra SSO** | Full PKCE OIDC flow via `openid-client@5`. `OidcService.beginLogin(tenantId)` discovers Entra metadata, generates code_verifier+challenge+nonce, encodes state as signed RS256 JWT (10-min TTL). `OidcService.completeLogin(code, state)` verifies state JWT, exchanges code via PKCE, extracts email from ID token claims, finds or auto-provisions user (role=CREW, null passwordHash). `upsertSsoConfig` + `getSsoConfig` admin endpoints. Client cache avoids repeated OIDC discovery calls per Entra tenant. `AuthService.issueTokens` changed from private to public for OIDC use. |
+| **2BA/Nareto Tech Library** | `TechLibraryModule` — `GET/POST /tech-library/config` (upsert API key + provider); `GET /tech-library/lookup?query=X` proxies to provider's search endpoint using tenant API key. Default endpoints for 2BA and Nareto documented. Returns 503 if connector not configured; 400 if query < 2 chars. Per REFERENCE.md §13, actual data requires customer-supplied license. |
+| **OCIMF Inspections** | `OcimfInspectionModule` — CRUD (`GET /ocimf-inspections?vesselId=X`, `POST`, `GET /:id`, `PATCH /:id`, `DELETE /:id`). Soft delete via `deletedAt`. Supports SIRE/CDI/TMSA inspection types with structured observations JSON. |
+| **Accounting Connector** | `AccountingModule` — `GET/POST /accounting/config` (provider + JSON config); `GET /accounting/export-pos?from=&to=&format=csv\|exact` exports POs in CSV (standard spreadsheet format) or Exact Online XML (purchase journal import format per Exact API spec). Exact XML includes PurchaseEntry elements with Line detail. |
+| **Web** | `LoginPage`: "Sign in with Microsoft" button (shown when tenantId is entered); calls `GET /auth/oidc/login?tenantId=X` → redirects to `authorizationUrl`. `OidcCallbackPage` at `/auth/callback` — reads code+state from URL, calls `POST /auth/oidc/callback`, logs in or shows error. `IntegrationsPage` (TENANT_ADMIN only, nav "Integrations"): 3 tabs — SSO (Entra config form + flow explanation), 2BA/Nareto (provider select + API key), Accounting (provider select + PO export with date range + format selector). `/integrations` route + `/auth/callback` public route added to App.tsx. |
+| **e2e tests** | Shore: 17 new tests in `integrations.e2e.ts` — SSO config upsert + read-back, beginLogin 5xx in test env, tech-library config upsert, lookup 400 validation, OCIMF CRUD (create/list/update/soft-delete + RLS policy), accounting config upsert, CSV export (content-type + header check), Exact XML export (content-type + root element check). auth-rs256.e2e.ts OIDC tests updated for new behavior (401 on invalid state, 4xx on missing tenantId). Shore: 217 ✓ (21 files). ci:full ✓ (146 unit). |
+| **CI result** | `pnpm -w run ci:full` ✓ (146 unit); shore e2e → 217 ✓ (21 files); vessel e2e → 128 ✓ (15 files, unchanged) |
+
 ### 2026-05-18 — P4-1 — Start (Fleetview) dashboard; budgets vs actuals
 
 | Item                            | Detail                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
@@ -444,9 +457,9 @@ Large batch of UI work implementing the Bearing design system across all Phase 1
 
 **Phase 3 complete (P3-1 through P3-5).** All operational depth tasks implemented: FLGO, Gantt project planning, multi-step approvals, RFQ comparison with PO conversion, and mobile feature parity (7 modules). Shore: 187 ✓ (19 files). Vessel: 128 ✓ (15 files). ci:full ✓.
 
-**P4-1 complete.** Fleetview dashboard implemented: fleet KPI strip, per-vessel status pills, budget vs actuals with progress bars, cross-vessel worklist. FlgoPage created (replaces ComingSoonPage stub). Shore: 200 ✓ (20 files). ci:full ✓.
+**P4-2 complete.** Four integrations implemented: Microsoft Entra SSO (full PKCE OIDC flow), 2BA/Nareto tech library connector (proxy lookup), OCIMF inspection tracking, accounting PO export (CSV + Exact Online XML). Login page SSO button + callback page + IntegrationsPage admin UI. Shore: 217 ✓ (21 files). ci:full ✓.
 
-Next: **P4-2 — Integrations** — 2BA, Nareto, OCIMF, accounting connector, Microsoft Entra SSO. See §11 Phase 4 tasks in REFERENCE.md.
+Next: **P4-3 — Class-society e-reporting connectors** — DNV Veracity, ABS, LR ClassDirect. See §11 Phase 4 tasks in REFERENCE.md.
 
 **Outstanding follow-up tickets (deferred, not blocking P1-4):**
 

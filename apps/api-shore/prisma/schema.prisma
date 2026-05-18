@@ -179,6 +179,10 @@ model Tenant {
   projectTasks         ProjectTask[]
   budgets              Budget[]
   budgetLines          BudgetLine[]
+  ssoConfig            TenantSsoConfig?
+  techLibraryConnector TechLibraryConnector?
+  accountingConnector  AccountingConnector?
+  ocimfInspections     OcimfInspection[]
 
   @@map("tenants")
 }
@@ -235,6 +239,7 @@ model Vessel {
   projects             Project[]
   projectTasks         ProjectTask[]
   budgets              Budget[]
+  ocimfInspections     OcimfInspection[]
 
   @@map("vessels")
 }
@@ -1776,6 +1781,102 @@ model BudgetLine {
   budget  Budget @relation(fields: [budgetId], references: [id], onDelete: Cascade)
 
   @@map("budget_lines")
+}
+
+// ── SSO: Tenant Entra config ─────────────────────────────────────────────────
+// One row per tenant. clientSecret stored in plaintext (encrypt at rest in prod).
+
+model TenantSsoConfig {
+  id             String    @id
+  tenantId       String    @unique @map("tenant_id")
+  entraClientId  String    @map("entra_client_id")
+  entraTenantId  String    @map("entra_tenant_id")
+  clientSecret   String    @map("client_secret")
+  redirectUri    String    @map("redirect_uri")
+  enabled        Boolean   @default(true)
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  tenant         Tenant    @relation(fields: [tenantId], references: [id])
+
+  @@map("tenant_sso_configs")
+}
+
+// ── Tech Library: 2BA / Nareto connector ─────────────────────────────────────
+
+enum TechLibraryProvider {
+  TWO_BA
+  NARETO
+}
+
+model TechLibraryConnector {
+  id        String               @id
+  tenantId  String               @unique @map("tenant_id")
+  provider  TechLibraryProvider  @default(TWO_BA)
+  apiKey    String               @map("api_key")
+  endpoint  String?
+  enabled   Boolean              @default(true)
+  createdAt DateTime             @default(now()) @map("created_at")
+  updatedAt DateTime             @updatedAt @map("updated_at")
+
+  tenant    Tenant               @relation(fields: [tenantId], references: [id])
+
+  @@map("tech_library_connectors")
+}
+
+// ── OCIMF Inspections ────────────────────────────────────────────────────────
+
+enum OcimfInspectionType {
+  SIRE
+  CDI
+  TMSA
+}
+
+model OcimfInspection {
+  id              String              @id
+  tenantId        String              @map("tenant_id")
+  vesselId        String              @map("vessel_id")
+  inspectionType  OcimfInspectionType @map("inspection_type")
+  inspectionDate  String              @map("inspection_date")
+  inspector       String?
+  port            String?
+  reportNumber    String?             @map("report_number")
+  overallScore    Decimal?            @map("overall_score") @db.Decimal(4, 2)
+  observationsJson Json?              @map("observations_json")
+  hlc             String?
+  deletedAt       DateTime?           @map("deleted_at")
+  createdAt       DateTime            @default(now()) @map("created_at")
+  updatedAt       DateTime            @updatedAt @map("updated_at")
+
+  tenant          Tenant              @relation(fields: [tenantId], references: [id])
+  vessel          Vessel              @relation(fields: [vesselId], references: [id])
+
+  @@index([tenantId, vesselId, inspectionDate])
+  @@map("ocimf_inspections")
+}
+
+// ── Accounting Connector ─────────────────────────────────────────────────────
+
+enum AccountingProvider {
+  EXACT
+  SAP
+  TWINFIELD
+  NETSUITE
+  CSV
+}
+
+model AccountingConnector {
+  id        String              @id
+  tenantId  String              @unique @map("tenant_id")
+  provider  AccountingProvider  @default(CSV)
+  config    Json                @default("{}")
+  enabled   Boolean             @default(true)
+  createdAt DateTime            @default(now()) @map("created_at")
+  updatedAt DateTime            @updatedAt @map("updated_at")
+
+  tenant    Tenant              @relation(fields: [tenantId], references: [id])
+
+  @@map("accounting_connectors")
 }
 
 // ── Outbox / SyncRecord ───────────────────────────────────────────────────────
