@@ -42,15 +42,16 @@ void i18n.use(initReactI18next).init({
 });
 
 export function applyLang(code: string): void {
-  const lang = LANGUAGES.find((l) => l.code === code);
-  const dir = lang?.dir ?? 'ltr';
   document.documentElement.lang = code;
-  document.documentElement.dir = dir;
+  // RTL layout (dir="rtl") is not yet implemented — setting it flips the
+  // entire app layout. Will be enabled once inline styles use CSS logical
+  // properties. Until then, keep dir=ltr regardless of language.
   localStorage.setItem('fleetops-lang', code);
   void i18n.changeLanguage(code);
 }
 
-// Apply on boot
+// Apply on boot — also clear any stale dir="rtl" set by earlier app versions
+document.documentElement.dir = 'ltr';
 applyLang(savedLang);
 
 export default i18n;

@@ -14,5 +14,13 @@ export function LanguageSwitcher({ size = 'sm' }: Props) {
     label: `${l.label} — ${l.name}`,
   }));
 
-  return <Select options={options} value={i18n.language} onChange={applyLang} size={size} />;
+  return (
+    <Select
+      options={options}
+      value={i18n.language}
+      onChange={applyLang}
+      size={size}
+      placement={size === 'sm' ? 'top' : 'bottom'}
+    />
+  );
 }
