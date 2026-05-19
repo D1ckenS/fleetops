@@ -116,11 +116,22 @@ export interface Quote {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-const titleCase = (s: string) =>
-  s
-    .replace(/_/g, ' ')
-    .toLowerCase()
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+
+const STATUS_KEY: Record<string, string> = {
+  DRAFT: 'purchase.status_draft',
+  SUBMITTED: 'purchase.status_submitted',
+  APPROVED: 'purchase.status_approved',
+  REJECTED: 'purchase.status_rejected',
+  ORDERED: 'purchase.status_ordered',
+  SENT: 'purchase.status_sent',
+  ACKNOWLEDGED: 'purchase.status_confirmed',
+  IN_TRANSIT: 'purchase.status_in_transit',
+  PARTIALLY_RECEIVED: 'purchase.status_partial',
+  RECEIVED: 'purchase.status_received',
+  INVOICED: 'purchase.status_invoiced',
+  CLOSED: 'purchase.status_closed',
+  CANCELLED: 'purchase.status_cancelled',
+};
 
 const fmtDate = (iso: string) =>
   new Date(iso).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
@@ -442,7 +453,7 @@ function PODetailPane({
                     · {po.poNumber}
                   </span>
                 )}
-                <Badge color={PO_STATUS_COLOR[po.status]}>{titleCase(po.status)}</Badge>
+                <Badge color={PO_STATUS_COLOR[po.status]}>{t(STATUS_KEY[po.status] ?? po.status)}</Badge>
                 <div className="flex-1" />
                 <button
                   onClick={onClose}
@@ -743,13 +754,13 @@ function RequisitionsTab() {
         <div className="flex gap-1.5 flex-wrap">
           {REQ_FILTERS.map((f) => (
             <Chip key={f} active={filter === f} onClick={() => setFilter(f)}>
-              {f === 'ALL' ? 'All' : titleCase(f)}
+              {f === 'ALL' ? t('common.all') : t(STATUS_KEY[f] ?? f)}
             </Chip>
           ))}
         </div>
         <div className="flex-1" />
         <span className="text-[11px]" style={{ color: 'var(--ink-3)' }}>
-          {reqs.length} {filter !== 'ALL' ? titleCase(filter).toLowerCase() : ''}
+          {reqs.length} {filter !== 'ALL' ? (t(STATUS_KEY[filter] ?? filter)).toLowerCase() : ''}
         </span>
       </div>
 
@@ -841,7 +852,7 @@ function RequisitionsTab() {
                     {fmtAmt(r.totalAmount, r.currency)}
                   </div>
                 </div>
-                <Badge color={REQ_STATUS_COLOR[r.status]}>{titleCase(r.status)}</Badge>
+                <Badge color={REQ_STATUS_COLOR[r.status]}>{t(STATUS_KEY[r.status] ?? r.status)}</Badge>
                 <span className="text-[11px]" style={{ color: 'var(--ink-3)' }}>
                   {fmtDate(r.requestedAt)}
                 </span>
@@ -1444,7 +1455,7 @@ function PurchaseOrdersTab() {
                 <span className="font-mono text-[11px]" style={{ color: 'var(--ink-3)' }}>
                   {po.expectedDeliveryAt ? fmtDate(po.expectedDeliveryAt) : '—'}
                 </span>
-                <Badge color={PO_STATUS_COLOR[po.status]}>{titleCase(po.status)}</Badge>
+                <Badge color={PO_STATUS_COLOR[po.status]}>{t(STATUS_KEY[po.status] ?? po.status)}</Badge>
                 <div className="text-right">
                   <div
                     className="font-mono text-[12.5px] font-semibold"
