@@ -509,6 +509,8 @@ Large batch of UI work implementing the Bearing design system across all Phase 1
 
 **P5-2 complete (2026-05-18).** Localization implemented for 8 languages (EN / DE / NL / FIL / RU / GR / ZH / AR) — AR confirmed by Ziad (added to list from open question). Infrastructure: i18next + react-i18next, 8 locale JSON files (~300 keys each), `applyLang()` with RTL support (dir="rtl" on html element for AR), `LanguageSwitcher` dropdown in sidebar and login page, language preference persisted to localStorage. Fully translated: nav labels, login page, "no vessel" guard, dashboard (KPIs, fleet table, worklist), maintenance tab labels, AppShell "Sign out". All other pages have the import ready — strings fall back to English via i18next fallbackLng. RTL layout activates automatically via browser when dir="rtl" is set. New deps: i18next, react-i18next. ci:full 156 ✓, shore e2e 256 ✓, vessel e2e 128 ✓.
 
+**i18n pass 2 complete (2026-05-19).** All remaining hardcoded strings translated across Certificates, Safety, QHSE, Crewing, Analytics, Compliance and Integrations pages (~150 strings, ~42 new locale keys, all 8 languages). Pre-existing Prettier violations (22 files) also fixed. Merged via PR #24. ci:full 156 ✓, shore e2e 256 ✓, vessel e2e 128 ✓.
+
 Next: **P5-3 — Performance: Fleetview <1.5s on 50 vessels; vessel cold start <5s.**
 
 **Outstanding follow-up tickets (deferred, not blocking P1-4):**
