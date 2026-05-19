@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Input, Modal, TextArea } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
 
@@ -19,6 +20,7 @@ interface Props {
 }
 
 export function EditSupplierModal({ supplier, onClose, onSaved }: Props) {
+  const { t } = useTranslation();
   const [form, setForm] = useState({
     name: supplier.name,
     contactName: supplier.contactName ?? '',
@@ -78,10 +80,10 @@ export function EditSupplierModal({ supplier, onClose, onSaved }: Props) {
       footer={
         <>
           <Button variant="secondary" onClick={onClose} disabled={saving}>
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button loading={saving} onClick={handleSubmit}>
-            Save Changes
+            {t('common.save')}
           </Button>
         </>
       }

@@ -697,5 +697,22 @@
     "save_draft": "Сохранить как черновик",
     "submission_history": "История подачи"
   },
-  "settings": { "language": "Язык", "select_language": "Выбрать язык" }
+  "settings": { "language": "Язык", "select_language": "Выбрать язык" },
+  "profile": {
+    "title": "Профиль",
+    "personal_info": "Личная информация",
+    "first_name": "Имя",
+    "last_name": "Фамилия",
+    "email": "Эл. почта",
+    "role": "Роль",
+    "change_password": "Изменить пароль",
+    "current_password": "Текущий пароль",
+    "new_password": "Новый пароль",
+    "confirm_password": "Подтвердите новый пароль",
+    "save_changes": "Сохранить изменения",
+    "profile_updated": "Профиль обновлён.",
+    "passwords_no_match": "Пароли не совпадают.",
+    "password_changed": "Пароль изменён.",
+    "loading": "Загрузка…"
+  }
 }

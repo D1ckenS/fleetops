@@ -697,5 +697,22 @@
     "save_draft": "حفظ كمسودة",
     "submission_history": "سجل التقديمات"
   },
-  "settings": { "language": "اللغة", "select_language": "اختر اللغة" }
+  "settings": { "language": "اللغة", "select_language": "اختر اللغة" },
+  "profile": {
+    "title": "الملف الشخصي",
+    "personal_info": "المعلومات الشخصية",
+    "first_name": "الاسم الأول",
+    "last_name": "اسم العائلة",
+    "email": "البريد الإلكتروني",
+    "role": "الدور",
+    "change_password": "تغيير كلمة المرور",
+    "current_password": "كلمة المرور الحالية",
+    "new_password": "كلمة المرور الجديدة",
+    "confirm_password": "تأكيد كلمة المرور الجديدة",
+    "save_changes": "حفظ التغييرات",
+    "profile_updated": "تم تحديث الملف الشخصي.",
+    "passwords_no_match": "كلمتا المرور غير متطابقتين.",
+    "password_changed": "تم تغيير كلمة المرور.",
+    "loading": "جارٍ التحميل…"
+  }
 }

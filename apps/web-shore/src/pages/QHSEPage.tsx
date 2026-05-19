@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import { Badge, type BadgeColor, Spinner } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
@@ -1386,9 +1387,10 @@ function ReviewCard({ r }: { r: ManagementReview }) {
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 export function QHSEPage() {
+  const { t } = useTranslation();
   const [params, setParams] = useSearchParams();
   const tab = (params.get('tab') as Tab | null) ?? 'obj';
-  const setTab = (t: Tab) => setParams(t === 'obj' ? {} : { tab: t });
+  const setTab = (tabId: Tab) => setParams(tabId === 'obj' ? {} : { tab: tabId });
 
   const [objectives, setObjectives] = useState<QhseObjective[]>([]);
   const [audits, setAudits] = useState<Audit[]>([]);
@@ -1475,12 +1477,12 @@ export function QHSEPage() {
           className="text-[16px] font-semibold m-0"
           style={{ color: 'var(--ink)', letterSpacing: '-0.01em' }}
         >
-          QHSE
+          {t('qhse.title')}
         </h1>
         <span className="text-[12px]" style={{ color: 'var(--ink-3)' }}>
           ISM + DryBMS + ISO 14001
         </span>
-        {offTarget > 0 && <Badge color="amber">{offTarget} OFF TARGET</Badge>}
+        {offTarget > 0 && <Badge color="amber">{offTarget} {t('qhse.attention').toUpperCase()}</Badge>}
         <div className="flex-1" />
         <button
           className="px-3 py-1 rounded-2 text-[12px] font-medium border"
@@ -1497,7 +1499,7 @@ export function QHSEPage() {
           className="px-3 py-1 rounded-2 text-[12px] font-medium"
           style={{ background: 'var(--navy)', color: '#fff', border: 'none', cursor: 'pointer' }}
         >
-          + Log audit
+          {t('qhse.log_audit')}
         </button>
       </div>
 
@@ -1506,10 +1508,16 @@ export function QHSEPage() {
         className="flex gap-0 flex-shrink-0 px-4 overflow-x-auto"
         style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)' }}
       >
-        {TABS.map((t) => (
+        {([
+          { id: 'obj', label: t('qhse.tab_objectives') },
+          { id: 'audit', label: t('qhse.tab_audits') },
+          { id: 'env', label: t('qhse.tab_environmental') },
+          { id: 'dryb', label: t('qhse.tab_drybms') },
+          { id: 'review', label: t('qhse.tab_management_review') },
+        ] as { id: Tab; label: string }[]).map((tabItem) => (
           <button
-            key={t.id}
-            onClick={() => setTab(t.id)}
+            key={tabItem.id}
+            onClick={() => setTab(tabItem.id)}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -1517,24 +1525,24 @@ export function QHSEPage() {
               padding: '12px 16px',
               border: 'none',
               background: 'transparent',
-              borderBottom: `2px solid ${tab === t.id ? 'var(--navy)' : 'transparent'}`,
+              borderBottom: `2px solid ${tab === tabItem.id ? 'var(--navy)' : 'transparent'}`,
               cursor: 'pointer',
-              color: tab === t.id ? 'var(--ink)' : 'var(--ink-2)',
+              color: tab === tabItem.id ? 'var(--ink)' : 'var(--ink-2)',
               fontSize: 13,
-              fontWeight: tab === t.id ? 600 : 500,
+              fontWeight: tab === tabItem.id ? 600 : 500,
               marginBottom: -1,
               whiteSpace: 'nowrap',
             }}
           >
-            <span>{t.label}</span>
+            <span>{tabItem.label}</span>
             <span
               className="font-mono text-[10.5px] px-1.5 py-px rounded-[10px]"
               style={{
-                background: tab === t.id ? 'var(--navy)' : 'var(--surface-2)',
-                color: tab === t.id ? '#fff' : 'var(--ink-3)',
+                background: tab === tabItem.id ? 'var(--navy)' : 'var(--surface-2)',
+                color: tab === tabItem.id ? '#fff' : 'var(--ink-3)',
               }}
             >
-              {counts[t.id]}
+              {counts[tabItem.id]}
             </span>
           </button>
         ))}

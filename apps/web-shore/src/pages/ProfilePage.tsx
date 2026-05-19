@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Input } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
 import { useAuth } from '../context/useAuth.js';
@@ -17,6 +18,7 @@ interface UpdateResult {
 }
 
 export function ProfilePage() {
+  const { t } = useTranslation();
   const { login } = useAuth();
 
   const [profile, setProfile] = useState<ProfileData | null>(null);
@@ -56,7 +58,7 @@ export function ProfilePage() {
         email: email.trim(),
       });
       login(res.access_token);
-      setInfoStatus({ ok: true, msg: 'Profile updated.' });
+      setInfoStatus({ ok: true, msg: t('profile.profile_updated') });
     } catch (err) {
       setInfoStatus({ ok: false, msg: err instanceof Error ? err.message : 'Update failed.' });
     } finally {
@@ -68,7 +70,7 @@ export function ProfilePage() {
     e.preventDefault();
     setPwStatus(null);
     if (newPassword !== confirmPassword) {
-      setPwStatus({ ok: false, msg: 'New passwords do not match.' });
+      setPwStatus({ ok: false, msg: t('profile.passwords_no_match') });
       return;
     }
     setPwLoading(true);
@@ -81,7 +83,7 @@ export function ProfilePage() {
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
-      setPwStatus({ ok: true, msg: 'Password changed.' });
+      setPwStatus({ ok: true, msg: t('profile.password_changed') });
     } catch (err) {
       setPwStatus({ ok: false, msg: err instanceof Error ? err.message : 'Update failed.' });
     } finally {
@@ -91,7 +93,7 @@ export function ProfilePage() {
 
   if (!profile) {
     return (
-      <div style={{ color: '#8893A0', fontSize: 14, padding: 8 }}>Loading…</div>
+      <div style={{ color: '#8893A0', fontSize: 14, padding: 8 }}>{t('profile.loading')}</div>
     );
   }
 
@@ -108,7 +110,7 @@ export function ProfilePage() {
           letterSpacing: '-0.01em',
         }}
       >
-        Profile
+        {t('profile.title')}
       </h1>
       <p style={{ fontSize: 13, color: '#8893A0', marginTop: 0, marginBottom: 28 }}>
         {roleLabel}
@@ -126,26 +128,26 @@ export function ProfilePage() {
         }}
       >
         <h2 style={{ fontSize: 13, fontWeight: 600, color: '#0A1F33', marginTop: 0, marginBottom: 16 }}>
-          Personal information
+          {t('profile.personal_info')}
         </h2>
         <form onSubmit={handleInfoSave} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <Input
               id="firstName"
-              label="First name"
+              label={t('profile.first_name')}
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
             />
             <Input
               id="lastName"
-              label="Last name"
+              label={t('profile.last_name')}
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
             />
           </div>
           <Input
             id="email"
-            label="Email"
+            label={t('profile.email')}
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -167,7 +169,7 @@ export function ProfilePage() {
           )}
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <Button type="submit" loading={infoLoading} size="sm">
-              Save changes
+              {t('profile.save_changes')}
             </Button>
           </div>
         </form>
@@ -183,12 +185,12 @@ export function ProfilePage() {
         }}
       >
         <h2 style={{ fontSize: 13, fontWeight: 600, color: '#0A1F33', marginTop: 0, marginBottom: 16 }}>
-          Change password
+          {t('profile.change_password')}
         </h2>
         <form onSubmit={handlePasswordSave} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <Input
             id="currentPassword"
-            label="Current password"
+            label={t('profile.current_password')}
             type="password"
             value={currentPassword}
             onChange={(e) => setCurrentPassword(e.target.value)}
@@ -196,7 +198,7 @@ export function ProfilePage() {
           />
           <Input
             id="newPassword"
-            label="New password"
+            label={t('profile.new_password')}
             type="password"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
@@ -204,7 +206,7 @@ export function ProfilePage() {
           />
           <Input
             id="confirmPassword"
-            label="Confirm new password"
+            label={t('profile.confirm_password')}
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
@@ -226,7 +228,7 @@ export function ProfilePage() {
           )}
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <Button type="submit" loading={pwLoading} size="sm">
-              Change password
+              {t('profile.change_password')}
             </Button>
           </div>
         </form>

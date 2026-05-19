@@ -697,5 +697,22 @@
     "save_draft": "Als concept opslaan",
     "submission_history": "Indieningshistorie"
   },
-  "settings": { "language": "Taal", "select_language": "Taal selecteren" }
+  "settings": { "language": "Taal", "select_language": "Taal selecteren" },
+  "profile": {
+    "title": "Profiel",
+    "personal_info": "Persoonlijke informatie",
+    "first_name": "Voornaam",
+    "last_name": "Achternaam",
+    "email": "E-mail",
+    "role": "Rol",
+    "change_password": "Wachtwoord wijzigen",
+    "current_password": "Huidig wachtwoord",
+    "new_password": "Nieuw wachtwoord",
+    "confirm_password": "Nieuw wachtwoord bevestigen",
+    "save_changes": "Wijzigingen opslaan",
+    "profile_updated": "Profiel bijgewerkt.",
+    "passwords_no_match": "Wachtwoorden komen niet overeen.",
+    "password_changed": "Wachtwoord gewijzigd.",
+    "loading": "Laden…"
+  }
 }

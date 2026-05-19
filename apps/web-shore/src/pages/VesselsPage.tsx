@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Badge, Button, Input, Modal, Select, Spinner } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
 import { useVessel } from '../context/useVessel.js';
@@ -370,6 +371,7 @@ function EditUserModal({
 // ─── Main page ────────────────────────────────────────────────────────────────
 
 export function VesselsPage() {
+  const { t } = useTranslation();
   const { reload: reloadVesselCtx } = useVessel();
   const [vessels, setVessels] = useState<Vessel[]>([]);
   const [users, setUsers] = useState<User[]>([]);
@@ -434,16 +436,15 @@ export function VesselsPage() {
             className="text-[20px] font-semibold m-0"
             style={{ letterSpacing: '-0.01em', color: 'var(--ink)' }}
           >
-            Vessels & Users
+            {t('vessels_page.title')}
           </h1>
           <p className="text-[12.5px] mt-0.5 m-0" style={{ color: 'var(--ink-3)' }}>
-            {vessels.length} vessel{vessels.length !== 1 ? 's' : ''} · {users.length} user
-            {users.length !== 1 ? 's' : ''}
+            {vessels.length} {vessels.length !== 1 ? t('vessels_page.vessels') : t('vessels_page.vessel')} · {users.length} {users.length !== 1 ? t('vessels_page.users') : t('vessels_page.user')}
           </p>
         </div>
         <div className="flex-1" />
-        <Button onClick={() => setShowAddUser('')}>+ Add user</Button>
-        <Button onClick={() => setShowCreate(true)}>+ Add vessel</Button>
+        <Button onClick={() => setShowAddUser('')}>{t('vessels_page.add_user')}</Button>
+        <Button onClick={() => setShowCreate(true)}>{t('vessels_page.add_vessel')}</Button>
       </div>
 
       {/* Vessel cards */}
@@ -458,7 +459,7 @@ export function VesselsPage() {
               fontSize: 13,
             }}
           >
-            No vessels yet. Add your first vessel to get started.
+            {t('vessels_page.no_vessels')}
           </div>
         )}
 
@@ -507,8 +508,8 @@ export function VesselsPage() {
                     {v.name}
                   </div>
                   <div className="text-[11.5px]" style={{ color: 'var(--ink-3)' }}>
-                    {vUsers.length} user{vUsers.length !== 1 ? 's' : ''}
-                    {v.imoNumber && <> · IMO {v.imoNumber}</>}
+                    {vUsers.length} {vUsers.length !== 1 ? t('vessels_page.users') : t('vessels_page.user')}
+                    {v.imoNumber && <> · {t('vessels_page.imo')} {v.imoNumber}</>}
                   </div>
                 </div>
                 <button
@@ -524,7 +525,7 @@ export function VesselsPage() {
                     color: 'var(--ink-2)',
                   }}
                 >
-                  Edit
+                  {t('common.edit')}
                 </button>
                 <button
                   onClick={(e) => {
@@ -539,7 +540,7 @@ export function VesselsPage() {
                     color: 'var(--sig-red)',
                   }}
                 >
-                  Delete
+                  {t('common.delete')}
                 </button>
                 <svg
                   width="14"
@@ -577,7 +578,7 @@ export function VesselsPage() {
                       className="text-[10.5px] font-semibold uppercase tracking-widest flex-1"
                       style={{ color: 'var(--ink-3)' }}
                     >
-                      Users assigned to {v.name}
+                      {t('vessels_page.users_assigned_to')} {v.name}
                     </span>
                     <button
                       onClick={() => setShowAddUser(v.id)}
@@ -589,13 +590,13 @@ export function VesselsPage() {
                         cursor: 'pointer',
                       }}
                     >
-                      + Add user
+                      {t('vessels_page.add_user')}
                     </button>
                   </div>
 
                   {vUsers.length === 0 ? (
                     <div className="px-4 py-4 text-[12px]" style={{ color: 'var(--ink-3)' }}>
-                      No users assigned to this vessel yet.
+                      {t('vessels_page.no_vessel_users')}
                     </div>
                   ) : (
                     <div>
@@ -629,7 +630,7 @@ export function VesselsPage() {
                               color: 'var(--ink-2)',
                             }}
                           >
-                            Edit
+                            {t('common.edit')}
                           </button>
                           <button
                             onClick={() => handleDeleteUser(u.id)}
@@ -641,7 +642,7 @@ export function VesselsPage() {
                               color: 'var(--sig-red)',
                             }}
                           >
-                            Remove
+                            {t('common.delete')}
                           </button>
                         </div>
                       ))}
@@ -667,7 +668,7 @@ export function VesselsPage() {
                 className="text-[10.5px] font-semibold uppercase tracking-widest flex-1"
                 style={{ color: 'var(--ink-3)' }}
               >
-                Fleet-wide users (no vessel assigned)
+                {t('vessels_page.fleet_wide_users')}
               </span>
             </div>
             {unassignedUsers.map((u, i) => (
@@ -695,7 +696,7 @@ export function VesselsPage() {
                     color: 'var(--ink-2)',
                   }}
                 >
-                  Edit
+                  {t('common.edit')}
                 </button>
                 <button
                   onClick={() => handleDeleteUser(u.id)}
@@ -707,7 +708,7 @@ export function VesselsPage() {
                     color: 'var(--sig-red)',
                   }}
                 >
-                  Remove
+                  {t('common.delete')}
                 </button>
               </div>
             ))}

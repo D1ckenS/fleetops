@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { api } from '../api/client.js';
 import { useVessel } from '../context/useVessel.js';
 
@@ -72,6 +73,7 @@ function TabBtn({
 // ── Page ─────────────────────────────────────────────────────────────────────
 
 export function FlgoPage() {
+  const { t } = useTranslation();
   const { selectedVesselId } = useVessel();
   const [tab, setTab] = useState<Tab>('tanks');
   const [tanks, setTanks] = useState<Tank[]>([]);
@@ -107,7 +109,7 @@ export function FlgoPage() {
           fontSize: 13,
         }}
       >
-        Select a vessel to view FLGO data.
+        {t('flgo.select_vessel')}
       </div>
     );
   }
@@ -135,18 +137,18 @@ export function FlgoPage() {
           border: '1px solid #EEEBE2',
         }}
       >
-        {(['tanks', 'soundings', 'bdn'] as Tab[]).map((t) => (
+        {(['tanks', 'soundings', 'bdn'] as Tab[]).map((tabId) => (
           <TabBtn
-            key={t}
-            label={t === 'bdn' ? 'BDN' : t.charAt(0).toUpperCase() + t.slice(1)}
-            active={tab === t}
-            onClick={() => setTab(t)}
+            key={tabId}
+            label={tabId === 'tanks' ? t('flgo.tab_tanks') : tabId === 'soundings' ? t('flgo.tab_soundings') : t('flgo.tab_bdn')}
+            active={tab === tabId}
+            onClick={() => setTab(tabId)}
           />
         ))}
       </div>
 
       {loading ? (
-        <div style={{ textAlign: 'center', color: '#8893A0', padding: 40 }}>Loading…</div>
+        <div style={{ textAlign: 'center', color: '#8893A0', padding: 40 }}>{t('common.loading')}</div>
       ) : (
         <>
           {/* ── Tanks tab ───────────────────────────────────────────────── */}
@@ -168,7 +170,7 @@ export function FlgoPage() {
                   borderBottom: '1px solid #EEEBE2',
                 }}
               >
-                {['Tank', 'Type', 'Capacity (m³)', 'Latest ROB (MT)'].map((h) => (
+                {[t('flgo.col_tank'), t('flgo.col_type'), t('flgo.col_capacity'), t('flgo.col_rob_mt')].map((h) => (
                   <span
                     key={h}
                     style={{
@@ -192,7 +194,7 @@ export function FlgoPage() {
                     fontSize: 12,
                   }}
                 >
-                  No tanks configured. Add tanks via the API or vessel setup.
+                  {t('flgo.no_tanks')}
                 </div>
               ) : (
                 tanks.map((t) => {
@@ -273,7 +275,7 @@ export function FlgoPage() {
                   borderBottom: '1px solid #EEEBE2',
                 }}
               >
-                {['Date', 'Tank', 'MT', 'm³'].map((h) => (
+                {[t('flgo.col_date'), t('flgo.col_tank'), t('flgo.col_mt'), t('flgo.col_m3')].map((h) => (
                   <span
                     key={h}
                     style={{
@@ -297,7 +299,7 @@ export function FlgoPage() {
                     fontSize: 12,
                   }}
                 >
-                  No soundings recorded yet.
+                  {t('flgo.no_soundings')}
                 </div>
               ) : (
                 [...readings]
@@ -360,7 +362,7 @@ export function FlgoPage() {
                   borderBottom: '1px solid #EEEBE2',
                 }}
               >
-                {['Date', 'BDN No.', 'Qty (MT)', 'Sulphur %', 'Grade'].map((h) => (
+                {[t('flgo.col_date'), t('flgo.col_bdn_no'), t('flgo.col_qty_mt'), t('flgo.col_sulphur'), t('flgo.col_grade')].map((h) => (
                   <span
                     key={h}
                     style={{
@@ -384,7 +386,7 @@ export function FlgoPage() {
                     fontSize: 12,
                   }}
                 >
-                  No BDN records yet.
+                  {t('flgo.no_bdn')}
                 </div>
               ) : (
                 [...bdns]

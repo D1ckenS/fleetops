@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import { Badge, type BadgeColor, Spinner } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
@@ -1386,9 +1387,10 @@ function CapaTab({ capas, loading }: { capas: Capa[]; loading: boolean }) {
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 export function SafetyPage() {
+  const { t } = useTranslation();
   const [params, setParams] = useSearchParams();
   const tab = (params.get('tab') as Tab | null) ?? 'permit';
-  const setTab = (t: Tab) => setParams(t === 'permit' ? {} : { tab: t });
+  const setTab = (tabId: Tab) => setParams(tabId === 'permit' ? {} : { tab: tabId });
 
   const [permits, setPermits] = useState<WorkPermit[]>([]);
   const [findings, setFindings] = useState<SafetyFinding[]>([]);
@@ -1463,13 +1465,13 @@ export function SafetyPage() {
           className="text-[16px] font-semibold m-0"
           style={{ color: 'var(--ink)', letterSpacing: '-0.01em' }}
         >
-          Safety
+          {t('safety.title')}
         </h1>
         <span className="text-[12px]" style={{ color: 'var(--ink-3)' }}>
           ISM 2006
         </span>
-        {activePermits > 0 && <Badge color="green">{activePermits} ACTIVE</Badge>}
-        {awaitingPermits > 0 && <Badge color="amber">{awaitingPermits} AWAITING</Badge>}
+        {activePermits > 0 && <Badge color="green">{activePermits} {t('safety.status_active')}</Badge>}
+        {awaitingPermits > 0 && <Badge color="amber">{awaitingPermits} {t('safety.status_awaiting')}</Badge>}
         <div className="flex-1" />
         <button
           className="px-3 py-1 rounded-2 text-[12px] font-medium border"
@@ -1480,13 +1482,13 @@ export function SafetyPage() {
             color: 'var(--ink)',
           }}
         >
-          Toolbox talk
+          {t('safety.toolbox_talk')}
         </button>
         <button
           className="px-3 py-1 rounded-2 text-[12px] font-medium"
           style={{ background: 'var(--navy)', color: '#fff', border: 'none', cursor: 'pointer' }}
         >
-          + New permit
+          {t('safety.new_permit')}
         </button>
       </div>
 
@@ -1495,10 +1497,16 @@ export function SafetyPage() {
         className="flex gap-0 flex-shrink-0 px-4 overflow-x-auto"
         style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)' }}
       >
-        {TABS.map((t) => (
+        {([
+          { id: 'permit', label: t('safety.tab_permits') },
+          { id: 'find', label: t('safety.tab_findings') },
+          { id: 'jha', label: t('safety.tab_jha') },
+          { id: 'eq', label: t('safety.tab_equipment') },
+          { id: 'capa', label: t('safety.tab_capa') },
+        ] as { id: Tab; label: string }[]).map((tabItem) => (
           <button
-            key={t.id}
-            onClick={() => setTab(t.id)}
+            key={tabItem.id}
+            onClick={() => setTab(tabItem.id)}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -1506,24 +1514,24 @@ export function SafetyPage() {
               padding: '12px 16px',
               border: 'none',
               background: 'transparent',
-              borderBottom: `2px solid ${tab === t.id ? 'var(--navy)' : 'transparent'}`,
+              borderBottom: `2px solid ${tab === tabItem.id ? 'var(--navy)' : 'transparent'}`,
               cursor: 'pointer',
-              color: tab === t.id ? 'var(--ink)' : 'var(--ink-2)',
+              color: tab === tabItem.id ? 'var(--ink)' : 'var(--ink-2)',
               fontSize: 13,
-              fontWeight: tab === t.id ? 600 : 500,
+              fontWeight: tab === tabItem.id ? 600 : 500,
               marginBottom: -1,
               whiteSpace: 'nowrap',
             }}
           >
-            <span>{t.label}</span>
+            <span>{tabItem.label}</span>
             <span
               className="font-mono text-[10.5px] px-1.5 py-px rounded-[10px]"
               style={{
-                background: tab === t.id ? 'var(--navy)' : 'var(--surface-2)',
-                color: tab === t.id ? '#fff' : 'var(--ink-3)',
+                background: tab === tabItem.id ? 'var(--navy)' : 'var(--surface-2)',
+                color: tab === tabItem.id ? '#fff' : 'var(--ink-3)',
               }}
             >
-              {counts[t.id]}
+              {counts[tabItem.id]}
             </span>
           </button>
         ))}

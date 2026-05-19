@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import { Badge, type BadgeColor, Button, Spinner, TextArea } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
@@ -687,6 +688,7 @@ const REQ_FILTERS = ['ALL', 'DRAFT', 'SUBMITTED', 'APPROVED', 'REJECTED'] as con
 type ReqFilter = (typeof REQ_FILTERS)[number];
 
 function RequisitionsTab() {
+  const { t } = useTranslation();
   const [reqs, setReqs] = useState<Requisition[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -781,7 +783,7 @@ function RequisitionsTab() {
         )}
         {!loading && !error && reqs.length === 0 && (
           <div className="p-10 text-center text-xs" style={{ color: 'var(--ink-3)' }}>
-            No requisitions found.
+            {t('purchase.no_requisitions')}
           </div>
         )}
         {!loading &&
@@ -1294,6 +1296,7 @@ const PO_STAGE_FILTERS = [
 ];
 
 function PurchaseOrdersTab() {
+  const { t } = useTranslation();
   const [pos, setPOs] = useState<PurchaseOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -1392,7 +1395,7 @@ function PurchaseOrdersTab() {
           )}
           {!loading && !error && filteredPOs.length === 0 && (
             <div className="p-10 text-center text-xs" style={{ color: 'var(--ink-3)' }}>
-              No purchase orders found.
+              {t('purchase.no_pos')}
             </div>
           )}
           {!loading &&
@@ -1506,6 +1509,7 @@ interface FlatGrn {
 }
 
 function GoodsReceiptsTab() {
+  const { t } = useTranslation();
   const [grns, setGrns] = useState<FlatGrn[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -1580,7 +1584,7 @@ function GoodsReceiptsTab() {
         )}
         {!loading && grns.length === 0 && (
           <div className="p-10 text-center text-xs" style={{ color: 'var(--ink-3)' }}>
-            No goods receipts yet.
+            {t('purchase.no_grns')}
           </div>
         )}
         {!loading &&
@@ -1634,6 +1638,7 @@ interface SupplierFull {
 }
 
 function SuppliersTab() {
+  const { t } = useTranslation();
   const [suppliers, setSuppliers] = useState<SupplierFull[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -1673,7 +1678,7 @@ function SuppliersTab() {
           Vendors available when creating purchase orders.
         </span>
         <Button size="sm" onClick={() => setCreating(true)}>
-          + New Supplier
+          {t('purchase.new_supplier')}
         </Button>
       </div>
 
@@ -1708,14 +1713,14 @@ function SuppliersTab() {
         {!loading && !error && suppliers.length === 0 && (
           <div className="p-10 text-center">
             <p className="text-xs mb-2" style={{ color: 'var(--ink-3)' }}>
-              No suppliers yet.
+              {t('purchase.no_suppliers')}
             </p>
             <button
               className="text-xs font-medium underline"
               style={{ color: 'var(--sig-blue)' }}
               onClick={() => setCreating(true)}
             >
-              Add the first one
+              {t('purchase.add_first_supplier')}
             </button>
           </div>
         )}
@@ -1855,8 +1860,16 @@ const TABS: { id: Tab; label: string }[] = [
 ];
 
 export function PurchasePage() {
+  const { t } = useTranslation();
   const [params, setParams] = useSearchParams();
   const tab = (params.get('tab') as Tab | null) ?? 'requisitions';
+  const tabs: { id: Tab; label: string }[] = [
+    { id: 'requisitions', label: t('purchase.tab_requisitions') },
+    { id: 'rfq', label: t('purchase.tab_rfqs') },
+    { id: 'po', label: t('purchase.tab_pos') },
+    { id: 'grn', label: t('purchase.tab_grns') },
+    { id: 'suppliers', label: t('purchase.tab_suppliers') },
+  ];
   const [search, setSearch] = useState('');
   const [pos, setPOs] = useState<PurchaseOrder[]>([]);
   const [creating, setCreating] = useState(false);
@@ -1891,7 +1904,7 @@ export function PurchasePage() {
           className="text-[16px] font-semibold m-0"
           style={{ color: 'var(--ink)', letterSpacing: '-0.01em' }}
         >
-          Purchase
+          {t('purchase.title')}
         </h1>
         <div className="flex-1" />
         {/* Search */}
@@ -1916,13 +1929,13 @@ export function PurchasePage() {
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search PO, supplier, requisition…"
+            placeholder={t('purchase.search_placeholder')}
             className="flex-1 bg-transparent outline-none text-[12px]"
             style={{ color: 'var(--ink)', border: 'none' }}
           />
         </div>
         <Button size="sm" onClick={() => setCreating(true)}>
-          + New Requisition
+          {t('purchase.new_requisition')}
         </Button>
       </div>
 
@@ -1931,18 +1944,18 @@ export function PurchasePage() {
         className="flex gap-0 flex-shrink-0 px-4"
         style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)' }}
       >
-        {TABS.map((t) => (
+        {tabs.map((tabItem) => (
           <button
-            key={t.id}
-            onClick={() => setTab(t.id)}
+            key={tabItem.id}
+            onClick={() => setTab(tabItem.id)}
             className="px-4 py-2.5 text-[13px] font-medium border-b-2 transition-colors flex items-center gap-2"
             style={
-              tab === t.id
+              tab === tabItem.id
                 ? { borderBottomColor: 'var(--navy)', color: 'var(--navy)', marginBottom: '-1px' }
                 : { borderBottomColor: 'transparent', color: 'var(--ink-3)' }
             }
           >
-            {t.label}
+            {tabItem.label}
           </button>
         ))}
       </div>

@@ -697,5 +697,22 @@
     "save_draft": "保存为草稿",
     "submission_history": "提交历史"
   },
-  "settings": { "language": "语言", "select_language": "选择语言" }
+  "settings": { "language": "语言", "select_language": "选择语言" },
+  "profile": {
+    "title": "个人资料",
+    "personal_info": "个人信息",
+    "first_name": "名字",
+    "last_name": "姓氏",
+    "email": "电子邮件",
+    "role": "角色",
+    "change_password": "修改密码",
+    "current_password": "当前密码",
+    "new_password": "新密码",
+    "confirm_password": "确认新密码",
+    "save_changes": "保存更改",
+    "profile_updated": "资料已更新。",
+    "passwords_no_match": "新密码不一致。",
+    "password_changed": "密码已更改。",
+    "loading": "加载中…"
+  }
 }

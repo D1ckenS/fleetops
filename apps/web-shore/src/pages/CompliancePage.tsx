@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { api } from '../api/client.js';
 import { useVessel } from '../context/useVessel.js';
 
@@ -178,6 +179,7 @@ function NavBtn({
 // ── DNV Detail View ───────────────────────────────────────────────────────────
 
 function DnvView({ vesselId }: { vesselId: string }) {
+  const { t } = useTranslation();
   const [report, setReport] = useState<DnvReport | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -190,7 +192,7 @@ function DnvView({ vesselId }: { vesselId: string }) {
   }, [vesselId]);
 
   if (loading)
-    return <div style={{ padding: 40, textAlign: 'center', color: '#8893A0' }}>Loading…</div>;
+    return <div style={{ padding: 40, textAlign: 'center', color: '#8893A0' }}>{t('common.loading')}</div>;
   if (!report) return <div style={{ padding: 24, color: '#AB382E' }}>Failed to load report.</div>;
 
   const statusColors: Record<OverallStatus, string> = {
@@ -252,7 +254,7 @@ function DnvView({ vesselId }: { vesselId: string }) {
                 borderRadius: 4,
               }}
             >
-              Ready for DNV Veracity submission
+              {t('compliance.ready_for_dnv')}
             </span>
           )}
         </div>
@@ -271,13 +273,13 @@ function DnvView({ vesselId }: { vesselId: string }) {
               textDecoration: 'none',
             }}
           >
-            Download JSON
+            {t('compliance.download_json')}
           </a>
         </div>
       </div>
 
       {/* Checks */}
-      <Card title="Compliance Checks">
+      <Card title={t('compliance.compliance_checks')}>
         {report.checks.map((check, i) => (
           <div
             key={i}
@@ -328,6 +330,7 @@ function DnvView({ vesselId }: { vesselId: string }) {
 // ── ISO 27001 Detail View ─────────────────────────────────────────────────────
 
 function IsoView() {
+  const { t } = useTranslation();
   const [report, setReport] = useState<IsoReport | null>(null);
   const [loading, setLoading] = useState(true);
   const [_expandGaps, _setExpandGaps] = useState(false);
@@ -341,7 +344,7 @@ function IsoView() {
   }, []);
 
   if (loading)
-    return <div style={{ padding: 40, textAlign: 'center', color: '#8893A0' }}>Loading…</div>;
+    return <div style={{ padding: 40, textAlign: 'center', color: '#8893A0' }}>{t('common.loading')}</div>;
   if (!report) return <div style={{ padding: 24, color: '#AB382E' }}>Failed to load report.</div>;
 
   const categories = [...new Set(report.controls.map((c) => c.category))];
@@ -366,15 +369,15 @@ function IsoView() {
           <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
             {[
               {
-                label: 'Implemented',
+                label: t('compliance.implemented'),
                 value: report.summary.implemented,
                 bg: '#E2EEE6',
                 fg: '#2F7D4F',
               },
-              { label: 'Partial', value: report.summary.partial, bg: '#F4E7D0', fg: '#B5731E' },
-              { label: 'Gaps', value: report.summary.gaps, bg: '#F2DDD8', fg: '#AB382E' },
+              { label: t('compliance.status_partial'), value: report.summary.partial, bg: '#F4E7D0', fg: '#B5731E' },
+              { label: t('compliance.gaps'), value: report.summary.gaps, bg: '#F2DDD8', fg: '#AB382E' },
               {
-                label: 'N/A',
+                label: t('compliance.status_na'),
                 value: report.summary.notApplicable,
                 bg: '#F4F2EC',
                 fg: '#8893A0',
@@ -417,12 +420,12 @@ function IsoView() {
             alignSelf: 'flex-start',
           }}
         >
-          Download JSON
+          {t('compliance.download_json')}
         </a>
       </div>
 
       {/* Key findings */}
-      <Card title="Key Findings">
+      <Card title={t('compliance.key_findings')}>
         <div style={{ padding: '12px 16px' }}>
           <ul style={{ margin: 0, padding: '0 0 0 18px' }}>
             {report.keyFindings.map((f, i) => (
@@ -436,7 +439,7 @@ function IsoView() {
 
       {/* Priority actions */}
       {report.priorityActions.length > 0 && (
-        <Card title="Priority Actions">
+        <Card title={t('compliance.priority_actions')}>
           <div style={{ padding: '12px 16px' }}>
             <ol style={{ margin: 0, padding: '0 0 0 18px' }}>
               {report.priorityActions.map((a, i) => (
@@ -453,7 +456,7 @@ function IsoView() {
       {categories.map((category) => {
         const catControls = report.controls.filter((c) => c.category === category);
         return (
-          <Card key={category} title={`${category} Controls`}>
+          <Card key={category} title={`${category} ${t('compliance.controls')}`}>
             {catControls.map((ctrl, i) => (
               <div
                 key={ctrl.id}
@@ -511,6 +514,7 @@ function IsoView() {
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
 export function CompliancePage() {
+  const { t } = useTranslation();
   const { selectedVesselId, vessels } = useVessel();
   const [view, setView] = useState<View>('overview');
   const [overviewLoading, setOverviewLoading] = useState(false);
@@ -540,10 +544,10 @@ export function CompliancePage() {
             letterSpacing: '-0.011em',
           }}
         >
-          Compliance
+          {t('compliance.title')}
         </h1>
         <p style={{ fontSize: 13, color: '#8893A0', margin: 0 }}>
-          DNV CG-0339 type-approval evidence and ISO 27001:2022 readiness assessment.
+          {t('compliance.subtitle')}
         </p>
       </div>
 
@@ -560,10 +564,10 @@ export function CompliancePage() {
           width: 'fit-content',
         }}
       >
-        <NavBtn label="Overview" active={view === 'overview'} onClick={() => setView('overview')} />
-        <NavBtn label="DNV Type-Approval" active={view === 'dnv'} onClick={() => setView('dnv')} />
+        <NavBtn label={t('compliance.tab_overview')} active={view === 'overview'} onClick={() => setView('overview')} />
+        <NavBtn label={t('compliance.tab_dnv')} active={view === 'dnv'} onClick={() => setView('dnv')} />
         <NavBtn
-          label="ISO 27001 Readiness"
+          label={t('compliance.tab_iso')}
           active={view === 'iso27001'}
           onClick={() => setView('iso27001')}
         />
@@ -574,10 +578,10 @@ export function CompliancePage() {
         <div>
           {!vesselId ? (
             <div style={{ textAlign: 'center', color: '#8893A0', padding: 40 }}>
-              Select a vessel to view compliance status.
+              {t('compliance.select_vessel')}
             </div>
           ) : overviewLoading ? (
-            <div style={{ textAlign: 'center', color: '#8893A0', padding: 40 }}>Loading…</div>
+            <div style={{ textAlign: 'center', color: '#8893A0', padding: 40 }}>{t('common.loading')}</div>
           ) : overviewData ? (
             <div
               style={{
@@ -607,7 +611,7 @@ export function CompliancePage() {
                     marginBottom: 12,
                   }}
                 >
-                  DNV CG-0339 Type-Approval
+                  {t('compliance.tab_dnv')}
                 </div>
                 <ScoreGauge
                   score={(overviewData.dnv as { score: number })?.score ?? 0}
@@ -641,7 +645,7 @@ export function CompliancePage() {
                     marginBottom: 12,
                   }}
                 >
-                  ISO 27001:2022 Readiness
+                  {t('compliance.tab_iso')}
                 </div>
                 <ScoreGauge
                   score={(overviewData.iso27001 as { score: number })?.score ?? 0}

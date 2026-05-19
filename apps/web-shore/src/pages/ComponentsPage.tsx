@@ -281,7 +281,7 @@ export function ComponentsPage() {
             margin: '0 0 16px',
           }}
         >
-          Maintenance
+          {t('maintenance.title')}
         </h1>
         <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid #E5E3DA' }}>
           {TABS.map((t) => (
@@ -355,7 +355,7 @@ export function ComponentsPage() {
                   className="text-blue-600 hover:underline"
                   onClick={() => setModal({ kind: 'component' })}
                 >
-                  Add the first one.
+                  {t('maintenance.add_first_component')}
                 </button>
               </div>
             )}

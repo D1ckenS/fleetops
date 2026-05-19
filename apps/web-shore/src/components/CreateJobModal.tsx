@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Input, Modal, Select, TextArea } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
 import { TypicalPartsList, type TypicalPart } from './TypicalPartsList.js';
@@ -25,6 +26,7 @@ const EMPTY = {
 };
 
 export function CreateJobModal({ open, componentId, componentName, onClose, onCreated }: Props) {
+  const { t } = useTranslation();
   const [form, setForm] = useState(EMPTY);
   const [mode, setMode] = useState<IntervalMode>('days');
   const [typicalParts, setTypicalParts] = useState<TypicalPart[]>([]);
@@ -87,10 +89,10 @@ export function CreateJobModal({ open, componentId, componentName, onClose, onCr
       footer={
         <>
           <Button variant="secondary" onClick={handleClose} disabled={saving}>
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button loading={saving} onClick={handleSubmit}>
-            Create Job
+            {t('common.create')} {t('maintenance.job')}
           </Button>
         </>
       }

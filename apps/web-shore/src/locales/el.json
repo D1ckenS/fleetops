@@ -697,5 +697,22 @@
     "save_draft": "Αποθήκευση ως προσχέδιο",
     "submission_history": "Ιστορικό υποβολών"
   },
-  "settings": { "language": "Γλώσσα", "select_language": "Επιλογή γλώσσας" }
+  "settings": { "language": "Γλώσσα", "select_language": "Επιλογή γλώσσας" },
+  "profile": {
+    "title": "Προφίλ",
+    "personal_info": "Προσωπικές πληροφορίες",
+    "first_name": "Όνομα",
+    "last_name": "Επώνυμο",
+    "email": "Email",
+    "role": "Ρόλος",
+    "change_password": "Αλλαγή κωδικού",
+    "current_password": "Τρέχων κωδικός",
+    "new_password": "Νέος κωδικός",
+    "confirm_password": "Επιβεβαίωση νέου κωδικού",
+    "save_changes": "Αποθήκευση αλλαγών",
+    "profile_updated": "Το προφίλ ενημερώθηκε.",
+    "passwords_no_match": "Οι κωδικοί δεν ταιριάζουν.",
+    "password_changed": "Ο κωδικός άλλαξε.",
+    "loading": "Φόρτωση…"
+  }
 }

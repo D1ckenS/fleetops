@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Input, Modal } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
 
@@ -21,6 +22,7 @@ export function LogRunningHoursModal({
   onClose,
   onLogged,
 }: Props) {
+  const { t } = useTranslation();
   const [value, setValue] = useState('');
   const [source, setSource] = useState<(typeof SOURCES)[number]>('MANUAL');
   const [saving, setSaving] = useState(false);
@@ -68,7 +70,7 @@ export function LogRunningHoursModal({
       footer={
         <>
           <Button variant="secondary" onClick={handleClose} disabled={saving}>
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button loading={saving} onClick={handleSubmit}>
             Log Reading

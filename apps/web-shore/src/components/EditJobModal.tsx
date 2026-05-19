@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Input, Modal, Select, TextArea } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
 import { TypicalPartsList, type TypicalPart } from './TypicalPartsList.js';
@@ -28,6 +29,7 @@ type IntervalMode = 'days' | 'hours';
 const PRIORITIES = ['LOW', 'NORMAL', 'HIGH', 'CRITICAL'] as const;
 
 export function EditJobModal({ open, job, componentName, onClose, onSaved }: Props) {
+  const { t } = useTranslation();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [mode, setMode] = useState<IntervalMode>('days');
@@ -106,10 +108,10 @@ export function EditJobModal({ open, job, componentName, onClose, onSaved }: Pro
       footer={
         <>
           <Button variant="secondary" onClick={handleClose} disabled={saving}>
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button loading={saving} onClick={handleSubmit}>
-            Save Changes
+            {t('common.save')}
           </Button>
         </>
       }

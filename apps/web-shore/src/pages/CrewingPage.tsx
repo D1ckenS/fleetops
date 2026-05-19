@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import { Badge, type BadgeColor, Spinner } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
@@ -406,6 +407,7 @@ function CrewDetailPane({ c, onClose }: { c: CrewMember; onClose: () => void }) 
 }
 
 function CrewTab({ crew, loading }: { crew: CrewMember[]; loading: boolean }) {
+  const { t } = useTranslation();
   const [selected, setSelected] = useState<string | null>(null);
   const [dept, setDept] = useState('All');
 
@@ -466,7 +468,7 @@ function CrewTab({ crew, loading }: { crew: CrewMember[]; loading: boolean }) {
             </div>
           )}
           {!loading && crew.length === 0 && (
-            <EmptyState message="No crew members on record. Sign-on records will appear here." />
+            <EmptyState message={t('crewing.no_crew')} />
           )}
           {!loading &&
             visible.map((c) => (
@@ -1395,6 +1397,7 @@ function DrillsTab() {
 type Tab = 'crew' | 'rotation' | 'rest-hours' | 'certificates' | 'drills';
 
 export function CrewingPage() {
+  const { t } = useTranslation();
   const [params, setParams] = useSearchParams();
   const tab = (params.get('tab') as Tab | null) ?? 'crew';
   const [search, setSearch] = useState('');
@@ -1424,16 +1427,16 @@ export function CrewingPage() {
       .catch(() => undefined);
   }, [loadCrew]);
 
-  const setTab = (t: Tab) => setParams(t === 'crew' ? {} : { tab: t });
+  const setTab = (tabId: Tab) => setParams(tabId === 'crew' ? {} : { tab: tabId });
 
   const nonCompliant = crew.filter((c) => c.mlcStatus !== 'compliant').length;
 
-  const TABS: { id: Tab; label: string; count: number }[] = [
-    { id: 'crew', label: 'Crew', count: crew.length },
-    { id: 'rotation', label: 'Rotation', count: crew.length },
-    { id: 'rest-hours', label: 'Rest hours', count: nonCompliant },
-    { id: 'certificates', label: 'Certificates', count: certCount },
-    { id: 'drills', label: 'Drills', count: drillCount },
+  const crewTabs: { id: Tab; label: string; count: number }[] = [
+    { id: 'crew', label: t('crewing.tab_crew'), count: crew.length },
+    { id: 'rotation', label: t('crewing.tab_rotation'), count: crew.length },
+    { id: 'rest-hours', label: t('crewing.tab_rest_hours'), count: nonCompliant },
+    { id: 'certificates', label: t('crewing.tab_certificates'), count: certCount },
+    { id: 'drills', label: t('crewing.tab_drills'), count: drillCount },
   ];
 
   return (
@@ -1455,10 +1458,10 @@ export function CrewingPage() {
           className="text-[16px] font-semibold m-0"
           style={{ color: 'var(--ink)', letterSpacing: '-0.01em' }}
         >
-          Crewing
+          {t('crewing.title')}
         </h1>
         <span className="text-[12px] whitespace-nowrap" style={{ color: 'var(--ink-3)' }}>
-          {crew.length > 0 ? `${crew.length} on board · ` : ''}MLC 2006
+          {crew.length > 0 ? `${crew.length} ${t('crewing.on_board')} · ` : ''}{t('crewing.mlc')}
         </span>
         <div className="flex-1" />
         <div
@@ -1482,7 +1485,7 @@ export function CrewingPage() {
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search crew, certs…"
+            placeholder={t('crewing.search_placeholder')}
             className="flex-1 bg-transparent outline-none text-[12px]"
             style={{ color: 'var(--ink)', border: 'none' }}
           />
@@ -1491,13 +1494,13 @@ export function CrewingPage() {
           className="px-3 py-1 rounded-2 border text-xs font-medium"
           style={{ borderColor: 'var(--border)', color: 'var(--ink-2)', cursor: 'pointer' }}
         >
-          Crew pool
+          {t('crewing.crew_pool')}
         </button>
         <button
           className="px-3 py-1 rounded-2 text-xs font-medium"
           style={{ background: 'var(--navy)', color: '#fff', border: 'none', cursor: 'pointer' }}
         >
-          + Sign on
+          {t('crewing.sign_on')}
         </button>
       </div>
 
@@ -1506,26 +1509,26 @@ export function CrewingPage() {
         className="flex gap-0 flex-shrink-0 px-4 overflow-x-auto"
         style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)' }}
       >
-        {TABS.map((t) => (
+        {crewTabs.map((tabItem) => (
           <button
-            key={t.id}
-            onClick={() => setTab(t.id)}
+            key={tabItem.id}
+            onClick={() => setTab(tabItem.id)}
             className="flex items-center gap-2 px-4 py-2.5 text-[13px] font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0"
             style={
-              tab === t.id
+              tab === tabItem.id
                 ? { borderBottomColor: 'var(--navy)', color: 'var(--navy)', marginBottom: -1 }
                 : { borderBottomColor: 'transparent', color: 'var(--ink-3)' }
             }
           >
-            <span>{t.label}</span>
+            <span>{tabItem.label}</span>
             <span
               className="font-mono text-[10.5px] px-1.5 py-px rounded-[10px]"
               style={{
-                background: tab === t.id ? 'var(--navy)' : 'var(--surface-2)',
-                color: tab === t.id ? '#fff' : 'var(--ink-3)',
+                background: tab === tabItem.id ? 'var(--navy)' : 'var(--surface-2)',
+                color: tab === tabItem.id ? '#fff' : 'var(--ink-3)',
               }}
             >
-              {t.count}
+              {tabItem.count}
             </span>
           </button>
         ))}

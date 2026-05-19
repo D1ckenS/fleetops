@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Badge, Button, Spinner } from '@fleetops/ui-kit';
 import type { BadgeColor } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
@@ -32,6 +33,7 @@ const statusLabel: Record<JobInstance['status'], string> = {
 };
 
 export function JobInstancesPage() {
+  const { t } = useTranslation();
   interface JobMeta {
     id: string;
     typicalPartsJson?: string | null;
@@ -75,12 +77,12 @@ export function JobInstancesPage() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-slate-900">Job Instances</h1>
+          <h1 className="text-xl font-bold text-slate-900">{t('maintenance.tab_jobs')}</h1>
           <p className="text-sm text-slate-500 mt-0.5">
             Scheduled maintenance tasks for this vessel
           </p>
         </div>
-        <Button onClick={() => setScheduleOpen(true)}>+ Schedule Job</Button>
+        <Button onClick={() => setScheduleOpen(true)}>{t('maintenance.new_instance')}</Button>
       </div>
 
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
@@ -103,16 +105,16 @@ export function JobInstancesPage() {
             <thead className="bg-slate-50 border-b border-slate-200">
               <tr>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">
-                  Status
+                  {t('common.status')}
                 </th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">
-                  Due date
+                  {t('maintenance.next_due')}
                 </th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">
-                  Due hours
+                  {t('maintenance.interval_hours')}
                 </th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">
-                  Job ID
+                  {t('maintenance.job')} ID
                 </th>
                 <th className="px-4 py-3" />
               </tr>
@@ -145,7 +147,7 @@ export function JobInstancesPage() {
                             })
                           }
                         >
-                          Sign Off
+                          {t('maintenance.sign_off')}
                         </Button>
                       )}
                       <button
@@ -153,7 +155,7 @@ export function JobInstancesPage() {
                         className="text-xs text-red-400 hover:text-red-600 transition-colors px-1"
                         title="Delete instance"
                       >
-                        Delete
+                        {t('common.delete')}
                       </button>
                     </div>
                   </td>

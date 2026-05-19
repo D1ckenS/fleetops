@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import { Badge, type BadgeColor, Select, Spinner } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
@@ -115,6 +116,7 @@ function DaysLeftBadge({ daysLeft, status }: { daysLeft: number; status: string 
 // ─── Register tab ─────────────────────────────────────────────────────────────
 
 function RegisterTab({ certs, loading }: { certs: Certificate[]; loading: boolean }) {
+  const { t } = useTranslation();
   const [selected, setSelected] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<'all' | 'critical' | 'soon'>('all');
   const [catFilter, setCatFilter] = useState<string>('all');
@@ -220,7 +222,7 @@ function RegisterTab({ certs, loading }: { certs: Certificate[]; loading: boolea
         {/* Rows */}
         <div className="flex-1 overflow-y-auto" style={{ background: 'var(--surface)' }}>
           {visible.length === 0 ? (
-            <EmptyState msg="No certificates match this filter. Upload your first certificate to get started." />
+            <EmptyState msg={t('certificates.no_certs')} />
           ) : (
             visible.map((c) => (
               <div
@@ -286,7 +288,7 @@ function RegisterTab({ certs, loading }: { certs: Certificate[]; loading: boolea
         }}
       >
         {!sel ? (
-          <EmptyState msg="Select a certificate to view authority, endorsements and linked surveys." />
+          <EmptyState msg={t('certificates.select_cert_hint')} />
         ) : (
           <>
             <div className="overflow-y-auto flex-1">
@@ -460,6 +462,7 @@ function RegisterTab({ certs, loading }: { certs: Certificate[]; loading: boolea
 // ─── Surveys tab ──────────────────────────────────────────────────────────────
 
 function SurveysTab({ surveys, loading }: { surveys: Survey[]; loading: boolean }) {
+  const { t } = useTranslation();
   if (loading)
     return (
       <div className="flex-1 flex items-center justify-center">
@@ -494,7 +497,7 @@ function SurveysTab({ surveys, loading }: { surveys: Survey[]; loading: boolean 
       </div>
 
       {surveys.length === 0 ? (
-        <EmptyState msg="No surveys scheduled. Add your first survey window to track upcoming endorsements." />
+        <EmptyState msg={t('certificates.no_surveys')} />
       ) : (
         <div className="p-4 flex flex-col gap-3">
           {surveys.map((s) => (
@@ -576,6 +579,7 @@ function ConditionsTab({
   conditions: ConditionOfClass[];
   loading: boolean;
 }) {
+  const { t } = useTranslation();
   if (loading)
     return (
       <div className="flex-1 flex items-center justify-center">
@@ -611,7 +615,7 @@ function ConditionsTab({
       </div>
 
       {conditions.length === 0 ? (
-        <EmptyState msg="No conditions of class on file. Items raised in class surveys will appear here." />
+        <EmptyState msg={t('certificates.no_conditions')} />
       ) : (
         <div className="p-4 flex flex-col gap-3">
           {open.map((c) => (
@@ -726,6 +730,7 @@ function ConditionsTab({
 // ─── Inspections tab ───────────────────────────────────────────────────────────
 
 function InspectionsTab({ inspections, loading }: { inspections: Inspection[]; loading: boolean }) {
+  const { t } = useTranslation();
   if (loading)
     return (
       <div className="flex-1 flex items-center justify-center">
@@ -826,7 +831,7 @@ function InspectionsTab({ inspections, loading }: { inspections: Inspection[]; l
             <span />
           </div>
           {inspections.length === 0 ? (
-            <EmptyState msg="No inspections on record. PSC, vetting and flag-state inspections will appear here." />
+            <EmptyState msg={t('certificates.no_inspections')} />
           ) : (
             inspections.map((i) => (
               <div
@@ -899,6 +904,7 @@ function InspectionsTab({ inspections, loading }: { inspections: Inspection[]; l
 // ─── Renewal timeline tab ─────────────────────────────────────────────────────
 
 function RenewalTimelineTab({ certs, loading }: { certs: Certificate[]; loading: boolean }) {
+  const { t } = useTranslation();
   if (loading)
     return (
       <div className="flex-1 flex items-center justify-center">
@@ -1066,9 +1072,17 @@ function RenewalTimelineTab({ certs, loading }: { certs: Certificate[]; loading:
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 export function CertificatesPage() {
+  const { t } = useTranslation();
   const [params, setParams] = useSearchParams();
   const tab = (params.get('tab') as Tab | null) ?? 'reg';
-  const setTab = (t: Tab) => setParams(t === 'reg' ? {} : { tab: t });
+  const setTab = (tabId: Tab) => setParams(tabId === 'reg' ? {} : { tab: tabId });
+  const tabs: { id: Tab; label: string }[] = [
+    { id: 'reg', label: t('certificates.tab_register') },
+    { id: 'surv', label: t('certificates.tab_surveys') },
+    { id: 'coc', label: t('certificates.tab_conditions') },
+    { id: 'insp', label: t('certificates.tab_inspections') },
+    { id: 'renew', label: t('certificates.tab_renewal') },
+  ];
 
   const [certs, setCerts] = useState<Certificate[]>([]);
   const [surveys, setSurveys] = useState<Survey[]>([]);
@@ -1137,13 +1151,13 @@ export function CertificatesPage() {
           className="text-[16px] font-semibold m-0"
           style={{ color: 'var(--ink)', letterSpacing: '-0.01em' }}
         >
-          Certificates
+          {t('certificates.title')}
         </h1>
         <span className="text-[12px]" style={{ color: 'var(--ink-3)' }}>
-          {certs.length} cert{certs.length !== 1 ? 's' : ''}
+          {certs.length} {certs.length !== 1 ? t('certificates.certs') : t('certificates.cert')}
         </span>
-        {overdueCount > 0 && <Badge color="red">{overdueCount} OVERDUE</Badge>}
-        {windowCount > 0 && <Badge color="amber">{windowCount} IN WINDOW</Badge>}
+        {overdueCount > 0 && <Badge color="red">{overdueCount} {t('certificates.status_overdue')}</Badge>}
+        {windowCount > 0 && <Badge color="amber">{windowCount} {t('certificates.status_in_window')}</Badge>}
         <div className="flex-1" />
         <button
           className="px-3 py-1 rounded-2 text-[12px] font-medium border"
@@ -1154,13 +1168,13 @@ export function CertificatesPage() {
             color: 'var(--ink)',
           }}
         >
-          Notification rules
+          {t('certificates.notification_rules')}
         </button>
         <button
           className="px-3 py-1 rounded-2 text-[12px] font-medium"
           style={{ background: 'var(--navy)', color: '#fff', border: 'none', cursor: 'pointer' }}
         >
-          + Upload cert
+          {t('certificates.new_cert')}
         </button>
       </div>
 
@@ -1169,31 +1183,31 @@ export function CertificatesPage() {
         className="flex gap-0 flex-shrink-0 px-4 overflow-x-auto"
         style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)' }}
       >
-        {TABS.map((t) => (
+        {tabs.map((tabItem) => (
           <button
-            key={t.id}
-            onClick={() => setTab(t.id)}
+            key={tabItem.id}
+            onClick={() => setTab(tabItem.id)}
             className="flex items-center gap-2 py-3 text-[13px] border-b-2 whitespace-nowrap flex-shrink-0"
             style={{
               padding: '12px 16px',
               border: 'none',
               background: 'transparent',
-              borderBottom: `2px solid ${tab === t.id ? 'var(--navy)' : 'transparent'}`,
+              borderBottom: `2px solid ${tab === tabItem.id ? 'var(--navy)' : 'transparent'}`,
               cursor: 'pointer',
-              color: tab === t.id ? 'var(--ink)' : 'var(--ink-2)',
-              fontWeight: tab === t.id ? 600 : 500,
+              color: tab === tabItem.id ? 'var(--ink)' : 'var(--ink-2)',
+              fontWeight: tab === tabItem.id ? 600 : 500,
               marginBottom: -1,
             }}
           >
-            <span>{t.label}</span>
+            <span>{tabItem.label}</span>
             <span
               className="font-mono text-[10.5px] px-1.5 py-px rounded-[10px]"
               style={{
-                background: tab === t.id ? 'var(--navy)' : 'var(--surface-2)',
-                color: tab === t.id ? '#fff' : 'var(--ink-3)',
+                background: tab === tabItem.id ? 'var(--navy)' : 'var(--surface-2)',
+                color: tab === tabItem.id ? '#fff' : 'var(--ink-3)',
               }}
             >
-              {counts[t.id]}
+              {counts[tabItem.id]}
             </span>
           </button>
         ))}

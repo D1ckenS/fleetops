@@ -697,5 +697,22 @@
     "save_draft": "I-save bilang Draft",
     "submission_history": "Kasaysayan ng Pagsumite"
   },
-  "settings": { "language": "Wika", "select_language": "Pumili ng Wika" }
+  "settings": { "language": "Wika", "select_language": "Pumili ng Wika" },
+  "profile": {
+    "title": "Profile",
+    "personal_info": "Personal na impormasyon",
+    "first_name": "Unang pangalan",
+    "last_name": "Apelyido",
+    "email": "Email",
+    "role": "Papel",
+    "change_password": "Baguhin ang password",
+    "current_password": "Kasalukuyang password",
+    "new_password": "Bagong password",
+    "confirm_password": "Kumpirmahin ang bagong password",
+    "save_changes": "I-save ang mga pagbabago",
+    "profile_updated": "Na-update ang profile.",
+    "passwords_no_match": "Hindi magkatugma ang mga password.",
+    "password_changed": "Nabago ang password.",
+    "loading": "Naglo-load…"
+  }
 }

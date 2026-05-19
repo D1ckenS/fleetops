@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Input, Modal, Select, TextArea } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
 import { type TypicalPart } from './TypicalPartsList.js';
@@ -36,6 +37,7 @@ export function SignOffModal({
   onClose,
   onSuccess,
 }: SignOffModalProps) {
+  const { t } = useTranslation();
   const [hoursWorked, setHoursWorked] = useState('');
   const [notes, setNotes] = useState('');
   const [photos, setPhotos] = useState<File[]>([]);
@@ -163,15 +165,15 @@ export function SignOffModal({
   return (
     <Modal
       open={jobInstanceId !== null}
-      title="Sign Off Job"
+      title={t('maintenance.sign_off_job')}
       onClose={handleClose}
       footer={
         <>
           <Button variant="secondary" onClick={handleClose} disabled={loading}>
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button loading={loading} onClick={handleSubmit}>
-            Sign Off
+            {t('maintenance.sign_off')}
           </Button>
         </>
       }
@@ -181,7 +183,7 @@ export function SignOffModal({
 
         <Input
           id="hoursWorked"
-          label="Hours worked"
+          label={t('maintenance.hours_worked')}
           type="number"
           min="0"
           step="0.5"
@@ -202,7 +204,7 @@ export function SignOffModal({
         {/* ── Parts consumed ─────────────────────────────────────── */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-slate-700">Parts consumed</span>
+            <span className="text-sm font-medium text-slate-700">{t('maintenance.parts_consumed')}</span>
             <button
               type="button"
               onClick={() => setShowAddLine((v) => !v)}
@@ -299,7 +301,7 @@ export function SignOffModal({
 
         {/* ── Photos ─────────────────────────────────────────────── */}
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-slate-700">Photos</label>
+          <label className="text-sm font-medium text-slate-700">{t('maintenance.photos')}</label>
           <button
             type="button"
             onClick={() => fileRef.current?.click()}

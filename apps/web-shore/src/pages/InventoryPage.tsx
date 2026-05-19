@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
 import { CreatePartModal } from '../components/CreatePartModal.js';
@@ -225,6 +226,7 @@ function DetailPane({
   onStockConfig: (id: string, name: string) => void;
   onBarcodes: (id: string, name: string) => void;
 }) {
+  const { t } = useTranslation();
   const [movements, setMovements] = useState<Movement[]>([]);
   const [loadingMov, setLoadingMov] = useState(false);
 
@@ -496,13 +498,13 @@ function DetailPane({
         }}
       >
         <Button size="sm" onClick={() => onMovement(part.id, part.name)}>
-          Post movement
+          {t('inventory.post_movement')}
         </Button>
         <Button size="sm" variant="secondary" onClick={() => onStockConfig(part.id, part.name)}>
-          Stock config
+          {t('inventory.add_stock_level')}
         </Button>
         <Button size="sm" variant="secondary" onClick={() => onBarcodes(part.id, part.name)}>
-          Barcodes
+          {t('inventory.manage_barcodes')}
         </Button>
       </div>
     </aside>
@@ -540,6 +542,7 @@ type ActiveModal =
   | { kind: 'barcodes'; partId: string; partName: string };
 
 export function InventoryPage() {
+  const { t } = useTranslation();
   const [parts, setParts] = useState<Part[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
   const [loading, setLoading] = useState(true);
@@ -839,7 +842,7 @@ export function InventoryPage() {
             flexShrink: 0,
           }}
         >
-          <span style={{ fontSize: 13, fontWeight: 600, color: T.ink }}>Inventory</span>
+          <span style={{ fontSize: 13, fontWeight: 600, color: T.ink }}>{t('inventory.title')}</span>
           <span style={{ color: T.ink3, fontSize: 11.5 }}>
             · {visible.length} of {parts.length}
           </span>
@@ -951,7 +954,7 @@ export function InventoryPage() {
             )}
           </div>
           <Button size="sm" onClick={() => setCreateOpen(true)}>
-            + New Part
+            {t('inventory.new_part')}
           </Button>
         </div>
 
@@ -1009,11 +1012,11 @@ export function InventoryPage() {
             {!loading && visible.length === 0 && (
               <div style={{ padding: 40, textAlign: 'center' }}>
                 <p style={{ fontSize: 13, color: T.ink3, margin: '0 0 12px' }}>
-                  {parts.length === 0 ? 'No parts yet.' : 'No parts match the current filter.'}
+                  {parts.length === 0 ? t('inventory.no_parts') : t('inventory.no_parts')}
                 </p>
                 {parts.length === 0 && (
                   <Button size="sm" onClick={() => setCreateOpen(true)}>
-                    + New Part
+                    {t('inventory.new_part')}
                   </Button>
                 )}
               </div>

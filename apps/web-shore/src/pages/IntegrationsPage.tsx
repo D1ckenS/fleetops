@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { api } from '../api/client.js';
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -169,6 +170,7 @@ function StatusBadge({ ok }: { ok: boolean }) {
 // ── SSO Tab ──────────────────────────────────────────────────────────────────
 
 function SsoTab() {
+  const { t } = useTranslation();
   const [configs, setConfigs] = useState<SsoConfig[]>([]);
 
   useEffect(() => {
@@ -183,16 +185,16 @@ function SsoTab() {
 
   return (
     <>
-      <SectionCard title="Microsoft Entra SSO">
+      <SectionCard title={t('integrations.entra_title')}>
         <p style={{ fontSize: 12.5, color: '#41546A', marginBottom: 16 }}>
-          Allow users to sign in with their Microsoft / Azure AD account.{' '}
+          {t('integrations.entra_desc')}{' '}
           <a
             href="https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app"
             target="_blank"
             rel="noopener noreferrer"
             style={{ color: '#1F5B9D' }}
           >
-            Microsoft docs ↗
+            {t('integrations.entra_docs')}
           </a>
         </p>
         <ProviderForm
@@ -204,23 +206,22 @@ function SsoTab() {
         />
       </SectionCard>
 
-      <SectionCard title="Google SSO">
+      <SectionCard title={t('integrations.google_title')}>
         <p style={{ fontSize: 12.5, color: '#41546A', marginBottom: 16 }}>
-          Allow users to sign in with their Google account. Create an OAuth 2.0 Web Application
-          client in Google Cloud Console.{' '}
+          {t('integrations.google_desc')}{' '}
           <a
             href="https://developers.google.com/identity/openid-connect/openid-connect#appsetup"
             target="_blank"
             rel="noopener noreferrer"
             style={{ color: '#1F5B9D' }}
           >
-            Google docs ↗
+            {t('integrations.google_docs')}
           </a>
         </p>
         <ProviderForm providerKey="GOOGLE" initial={google} discoveryUrl={GOOGLE_DISCOVERY_URL} />
       </SectionCard>
 
-      <SectionCard title="How SSO login works">
+      <SectionCard title={t('integrations.how_sso_works')}>
         <ol
           style={{ fontSize: 12.5, color: '#41546A', lineHeight: 1.7, paddingLeft: 18, margin: 0 }}
         >
@@ -338,6 +339,7 @@ function ProviderForm({
 // ── Tech Library Tab ─────────────────────────────────────────────────────────
 
 function TechLibraryTab() {
+  const { t } = useTranslation();
   const [cfg, setCfg] = useState<Partial<TechLibraryConfig>>({ provider: 'TWO_BA' });
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
@@ -356,7 +358,7 @@ function TechLibraryTab() {
     setMsg(null);
     try {
       await api.post('/tech-library/config', cfg);
-      setMsg('Tech library configuration saved.');
+      setMsg(t('integrations.saved'));
     } catch (e) {
       setMsg(e instanceof Error ? e.message : 'Save failed');
     } finally {
@@ -365,10 +367,9 @@ function TechLibraryTab() {
   }
 
   return (
-    <SectionCard title="2BA / Nareto Part Lookup">
+    <SectionCard title={t('integrations.tech_library_title')}>
       <p style={{ fontSize: 12.5, color: '#41546A', marginBottom: 16 }}>
-        Connect to the 2BA or Nareto technical product database to look up spare parts by part
-        number or description. Requires a valid license and API key from the provider.
+        {t('integrations.tech_library_desc')}
       </p>
       <div style={{ marginBottom: 14 }}>
         <label
@@ -437,6 +438,7 @@ function TechLibraryTab() {
 // ── Accounting Tab ───────────────────────────────────────────────────────────
 
 function AccountingTab() {
+  const { t } = useTranslation();
   const [cfg, setCfg] = useState<Partial<AccountingConfig>>({ provider: 'CSV' });
   const [saving, setSaving] = useState(false);
   const [exporting, setExporting] = useState(false);
@@ -459,7 +461,7 @@ function AccountingTab() {
     setMsg(null);
     try {
       await api.post('/accounting/config', cfg);
-      setMsg('Accounting configuration saved.');
+      setMsg(t('integrations.saved'));
     } catch (e) {
       setMsg(e instanceof Error ? e.message : 'Save failed');
     } finally {
@@ -487,10 +489,9 @@ function AccountingTab() {
 
   return (
     <>
-      <SectionCard title="Accounting System">
+      <SectionCard title={t('integrations.accounting_title')}>
         <p style={{ fontSize: 12.5, color: '#41546A', marginBottom: 16 }}>
-          Connect FleetOps to your accounting system. Purchase orders can be exported in CSV or
-          Exact Online XML format for import into your accounting package.
+          {t('integrations.accounting_desc')}
         </p>
         <div style={{ marginBottom: 14 }}>
           <label
@@ -1064,13 +1065,14 @@ function ClassSocietiesTab() {
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
 export function IntegrationsPage() {
+  const { t } = useTranslation();
   const [tab, setTab] = useState<Tab>('sso');
 
   const tabs: { key: Tab; label: string }[] = [
-    { key: 'sso', label: 'SSO' },
-    { key: 'tech-library', label: '2BA / Nareto' },
-    { key: 'accounting', label: 'Accounting' },
-    { key: 'class-societies', label: 'Class Societies' },
+    { key: 'sso', label: t('integrations.tab_sso') },
+    { key: 'tech-library', label: t('integrations.tab_tech_library') },
+    { key: 'accounting', label: t('integrations.tab_accounting') },
+    { key: 'class-societies', label: t('integrations.tab_class') },
   ];
 
   return (
@@ -1084,7 +1086,7 @@ export function IntegrationsPage() {
           letterSpacing: '-0.011em',
         }}
       >
-        Integrations
+        {t('integrations.title')}
       </h1>
 
       {/* Tab bar */}

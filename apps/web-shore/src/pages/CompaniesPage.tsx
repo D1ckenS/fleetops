@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Badge, Button, Input, Modal, Spinner } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
 
@@ -330,6 +331,7 @@ function CreateAdminModal({
 // ─── Main page ────────────────────────────────────────────────────────────────
 
 export function CompaniesPage() {
+  const { t } = useTranslation();
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
@@ -356,14 +358,14 @@ export function CompaniesPage() {
             className="text-[20px] font-semibold m-0"
             style={{ letterSpacing: '-0.01em', color: 'var(--ink)' }}
           >
-            Companies
+            {t('companies.title')}
           </h1>
           <p className="text-[12.5px] mt-0.5 m-0" style={{ color: 'var(--ink-3)' }}>
-            Platform-level management · visible only to super admins
+            {t('companies.subtitle')}
           </p>
         </div>
         <div className="flex-1" />
-        <Button onClick={() => setShowCreate(true)}>+ Add company</Button>
+        <Button onClick={() => setShowCreate(true)}>{t('companies.add_company')}</Button>
       </div>
 
       {loading ? (
@@ -385,17 +387,17 @@ export function CompaniesPage() {
               borderBottom: '1px solid var(--hairline)',
             }}
           >
-            <span>Company</span>
-            <span>Short name</span>
-            <span style={{ textAlign: 'left' }}>Vessels</span>
-            <span style={{ textAlign: 'left' }}>Users</span>
-            <span>Created</span>
-            <span style={{ textAlign: 'center' }}>Action</span>
+            <span>{t('companies.col_company')}</span>
+            <span>{t('companies.col_short_name')}</span>
+            <span style={{ textAlign: 'left' }}>{t('companies.col_vessels')}</span>
+            <span style={{ textAlign: 'left' }}>{t('companies.col_users')}</span>
+            <span>{t('companies.col_created')}</span>
+            <span style={{ textAlign: 'center' }}>{t('companies.col_action')}</span>
           </div>
 
           {companies.length === 0 && (
             <div className="px-4 py-8 text-center text-[12.5px]" style={{ color: 'var(--ink-3)' }}>
-              No companies yet.
+              {t('companies.no_companies')}
             </div>
           )}
 
@@ -453,7 +455,7 @@ export function CompaniesPage() {
                     cursor: 'pointer',
                   }}
                 >
-                  + Admin
+                  {t('companies.add_admin')}
                 </button>
                 <button
                   onClick={() => setEdit(c)}
@@ -465,7 +467,7 @@ export function CompaniesPage() {
                     color: 'var(--ink-2)',
                   }}
                 >
-                  Edit
+                  {t('companies.edit')}
                 </button>
               </div>
             </div>
