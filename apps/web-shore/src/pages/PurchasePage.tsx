@@ -1286,20 +1286,19 @@ function RFQsTab() {
 
 // ─── Purchase Orders tab ──────────────────────────────────────────────────────
 
-const PO_STAGE_FILTERS = [
-  { id: 'all', label: 'All' },
-  { id: 'DRAFT', label: 'Draft' },
-  { id: 'SENT', label: 'Sent' },
-  { id: 'ACKNOWLEDGED', label: 'Confirmed' },
-  { id: 'IN_TRANSIT', label: 'In Transit' },
-  { id: 'PARTIALLY_RECEIVED', label: 'Partial' },
-  { id: 'RECEIVED', label: 'Received' },
-  { id: 'INVOICED', label: 'Invoiced' },
-  { id: 'CLOSED', label: 'Closed' },
-];
-
 function PurchaseOrdersTab() {
   const { t } = useTranslation();
+  const PO_STAGE_FILTERS = [
+    { id: 'all', label: t('common.all') },
+    { id: 'DRAFT', label: t('purchase.status_draft') },
+    { id: 'SENT', label: t('purchase.status_sent') },
+    { id: 'ACKNOWLEDGED', label: t('purchase.status_confirmed') },
+    { id: 'IN_TRANSIT', label: t('purchase.status_in_transit') },
+    { id: 'PARTIALLY_RECEIVED', label: t('purchase.status_partial') },
+    { id: 'RECEIVED', label: t('purchase.status_received') },
+    { id: 'INVOICED', label: t('purchase.status_invoiced') },
+    { id: 'CLOSED', label: t('purchase.status_closed') },
+  ];
   const [pos, setPOs] = useState<PurchaseOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

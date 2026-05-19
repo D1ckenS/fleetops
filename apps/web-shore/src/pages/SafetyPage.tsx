@@ -1205,10 +1205,10 @@ function CapaTab({ capas, loading }: { capas: Capa[]; loading: boolean }) {
     );
 
   const stages: { id: CapaStage; label: string; color: string }[] = [
-    { id: 'investigation', label: 'Investigation', color: 'var(--sig-amber)' },
-    { id: 'action', label: 'Action', color: 'var(--sig-blue)' },
-    { id: 'verification', label: 'Verification', color: '#5E479F' },
-    { id: 'closed', label: 'Closed', color: 'var(--sig-green)' },
+    { id: 'investigation', label: t('safety.investigation'), color: 'var(--sig-amber)' },
+    { id: 'action', label: t('safety.action'), color: 'var(--sig-blue)' },
+    { id: 'verification', label: t('safety.verification'), color: '#5E479F' },
+    { id: 'closed', label: t('safety.closed'), color: 'var(--sig-green)' },
   ];
 
   const open = capas.filter((c) => c.stage !== 'closed').length;
