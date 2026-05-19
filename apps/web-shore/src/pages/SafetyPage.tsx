@@ -134,13 +134,6 @@ const findingMeta: Record<FindingKind, { color: BadgeColor; label: string }> = {
 };
 
 type Tab = 'permit' | 'find' | 'jha' | 'eq' | 'capa';
-const TABS: { id: Tab; label: string }[] = [
-  { id: 'permit', label: 'Permits to work' },
-  { id: 'find', label: 'Findings' },
-  { id: 'jha', label: 'JHA' },
-  { id: 'eq', label: 'Equipment' },
-  { id: 'capa', label: 'CAPA' },
-];
 
 // ─── Shared atoms ─────────────────────────────────────────────────────────────
 

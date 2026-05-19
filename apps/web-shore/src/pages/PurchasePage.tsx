@@ -1855,13 +1855,6 @@ function FooterStats({ pos }: { pos: PurchaseOrder[] }) {
 
 type Tab = 'requisitions' | 'rfq' | 'po' | 'grn' | 'suppliers';
 
-const TABS: { id: Tab; label: string }[] = [
-  { id: 'requisitions', label: 'Requisitions' },
-  { id: 'rfq', label: 'RFQs' },
-  { id: 'po', label: 'Purchase Orders' },
-  { id: 'grn', label: 'Goods Receipts' },
-  { id: 'suppliers', label: 'Suppliers' },
-];
 
 export function PurchasePage() {
   const { t } = useTranslation();

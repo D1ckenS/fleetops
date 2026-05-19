@@ -87,13 +87,6 @@ const toneColor = (t: string): BadgeColor =>
           : 'green';
 
 type Tab = 'reg' | 'surv' | 'coc' | 'insp' | 'renew';
-const TABS: { id: Tab; label: string }[] = [
-  { id: 'reg', label: 'Register' },
-  { id: 'surv', label: 'Surveys' },
-  { id: 'coc', label: 'Conditions of class' },
-  { id: 'insp', label: 'Inspections' },
-  { id: 'renew', label: 'Renewal timeline' },
-];
 
 // ─── Shared atoms ─────────────────────────────────────────────────────────────
 
@@ -904,7 +897,6 @@ function InspectionsTab({ inspections, loading }: { inspections: Inspection[]; l
 // ─── Renewal timeline tab ─────────────────────────────────────────────────────
 
 function RenewalTimelineTab({ certs, loading }: { certs: Certificate[]; loading: boolean }) {
-  const { t } = useTranslation();
   if (loading)
     return (
       <div className="flex-1 flex items-center justify-center">

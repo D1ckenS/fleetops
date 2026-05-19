@@ -124,13 +124,6 @@ const stageMeta: Record<number, { label: string; tone: string; bg: string }> = {
 };
 
 type Tab = 'obj' | 'audit' | 'env' | 'dryb' | 'review';
-const TABS: { id: Tab; label: string }[] = [
-  { id: 'obj', label: 'Objectives' },
-  { id: 'audit', label: 'Audits' },
-  { id: 'env', label: 'Environmental' },
-  { id: 'dryb', label: 'DryBMS' },
-  { id: 'review', label: 'Management review' },
-];
 
 // ─── Shared atoms ─────────────────────────────────────────────────────────────
 
