@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button, Input } from '@fleetops/ui-kit';
 import { api } from '../api/client.js';
-import { useAuth } from '../context/AuthContext.js';
+import { useAuth } from '../context/useAuth.js';
 import { LanguageSwitcher } from '../components/LanguageSwitcher.js';
 
 interface LoginResult {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { api } from '../api/client.js';
-import { useAuth } from '../context/AuthContext.js';
+import { useAuth } from '../context/useAuth.js';
 
 export function OidcCallbackPage() {
   const [searchParams] = useSearchParams();

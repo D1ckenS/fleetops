@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AppShell } from '@fleetops/ui-kit';
-import { useAuth } from './context/AuthContext.js';
+import { useAuth } from './context/useAuth.js';
 import { LanguageSwitcher } from './components/LanguageSwitcher.js';
 import { VesselProvider } from './context/VesselContext.js';
 import { useVessel } from './context/useVessel.js';

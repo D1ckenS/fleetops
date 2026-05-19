@@ -1,7 +1,7 @@
 import { createContext, useCallback, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { api } from '../api/client.js';
-import { useAuth } from './AuthContext.js';
+import { useAuth } from './useAuth.js';
 
 export interface Vessel {
   id: string;
