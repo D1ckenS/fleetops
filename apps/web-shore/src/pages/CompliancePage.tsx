@@ -193,8 +193,13 @@ function DnvView({ vesselId }: { vesselId: string }) {
   }, [vesselId]);
 
   if (loading)
-    return <div style={{ padding: 40, textAlign: 'center', color: '#8893A0' }}>{t('common.loading')}</div>;
-  if (!report) return <div style={{ padding: 24, color: '#AB382E' }}>Failed to load report.</div>;
+    return (
+      <div style={{ padding: 40, textAlign: 'center', color: '#8893A0' }}>
+        {t('common.loading')}
+      </div>
+    );
+  if (!report)
+    return <div style={{ padding: 24, color: '#AB382E' }}>{t('compliance.load_error')}</div>;
 
   const statusColors: Record<OverallStatus, string> = {
     COMPLIANT: '#2F7D4F',
@@ -345,8 +350,13 @@ function IsoView() {
   }, []);
 
   if (loading)
-    return <div style={{ padding: 40, textAlign: 'center', color: '#8893A0' }}>{t('common.loading')}</div>;
-  if (!report) return <div style={{ padding: 24, color: '#AB382E' }}>Failed to load report.</div>;
+    return (
+      <div style={{ padding: 40, textAlign: 'center', color: '#8893A0' }}>
+        {t('common.loading')}
+      </div>
+    );
+  if (!report)
+    return <div style={{ padding: 24, color: '#AB382E' }}>{t('compliance.load_error')}</div>;
 
   const categories = [...new Set(report.controls.map((c) => c.category))];
 
@@ -375,8 +385,18 @@ function IsoView() {
                 bg: '#E2EEE6',
                 fg: '#2F7D4F',
               },
-              { label: t('compliance.status_partial'), value: report.summary.partial, bg: '#F4E7D0', fg: '#B5731E' },
-              { label: t('compliance.gaps'), value: report.summary.gaps, bg: '#F2DDD8', fg: '#AB382E' },
+              {
+                label: t('compliance.status_partial'),
+                value: report.summary.partial,
+                bg: '#F4E7D0',
+                fg: '#B5731E',
+              },
+              {
+                label: t('compliance.gaps'),
+                value: report.summary.gaps,
+                bg: '#F2DDD8',
+                fg: '#AB382E',
+              },
               {
                 label: t('compliance.status_na'),
                 value: report.summary.notApplicable,
@@ -547,9 +567,7 @@ export function CompliancePage() {
         >
           {t('compliance.title')}
         </h1>
-        <p style={{ fontSize: 13, color: '#8893A0', margin: 0 }}>
-          {t('compliance.subtitle')}
-        </p>
+        <p style={{ fontSize: 13, color: '#8893A0', margin: 0 }}>{t('compliance.subtitle')}</p>
       </div>
 
       {/* Tab bar */}
@@ -565,8 +583,16 @@ export function CompliancePage() {
           width: 'fit-content',
         }}
       >
-        <NavBtn label={t('compliance.tab_overview')} active={view === 'overview'} onClick={() => setView('overview')} />
-        <NavBtn label={t('compliance.tab_dnv')} active={view === 'dnv'} onClick={() => setView('dnv')} />
+        <NavBtn
+          label={t('compliance.tab_overview')}
+          active={view === 'overview'}
+          onClick={() => setView('overview')}
+        />
+        <NavBtn
+          label={t('compliance.tab_dnv')}
+          active={view === 'dnv'}
+          onClick={() => setView('dnv')}
+        />
         <NavBtn
           label={t('compliance.tab_iso')}
           active={view === 'iso27001'}
@@ -582,7 +608,9 @@ export function CompliancePage() {
               {t('compliance.select_vessel')}
             </div>
           ) : overviewLoading ? (
-            <div style={{ textAlign: 'center', color: '#8893A0', padding: 40 }}>{t('common.loading')}</div>
+            <div style={{ textAlign: 'center', color: '#8893A0', padding: 40 }}>
+              {t('common.loading')}
+            </div>
           ) : overviewData ? (
             <div
               style={{
@@ -621,7 +649,7 @@ export function CompliancePage() {
                   }
                 />
                 <div style={{ marginTop: 12, fontSize: 12, color: '#8893A0', textAlign: 'center' }}>
-                  Click to view full report →
+                  {t('compliance.click_report')}
                 </div>
               </div>
 
@@ -650,10 +678,10 @@ export function CompliancePage() {
                 </div>
                 <ScoreGauge
                   score={(overviewData.iso27001 as { score: number })?.score ?? 0}
-                  label={`${(overviewData.iso27001 as { implemented: number })?.implemented ?? 0} controls implemented`}
+                  label={`${(overviewData.iso27001 as { implemented: number })?.implemented ?? 0} ${t('compliance.controls_implemented')}`}
                 />
                 <div style={{ marginTop: 12, fontSize: 12, color: '#8893A0', textAlign: 'center' }}>
-                  Click to view assessment →
+                  {t('compliance.click_assessment')}
                 </div>
               </div>
             </div>

@@ -78,9 +78,7 @@ export function JobInstancesPage() {
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-slate-900">{t('maintenance.tab_jobs')}</h1>
-          <p className="text-sm text-slate-500 mt-0.5">
-            {t('maintenance.scheduled_tasks')}
-          </p>
+          <p className="text-sm text-slate-500 mt-0.5">{t('maintenance.scheduled_tasks')}</p>
         </div>
         <Button onClick={() => setScheduleOpen(true)}>{t('maintenance.new_instance')}</Button>
       </div>

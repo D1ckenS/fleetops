@@ -98,7 +98,9 @@ export function LogRunningHoursModal({
           autoFocus
         />
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">{t('maintenance.source')}</label>
+          <label className="block text-sm font-medium text-slate-700 mb-1">
+            {t('maintenance.source')}
+          </label>
           <div className="flex rounded-md border border-slate-200 overflow-hidden text-sm">
             {SOURCES.map((s) => (
               <button

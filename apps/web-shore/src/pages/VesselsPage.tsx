@@ -443,7 +443,9 @@ export function VesselsPage() {
             {t('vessels_page.title')}
           </h1>
           <p className="text-[12.5px] mt-0.5 m-0" style={{ color: 'var(--ink-3)' }}>
-            {vessels.length} {vessels.length !== 1 ? t('vessels_page.vessels') : t('vessels_page.vessel')} · {users.length} {users.length !== 1 ? t('vessels_page.users') : t('vessels_page.user')}
+            {vessels.length}{' '}
+            {vessels.length !== 1 ? t('vessels_page.vessels') : t('vessels_page.vessel')} ·{' '}
+            {users.length} {users.length !== 1 ? t('vessels_page.users') : t('vessels_page.user')}
           </p>
         </div>
         <div className="flex-1" />
@@ -512,8 +514,14 @@ export function VesselsPage() {
                     {v.name}
                   </div>
                   <div className="text-[11.5px]" style={{ color: 'var(--ink-3)' }}>
-                    {vUsers.length} {vUsers.length !== 1 ? t('vessels_page.users') : t('vessels_page.user')}
-                    {v.imoNumber && <> · {t('vessels_page.imo')} {v.imoNumber}</>}
+                    {vUsers.length}{' '}
+                    {vUsers.length !== 1 ? t('vessels_page.users') : t('vessels_page.user')}
+                    {v.imoNumber && (
+                      <>
+                        {' '}
+                        · {t('vessels_page.imo')} {v.imoNumber}
+                      </>
+                    )}
                   </div>
                 </div>
                 <button

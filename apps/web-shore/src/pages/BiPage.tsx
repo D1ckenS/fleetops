@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { embedDashboard } from '@superset-ui/embedded-sdk';
 import { api } from '../api/client.js';
 
@@ -53,6 +54,7 @@ function EmbeddedDashboard({
   supersetUrl: string;
   onBack: () => void;
 }) {
+  const { t } = useTranslation();
   const mountRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -117,7 +119,7 @@ function EmbeddedDashboard({
             cursor: 'pointer',
           }}
         >
-          ← Back
+          ← {t('common.back')}
         </button>
         <span style={{ fontSize: 15, fontWeight: 600, color: '#0A1F33' }}>
           {categoryIcon(dashboard.category)} {dashboard.title}
@@ -138,7 +140,7 @@ function EmbeddedDashboard({
             fontSize: 13,
           }}
         >
-          <strong>Could not load dashboard:</strong> {error}
+          <strong>{t('analytics.load_error')}</strong> {error}
           <p style={{ marginTop: 8, fontSize: 12, color: '#8893A0' }}>
             Make sure Superset is running at <code>{supersetUrl}</code> and the dashboard ID{' '}
             <code>{dashboard.supersetDashboardId}</code> exists.
@@ -159,7 +161,7 @@ function EmbeddedDashboard({
                 fontSize: 13,
               }}
             >
-              Loading dashboard…
+              {t('common.loading')}
             </div>
           )}
           <div ref={mountRef} style={{ width: '100%', height: '100%', minHeight: 600 }} />
@@ -172,6 +174,7 @@ function EmbeddedDashboard({
 // ── Main page ─────────────────────────────────────────────────────────────────
 
 export function BiPage() {
+  const { t } = useTranslation();
   const [dashboards, setDashboards] = useState<Dashboard[]>([]);
   const [config, setConfig] = useState<BiConfig | null>(null);
   const [selected, setSelected] = useState<Dashboard | null>(null);
@@ -200,7 +203,7 @@ export function BiPage() {
           fontSize: 13,
         }}
       >
-        Loading…
+        {t('common.loading')}
       </div>
     );
   }
@@ -222,7 +225,7 @@ export function BiPage() {
       <div style={{ maxWidth: 620, margin: '60px auto', textAlign: 'center' }}>
         <div style={{ fontSize: 40, marginBottom: 16 }}>📊</div>
         <h2 style={{ fontSize: 18, fontWeight: 600, color: '#0A1F33', marginBottom: 8 }}>
-          Analytics not configured
+          {t('analytics.not_configured')}
         </h2>
         <p style={{ fontSize: 13, color: '#8893A0', lineHeight: 1.6, marginBottom: 24 }}>
           FleetOps embeds Apache Superset for interactive fleet analytics. To enable it:
@@ -276,7 +279,7 @@ export function BiPage() {
       <div style={{ maxWidth: 560, margin: '60px auto', textAlign: 'center' }}>
         <div style={{ fontSize: 40, marginBottom: 16 }}>📊</div>
         <h2 style={{ fontSize: 18, fontWeight: 600, color: '#0A1F33', marginBottom: 8 }}>
-          No dashboards registered
+          {t('analytics.no_dashboards')}
         </h2>
         <p style={{ fontSize: 13, color: '#8893A0', lineHeight: 1.6 }}>
           Superset is running at <strong>{config.supersetUrl}</strong>. Create dashboards in
@@ -311,11 +314,9 @@ export function BiPage() {
             letterSpacing: '-0.011em',
           }}
         >
-          Analytics
+          {t('nav.analytics')}
         </h1>
-        <p style={{ fontSize: 13, color: '#8893A0', margin: 0 }}>
-          Interactive dashboards powered by Apache Superset.
-        </p>
+        <p style={{ fontSize: 13, color: '#8893A0', margin: 0 }}>{t('analytics.subtitle')}</p>
       </div>
 
       {Object.entries(groups).map(([category, cards]) => (
@@ -383,7 +384,7 @@ export function BiPage() {
                     borderRadius: 4,
                   }}
                 >
-                  Open →
+                  {t('analytics.open_link')}
                 </span>
               </button>
             ))}

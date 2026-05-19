@@ -204,7 +204,9 @@ export function SignOffModal({
         {/* ── Parts consumed ─────────────────────────────────────── */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-slate-700">{t('maintenance.parts_consumed')}</span>
+            <span className="text-sm font-medium text-slate-700">
+              {t('maintenance.parts_consumed')}
+            </span>
             <button
               type="button"
               onClick={() => setShowAddLine((v) => !v)}
@@ -215,9 +217,7 @@ export function SignOffModal({
           </div>
 
           {consumed.length === 0 && !showAddLine && (
-            <p className="text-xs text-slate-400 italic">
-              {t('maintenance.no_parts_recorded')}
-            </p>
+            <p className="text-xs text-slate-400 italic">{t('maintenance.no_parts_recorded')}</p>
           )}
 
           {consumed.map((line, idx) => (
@@ -268,7 +268,9 @@ export function SignOffModal({
                 />
               </div>
               <div className="w-32">
-                <label className="block text-xs text-slate-500 mb-1">{t('inventory.location')}</label>
+                <label className="block text-xs text-slate-500 mb-1">
+                  {t('inventory.location')}
+                </label>
                 <Select
                   value={addLocationId}
                   onChange={setAddLocationId}

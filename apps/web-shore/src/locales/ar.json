@@ -385,7 +385,16 @@
     "cat_marpol": "MARPOL",
     "cat_insurance": "التأمين",
     "cat_flag": "دولة العلم",
-    "filter_all_cats": "جميع الفئات"
+    "filter_all_cats": "جميع الفئات",
+    "status_filter": "الحالة",
+    "conditions_header": "الشروط والتوصيات والمذكرات",
+    "raised": "تاريخ الرفع",
+    "opened_at": "تاريخ الفتح",
+    "due_by": "مستحق بحلول",
+    "renewal_18months": "جدول التجديد · 18 شهرًا",
+    "legend_in_order": "سليم",
+    "legend_window": "نافذة",
+    "cert_col": "الشهادة"
   },
   "safety": {
     "title": "السلامة",
@@ -472,7 +481,11 @@
     "finding_observation": "ملاحظة",
     "finding_hazard": "خطر",
     "inherent_risk": "المخاطر الكامنة",
-    "residual_risk": "المخاطر المتبقية"
+    "residual_risk": "المخاطر المتبقية",
+    "ffa_label": "معدات مكافحة الحريق",
+    "lsa_label": "معدات إنقاذ الأرواح",
+    "other_safety": "معدات السلامة الأخرى",
+    "check": "فحص"
   },
   "qhse": {
     "title": "QHSE",
@@ -563,7 +576,13 @@
     "chair": "الرئيس",
     "actions": "الإجراءات",
     "invitations_pending": "دعوات معلقة",
-    "open_minutes": "فتح المحاضر"
+    "open_minutes": "فتح المحاضر",
+    "category": "الفئة",
+    "audits_12mo": "التدقيق · 12 شهرًا",
+    "no_voyages": "لا رحلات بحرية بعد",
+    "attendees": "الحاضرون",
+    "actions_done": "منجز",
+    "target_lower": "المستهدف"
   },
   "crewing": {
     "title": "الطاقم",
@@ -658,7 +677,10 @@
     "col_duration": "المدة",
     "col_attendance": "الحضور",
     "no_drills": "لا توجد تدريبات في آخر 90 يوماً.",
-    "renew": "تجديد"
+    "renew": "تجديد",
+    "crew_rotations": "دوران الطاقم — نافذة 8 أشهر",
+    "no_certs_on_record": "لا توجد شهادات مسجلة.",
+    "select_member_hint": "اختر عضو طاقم لعرض العقد والامتثال لـ MLC والشهادات."
   },
   "flgo": {
     "title": "FLGO",
@@ -703,10 +725,18 @@
     "implemented": "مُنفَّذ",
     "gaps": "الثغرات",
     "status_implemented": "مُنفَّذ",
-    "status_gap": "فجوة"
+    "status_gap": "فجوة",
+    "load_error": "تعذر تحميل التقرير.",
+    "click_report": "انقر لعرض التقرير الكامل →",
+    "click_assessment": "انقر لعرض التقييم →",
+    "controls_implemented": "ضوابط مُطبقة"
   },
   "analytics": {
-    "no_dashboards": "لم يتم تسجيل أي لوحات تحكم"
+    "no_dashboards": "لم يتم تسجيل أي لوحات تحكم",
+    "not_configured": "التحليلات غير مُهيأة",
+    "subtitle": "لوحات معلومات تفاعلية مدعومة من Apache Superset.",
+    "load_error": "تعذر تحميل لوحة المعلومات:",
+    "open_link": "فتح →"
   },
   "vessels_page": {
     "title": "السفن والمستخدمون",
@@ -786,7 +816,18 @@
     "submit_report": "تقديم تقرير",
     "report_type": "نوع التقرير",
     "save_draft": "حفظ كمسودة",
-    "submission_history": "سجل التقديمات"
+    "submission_history": "سجل التقديمات",
+    "from": "من",
+    "to": "إلى",
+    "vessel_label": "السفينة",
+    "society_label": "هيئة التصنيف",
+    "submitting": "جارٍ التقديم…",
+    "download_json": "تحميل JSON",
+    "sso_step1": "يدخل المستخدم معرف المؤسسة في صفحة تسجيل الدخول.",
+    "sso_step2": "ينقر المستخدم على \"تسجيل الدخول بـ Microsoft\" أو \"تسجيل الدخول بـ Google\".",
+    "sso_step3": "يُعيد FleetOps توجيه المستخدم إلى صفحة تسجيل الدخول للمزود المختار.",
+    "sso_step4": "بعد المصادقة يُعيد المزود التوجيه إلى عنوان URI.",
+    "sso_step5": "يُصدر FleetOps جلسة — يتم توفير المستخدمين الجدد تلقائيًا بدور CREW."
   },
   "settings": {
     "language": "اللغة",

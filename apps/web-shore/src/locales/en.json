@@ -394,7 +394,16 @@
     "cat_marpol": "MARPOL",
     "cat_insurance": "Insurance",
     "cat_flag": "Flag state",
-    "filter_all_cats": "All categories"
+    "filter_all_cats": "All categories",
+    "status_filter": "Status",
+    "conditions_header": "Conditions, recommendations, memoranda",
+    "raised": "Raised",
+    "opened_at": "Opened",
+    "due_by": "Due by",
+    "renewal_18months": "Renewal timeline · 18 months",
+    "legend_in_order": "in order",
+    "legend_window": "window",
+    "cert_col": "Certificate"
   },
   "safety": {
     "title": "Safety",
@@ -491,7 +500,11 @@
     "finding_observation": "OBSERV",
     "finding_hazard": "HAZARD",
     "inherent_risk": "Inherent risk",
-    "residual_risk": "Residual risk"
+    "residual_risk": "Residual risk",
+    "ffa_label": "Fire-fighting appliances",
+    "lsa_label": "Life-saving appliances",
+    "other_safety": "Other safety equipment",
+    "check": "Check"
   },
   "qhse": {
     "title": "QHSE",
@@ -584,7 +597,13 @@
     "chair": "CHAIR",
     "actions": "ACTIONS",
     "invitations_pending": "invitations pending",
-    "open_minutes": "Open minutes"
+    "open_minutes": "Open minutes",
+    "category": "Category",
+    "audits_12mo": "Audits · 12mo",
+    "no_voyages": "no voyages yet",
+    "attendees": "attendees",
+    "actions_done": "done",
+    "target_lower": "target"
   },
   "crewing": {
     "title": "Crewing",
@@ -679,7 +698,10 @@
     "col_duration": "Duration",
     "col_attendance": "Attendance",
     "no_drills": "No drills recorded in the last 90 days.",
-    "renew": "Renew"
+    "renew": "Renew",
+    "crew_rotations": "Crew rotations — 8-month window",
+    "no_certs_on_record": "No certificates on record.",
+    "select_member_hint": "Select a crew member to view contract, MLC compliance, and certificates."
   },
   "flgo": {
     "title": "FLGO",
@@ -724,10 +746,18 @@
     "implemented": "Implemented",
     "gaps": "Gaps",
     "status_implemented": "IMPLEMENTED",
-    "status_gap": "GAP"
+    "status_gap": "GAP",
+    "load_error": "Failed to load report.",
+    "click_report": "Click to view full report →",
+    "click_assessment": "Click to view assessment →",
+    "controls_implemented": "controls implemented"
   },
   "analytics": {
-    "no_dashboards": "No dashboards registered"
+    "no_dashboards": "No dashboards registered",
+    "not_configured": "Analytics not configured",
+    "subtitle": "Interactive dashboards powered by Apache Superset.",
+    "load_error": "Could not load dashboard:",
+    "open_link": "Open →"
   },
   "vessels_page": {
     "title": "Vessels & Users",
@@ -812,7 +842,18 @@
     "submit_report": "Submit a Report",
     "report_type": "Report type",
     "save_draft": "Save as draft",
-    "submission_history": "Submission History"
+    "submission_history": "Submission History",
+    "from": "From",
+    "to": "To",
+    "vessel_label": "Vessel",
+    "society_label": "Society",
+    "submitting": "Submitting…",
+    "download_json": "Download JSON",
+    "sso_step1": "User enters the Organisation ID on the login page.",
+    "sso_step2": "User clicks \"Sign in with Microsoft\" or \"Sign in with Google.\"",
+    "sso_step3": "FleetOps redirects to the chosen provider's login page.",
+    "sso_step4": "After authentication the provider redirects back to the Redirect URI above.",
+    "sso_step5": "FleetOps issues a session — new users are auto-provisioned with CREW role."
   },
   "settings": {
     "language": "Language",

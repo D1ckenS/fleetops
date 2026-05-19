@@ -385,7 +385,16 @@
     "cat_marpol": "MARPOL",
     "cat_insurance": "Ασφάλεια",
     "cat_flag": "Κράτος σημαίας",
-    "filter_all_cats": "Όλες οι κατηγορίες"
+    "filter_all_cats": "Όλες οι κατηγορίες",
+    "status_filter": "Κατάσταση",
+    "conditions_header": "Όροι, συστάσεις, σημειώματα",
+    "raised": "Ανέγερση",
+    "opened_at": "Άνοιγμα",
+    "due_by": "Λήξη",
+    "renewal_18months": "Χρονοδιάγραμμα ανανέωσης · 18 μήνες",
+    "legend_in_order": "σε τάξη",
+    "legend_window": "παράθυρο",
+    "cert_col": "Πιστοποιητικό"
   },
   "safety": {
     "title": "Ασφάλεια",
@@ -472,7 +481,11 @@
     "finding_observation": "ΠΑΡΑΤΗΡ.",
     "finding_hazard": "ΚΙΝΔΥΝΟΣ",
     "inherent_risk": "Εγγενής κίνδυνος",
-    "residual_risk": "Υπολειπόμενος κίνδυνος"
+    "residual_risk": "Υπολειπόμενος κίνδυνος",
+    "ffa_label": "Πυροσβεστικά μέσα",
+    "lsa_label": "Μέσα διάσωσης",
+    "other_safety": "Λοιπός εξοπλισμός ασφαλείας",
+    "check": "Έλεγχος"
   },
   "qhse": {
     "title": "QHSE",
@@ -563,7 +576,13 @@
     "chair": "ΠΡΟΕΔΡΟΣ",
     "actions": "ΕΝΕΡΓΕΙΕΣ",
     "invitations_pending": "εκκρεμείς προσκλήσεις",
-    "open_minutes": "Άνοιγμα πρακτικών"
+    "open_minutes": "Άνοιγμα πρακτικών",
+    "category": "Κατηγορία",
+    "audits_12mo": "Ελεγχοι · 12 μήνες",
+    "no_voyages": "χωρίς πλόες ακόμα",
+    "attendees": "συμμετέχοντες",
+    "actions_done": "ολοκληρωμένα",
+    "target_lower": "στόχος"
   },
   "crewing": {
     "title": "Πλήρωμα",
@@ -658,7 +677,10 @@
     "col_duration": "Διάρκεια",
     "col_attendance": "Παρουσία",
     "no_drills": "Δεν υπάρχουν ασκήσεις τις τελευταίες 90 ημέρες.",
-    "renew": "Ανανέωση"
+    "renew": "Ανανέωση",
+    "crew_rotations": "Εναλλαγές πληρώματος — 8μηνο παράθυρο",
+    "no_certs_on_record": "Δεν βρέθηκαν πιστοποιητικά.",
+    "select_member_hint": "Επιλέξτε μέλος πληρώματος για σύμβαση, συμμόρφωση MLC και πιστοποιητικά."
   },
   "flgo": {
     "title": "FLGO",
@@ -703,10 +725,18 @@
     "implemented": "Υλοποιήθηκε",
     "gaps": "Κενά",
     "status_implemented": "ΕΦΑΡΜΟΣΤΗΚΕ",
-    "status_gap": "ΚΕΝΟ"
+    "status_gap": "ΚΕΝΟ",
+    "load_error": "Αδυναμία φόρτωσης αναφοράς.",
+    "click_report": "Κάντε κλικ για να δείτε την πλήρη αναφορά →",
+    "click_assessment": "Κάντε κλικ για να δείτε την αξιολόγηση →",
+    "controls_implemented": "ελέγχοι υλοποιημένοι"
   },
   "analytics": {
-    "no_dashboards": "Δεν υπάρχουν καταχωρημένα dashboards"
+    "no_dashboards": "Δεν υπάρχουν καταχωρημένα dashboards",
+    "not_configured": "Η ανάλυση δεν έχει διαμορφωθεί",
+    "subtitle": "Διαδραστικοί πίνακες ελέγχου από Apache Superset.",
+    "load_error": "Αδυναμία φόρτωσης πίνακα ελέγχου:",
+    "open_link": "Άνοιγμα →"
   },
   "vessels_page": {
     "title": "Πλοία & Χρήστες",
@@ -786,7 +816,18 @@
     "submit_report": "Υποβολή αναφοράς",
     "report_type": "Τύπος αναφοράς",
     "save_draft": "Αποθήκευση ως προσχέδιο",
-    "submission_history": "Ιστορικό υποβολών"
+    "submission_history": "Ιστορικό υποβολών",
+    "from": "Από",
+    "to": "Έως",
+    "vessel_label": "Πλοίο",
+    "society_label": "Νηογνώμονας",
+    "submitting": "Υποβολή…",
+    "download_json": "Λήψη JSON",
+    "sso_step1": "Ο χρήστης εισάγει το Αναγνωριστικό Οργανισμού στη σελίδα σύνδεσης.",
+    "sso_step2": "Ο χρήστης κάνει κλικ στο «Σύνδεση με Microsoft» ή «Σύνδεση με Google».",
+    "sso_step3": "Το FleetOps ανακατευθύνει στη σελίδα σύνδεσης του επιλεγμένου παρόχου.",
+    "sso_step4": "Μετά την πιστοποίηση, ο πάροχος ανακατευθύνει στο Redirect URI.",
+    "sso_step5": "Το FleetOps εκδίδει σύνδεση — νέοι χρήστες αποκτούν αυτόματα ρόλο CREW."
   },
   "settings": {
     "language": "Γλώσσα",

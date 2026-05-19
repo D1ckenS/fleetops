@@ -227,11 +227,11 @@ function SsoTab() {
         <ol
           style={{ fontSize: 12.5, color: '#41546A', lineHeight: 1.7, paddingLeft: 18, margin: 0 }}
         >
-          <li>User enters the Organisation ID on the login page.</li>
-          <li>User clicks "Sign in with Microsoft" or "Sign in with Google."</li>
-          <li>FleetOps redirects to the chosen provider's login page.</li>
-          <li>After authentication the provider redirects back to the Redirect URI above.</li>
-          <li>FleetOps issues a session — new users are auto-provisioned with CREW role.</li>
+          <li>{t('integrations.sso_step1')}</li>
+          <li>{t('integrations.sso_step2')}</li>
+          <li>{t('integrations.sso_step3')}</li>
+          <li>{t('integrations.sso_step4')}</li>
+          <li>{t('integrations.sso_step5')}</li>
         </ol>
       </SectionCard>
     </>
@@ -283,19 +283,21 @@ function ProviderForm({
     }
   }
 
+  const { t } = useTranslation();
+
   return (
     <div>
       {buildDiscoveryUrl && (
         <LabeledInput
-          label="Directory (Tenant) ID"
+          label={t('integrations.tenant_id')}
           value={dirId}
           onChange={setDirId}
           placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-          hint='Use "common" to allow any Microsoft account.'
+          hint={t('integrations.tenant_id_hint')}
         />
       )}
       <LabeledInput
-        label="Client ID"
+        label={t('integrations.client_id')}
         value={clientId}
         onChange={setClientId}
         placeholder={
@@ -305,18 +307,18 @@ function ProviderForm({
         }
       />
       <LabeledInput
-        label="Client Secret"
+        label={t('integrations.client_secret')}
         type="password"
         value={clientSecret}
         onChange={setClientSecret}
-        placeholder="Your OAuth client secret"
+        placeholder={t('integrations.client_secret_placeholder')}
       />
       <LabeledInput
-        label="Redirect URI"
+        label={t('integrations.redirect_uri')}
         value={redirectUri}
         onChange={setRedirectUri}
         placeholder={DEFAULT_REDIRECT_URI}
-        hint="Must match the redirect URI in your provider's app settings exactly."
+        hint={t('integrations.redirect_uri_hint')}
       />
       <div
         style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 4, marginBottom: 8 }}
@@ -385,7 +387,7 @@ function TechLibraryTab() {
             textTransform: 'uppercase',
           }}
         >
-          Provider
+          {t('integrations.provider')}
         </label>
         <select
           value={cfg.provider ?? 'TWO_BA'}
@@ -405,17 +407,17 @@ function TechLibraryTab() {
         </select>
       </div>
       <LabeledInput
-        label="API Key"
+        label={t('integrations.api_key')}
         type="password"
         value={cfg.apiKey ?? ''}
         onChange={(v) => setCfg((c) => ({ ...c, apiKey: v }))}
-        placeholder="Your API key from the provider"
+        placeholder={t('integrations.api_key_placeholder')}
       />
       <LabeledInput
-        label="Custom Endpoint (optional)"
+        label={t('integrations.custom_endpoint')}
         value={cfg.endpoint ?? ''}
         onChange={(v) => setCfg((c) => ({ ...c, endpoint: v || null }))}
-        placeholder="Leave blank to use provider default"
+        placeholder={t('integrations.custom_endpoint_hint')}
       />
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <StatusBadge ok={Boolean(cfg.apiKey)} />
@@ -507,7 +509,7 @@ function AccountingTab() {
               textTransform: 'uppercase',
             }}
           >
-            Accounting system
+            {t('integrations.accounting_system')}
           </label>
           <select
             value={cfg.provider ?? 'CSV'}
@@ -541,9 +543,9 @@ function AccountingTab() {
         <SaveBtn loading={saving} onClick={save} />
       </SectionCard>
 
-      <SectionCard title="Export Purchase Orders">
+      <SectionCard title={t('integrations.export_pos')}>
         <p style={{ fontSize: 12.5, color: '#41546A', marginBottom: 16 }}>
-          Download purchase orders in your accounting system's import format.
+          {t('integrations.export_pos_desc')}
         </p>
         <div
           style={{
@@ -566,7 +568,7 @@ function AccountingTab() {
                 textTransform: 'uppercase',
               }}
             >
-              From
+              {t('integrations.from')}
             </label>
             <input
               type="date"
@@ -592,7 +594,7 @@ function AccountingTab() {
                 textTransform: 'uppercase',
               }}
             >
-              To
+              {t('integrations.to')}
             </label>
             <input
               type="date"
@@ -618,7 +620,7 @@ function AccountingTab() {
                 textTransform: 'uppercase',
               }}
             >
-              Format
+              {t('integrations.format')}
             </label>
             <select
               value={exportFormat}
@@ -652,7 +654,7 @@ function AccountingTab() {
             opacity: exporting ? 0.7 : 1,
           }}
         >
-          {exporting ? 'Downloading…' : 'Download export'}
+          {exporting ? t('integrations.downloading') : t('integrations.download_export')}
         </button>
       </SectionCard>
     </>
@@ -682,6 +684,7 @@ interface ClassSubmission {
 }
 
 function ClassSocietiesTab() {
+  const { t } = useTranslation();
   const [connectors, setConnectors] = useState<ClassConnector[]>([]);
   const [submissions, setSubmissions] = useState<ClassSubmission[]>([]);
   const [activeSociety, setActiveSociety] = useState<ClassSociety>('DNV');
@@ -811,7 +814,7 @@ function ClassSocietiesTab() {
             textTransform: 'uppercase',
           }}
         >
-          Society
+          {t('integrations.society_label')}
         </div>
         {CLASS_SOCIETIES.map((s) => {
           const configured = connectors.some((c) => c.society === s && c.apiKey);
@@ -889,7 +892,7 @@ function ClassSocietiesTab() {
           <SaveBtn loading={saving} onClick={saveConnector} />
         </SectionCard>
 
-        <SectionCard title="Submit a Report">
+        <SectionCard title={t('integrations.submit_report')}>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 14 }}>
             <div>
               <label
@@ -903,7 +906,7 @@ function ClassSocietiesTab() {
                   textTransform: 'uppercase',
                 }}
               >
-                Vessel
+                {t('integrations.vessel_label')}
               </label>
               <select
                 value={selectedVesselId}
@@ -935,7 +938,7 @@ function ClassSocietiesTab() {
                   textTransform: 'uppercase',
                 }}
               >
-                Report type
+                {t('integrations.report_type')}
               </label>
               <select
                 value={selectedReport}
@@ -973,7 +976,9 @@ function ClassSocietiesTab() {
                 opacity: submitting || !active?.apiKey ? 0.5 : 1,
               }}
             >
-              {submitting ? 'Submitting…' : `Submit to ${activeSociety}`}
+              {submitting
+                ? t('integrations.submitting')
+                : `${t('integrations.submit_report')} ${activeSociety}`}
             </button>
             <button
               onClick={() => submit(false)}
@@ -989,7 +994,7 @@ function ClassSocietiesTab() {
                 cursor: submitting ? 'not-allowed' : 'pointer',
               }}
             >
-              Save as draft
+              {t('integrations.save_draft')}
             </button>
             <button
               onClick={downloadExport}
@@ -1004,14 +1009,14 @@ function ClassSocietiesTab() {
                 cursor: !selectedVesselId ? 'not-allowed' : 'pointer',
               }}
             >
-              Download JSON
+              {t('integrations.download_json')}
             </button>
           </div>
         </SectionCard>
 
         {/* Submission history */}
         {submissions.filter((s) => s.society === activeSociety).length > 0 && (
-          <SectionCard title="Submission History">
+          <SectionCard title={t('integrations.submission_history')}>
             {submissions
               .filter((s) => s.society === activeSociety)
               .slice(0, 20)

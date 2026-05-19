@@ -293,7 +293,8 @@ function CreateAdminModal({
         </div>
         <div>
           <label className="text-[11.5px] font-medium mb-1 block" style={{ color: 'var(--ink-2)' }}>
-            {t('companies.admin_username')} * <span style={{ color: 'var(--ink-3)' }}>(used to log in)</span>
+            {t('companies.admin_username')} *{' '}
+            <span style={{ color: 'var(--ink-3)' }}>(used to log in)</span>
           </label>
           <Input
             value={username}

@@ -93,9 +93,7 @@ function Initials({ email, displayName }: { email: string; displayName?: string 
     const first = parts[0] ?? '';
     const last = parts[parts.length - 1] ?? '';
     letters =
-      parts.length >= 2 && first && last
-        ? (first[0] ?? '') + (last[0] ?? '')
-        : first.slice(0, 2);
+      parts.length >= 2 && first && last ? (first[0] ?? '') + (last[0] ?? '') : first.slice(0, 2);
   } else {
     const name = email.split('@')[0] ?? '';
     const parts = name.split(/[._-]/);

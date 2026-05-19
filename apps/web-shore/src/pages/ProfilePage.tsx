@@ -92,12 +92,13 @@ export function ProfilePage() {
   }
 
   if (!profile) {
-    return (
-      <div style={{ color: '#8893A0', fontSize: 14, padding: 8 }}>{t('profile.loading')}</div>
-    );
+    return <div style={{ color: '#8893A0', fontSize: 14, padding: 8 }}>{t('profile.loading')}</div>;
   }
 
-  const roleLabel = profile.role.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
+  const roleLabel = profile.role
+    .replace(/_/g, ' ')
+    .toLowerCase()
+    .replace(/\b\w/g, (c) => c.toUpperCase());
 
   return (
     <div style={{ maxWidth: 480 }}>
@@ -127,10 +128,21 @@ export function ProfilePage() {
           marginBottom: 20,
         }}
       >
-        <h2 style={{ fontSize: 13, fontWeight: 600, color: '#0A1F33', marginTop: 0, marginBottom: 16 }}>
+        <h2
+          style={{
+            fontSize: 13,
+            fontWeight: 600,
+            color: '#0A1F33',
+            marginTop: 0,
+            marginBottom: 16,
+          }}
+        >
           {t('profile.personal_info')}
         </h2>
-        <form onSubmit={handleInfoSave} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <form
+          onSubmit={handleInfoSave}
+          style={{ display: 'flex', flexDirection: 'column', gap: 12 }}
+        >
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <Input
               id="firstName"
@@ -184,10 +196,21 @@ export function ProfilePage() {
           padding: '20px 24px',
         }}
       >
-        <h2 style={{ fontSize: 13, fontWeight: 600, color: '#0A1F33', marginTop: 0, marginBottom: 16 }}>
+        <h2
+          style={{
+            fontSize: 13,
+            fontWeight: 600,
+            color: '#0A1F33',
+            marginTop: 0,
+            marginBottom: 16,
+          }}
+        >
           {t('profile.change_password')}
         </h2>
-        <form onSubmit={handlePasswordSave} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <form
+          onSubmit={handlePasswordSave}
+          style={{ display: 'flex', flexDirection: 'column', gap: 12 }}
+        >
           <Input
             id="currentPassword"
             label={t('profile.current_password')}

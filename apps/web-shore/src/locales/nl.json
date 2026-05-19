@@ -385,7 +385,16 @@
     "cat_marpol": "MARPOL",
     "cat_insurance": "Verzekering",
     "cat_flag": "Vlagstaat",
-    "filter_all_cats": "Alle categorieën"
+    "filter_all_cats": "Alle categorieën",
+    "status_filter": "Status",
+    "conditions_header": "Conditiebepalingen, aanbevelingen, notities",
+    "raised": "Gemeld",
+    "opened_at": "Geopend",
+    "due_by": "Uiterlijk",
+    "renewal_18months": "Verlengingstijdlijn · 18 maanden",
+    "legend_in_order": "in orde",
+    "legend_window": "venster",
+    "cert_col": "Certificaat"
   },
   "safety": {
     "title": "Veiligheid",
@@ -472,7 +481,11 @@
     "finding_observation": "OBSERV.",
     "finding_hazard": "GEVAAR",
     "inherent_risk": "Inherent risico",
-    "residual_risk": "Restrisico"
+    "residual_risk": "Restrisico",
+    "ffa_label": "Brandbestrijdingsmiddelen",
+    "lsa_label": "Reddingsmiddelen",
+    "other_safety": "Overige veiligheidsuitrusting",
+    "check": "Controleren"
   },
   "qhse": {
     "title": "QHSE",
@@ -563,7 +576,13 @@
     "chair": "VOORZITTER",
     "actions": "ACTIES",
     "invitations_pending": "uitnodigingen in afwachting",
-    "open_minutes": "Notulen openen"
+    "open_minutes": "Notulen openen",
+    "category": "Categorie",
+    "audits_12mo": "Audits · 12 mnd.",
+    "no_voyages": "nog geen reizen",
+    "attendees": "aanwezigen",
+    "actions_done": "gedaan",
+    "target_lower": "doel"
   },
   "crewing": {
     "title": "Bemanning",
@@ -658,7 +677,10 @@
     "col_duration": "Duur",
     "col_attendance": "Aanwezigheid",
     "no_drills": "Geen oefeningen in de afgelopen 90 dagen.",
-    "renew": "Verlengen"
+    "renew": "Verlengen",
+    "crew_rotations": "Bemanningsrotaties — 8 maanden venster",
+    "no_certs_on_record": "Geen certificaten geregistreerd.",
+    "select_member_hint": "Selecteer een bemanningslid voor contract, MLC-naleving en certificaten."
   },
   "flgo": {
     "title": "FLGO",
@@ -703,10 +725,18 @@
     "implemented": "Geïmplementeerd",
     "gaps": "Tekortkomingen",
     "status_implemented": "GEÏMPLEMENTEERD",
-    "status_gap": "GAP"
+    "status_gap": "GAP",
+    "load_error": "Rapport kon niet geladen worden.",
+    "click_report": "Klik om volledig rapport te bekijken →",
+    "click_assessment": "Klik om beoordeling te bekijken →",
+    "controls_implemented": "maatregelen geïmplementeerd"
   },
   "analytics": {
-    "no_dashboards": "Geen dashboards geregistreerd"
+    "no_dashboards": "Geen dashboards geregistreerd",
+    "not_configured": "Analyse niet geconfigureerd",
+    "subtitle": "Interactieve dashboards mogelijk gemaakt door Apache Superset.",
+    "load_error": "Dashboard kon niet geladen worden:",
+    "open_link": "Openen →"
   },
   "vessels_page": {
     "title": "Schepen & Gebruikers",
@@ -786,7 +816,18 @@
     "submit_report": "Rapport indienen",
     "report_type": "Rapporttype",
     "save_draft": "Als concept opslaan",
-    "submission_history": "Indieningshistorie"
+    "submission_history": "Indieningshistorie",
+    "from": "Van",
+    "to": "Tot",
+    "vessel_label": "Schip",
+    "society_label": "Klassenbureau",
+    "submitting": "Indienen…",
+    "download_json": "JSON downloaden",
+    "sso_step1": "De gebruiker voert de Organisatie-ID in op de aanmeldpagina.",
+    "sso_step2": "De gebruiker klikt op \"Aanmelden met Microsoft\" of \"Aanmelden met Google\".",
+    "sso_step3": "FleetOps verwijst door naar de aanmeldpagina van de gekozen leverancier.",
+    "sso_step4": "Na authenticatie verwijst de leverancier terug naar de omleidings-URI.",
+    "sso_step5": "FleetOps verstrekt een sessie — nieuwe gebruikers worden automatisch aangemaakt met de CREW-rol."
   },
   "settings": {
     "language": "Taal",

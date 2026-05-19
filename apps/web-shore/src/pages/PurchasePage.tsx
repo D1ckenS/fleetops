@@ -116,7 +116,6 @@ export interface Quote {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-
 const STATUS_KEY: Record<string, string> = {
   DRAFT: 'purchase.status_draft',
   SUBMITTED: 'purchase.status_submitted',
@@ -192,7 +191,14 @@ function Chip({
 
 // ─── Lifecycle stepper ───────────────────────────────────────────────────────
 
-type LifecycleId = 'DRAFT' | 'SENT' | 'ACKNOWLEDGED' | 'IN_TRANSIT' | 'PARTIALLY_RECEIVED' | 'RECEIVED' | 'CLOSED';
+type LifecycleId =
+  | 'DRAFT'
+  | 'SENT'
+  | 'ACKNOWLEDGED'
+  | 'IN_TRANSIT'
+  | 'PARTIALLY_RECEIVED'
+  | 'RECEIVED'
+  | 'CLOSED';
 
 function LifecycleStepper({ status }: { status: POStatus }) {
   const { t } = useTranslation();
@@ -453,7 +459,9 @@ function PODetailPane({
                     · {po.poNumber}
                   </span>
                 )}
-                <Badge color={PO_STATUS_COLOR[po.status]}>{t(STATUS_KEY[po.status] ?? po.status)}</Badge>
+                <Badge color={PO_STATUS_COLOR[po.status]}>
+                  {t(STATUS_KEY[po.status] ?? po.status)}
+                </Badge>
                 <div className="flex-1" />
                 <button
                   onClick={onClose}
@@ -760,7 +768,7 @@ function RequisitionsTab() {
         </div>
         <div className="flex-1" />
         <span className="text-[11px]" style={{ color: 'var(--ink-3)' }}>
-          {reqs.length} {filter !== 'ALL' ? (t(STATUS_KEY[filter] ?? filter)).toLowerCase() : ''}
+          {reqs.length} {filter !== 'ALL' ? t(STATUS_KEY[filter] ?? filter).toLowerCase() : ''}
         </span>
       </div>
 
@@ -852,7 +860,9 @@ function RequisitionsTab() {
                     {fmtAmt(r.totalAmount, r.currency)}
                   </div>
                 </div>
-                <Badge color={REQ_STATUS_COLOR[r.status]}>{t(STATUS_KEY[r.status] ?? r.status)}</Badge>
+                <Badge color={REQ_STATUS_COLOR[r.status]}>
+                  {t(STATUS_KEY[r.status] ?? r.status)}
+                </Badge>
                 <span className="text-[11px]" style={{ color: 'var(--ink-3)' }}>
                   {fmtDate(r.requestedAt)}
                 </span>
@@ -899,8 +909,12 @@ function RequisitionsTab() {
                         <th className="text-left pb-1.5 font-medium">{t('common.description')}</th>
                         <th className="text-right pb-1.5 font-medium">{t('purchase.col_qty')}</th>
                         <th className="text-right pb-1.5 font-medium">{t('purchase.col_unit')}</th>
-                        <th className="text-right pb-1.5 font-medium">{t('purchase.col_est_unit_price')}</th>
-                        <th className="text-right pb-1.5 font-medium">{t('purchase.col_est_total')}</th>
+                        <th className="text-right pb-1.5 font-medium">
+                          {t('purchase.col_est_unit_price')}
+                        </th>
+                        <th className="text-right pb-1.5 font-medium">
+                          {t('purchase.col_est_total')}
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -1455,7 +1469,9 @@ function PurchaseOrdersTab() {
                 <span className="font-mono text-[11px]" style={{ color: 'var(--ink-3)' }}>
                   {po.expectedDeliveryAt ? fmtDate(po.expectedDeliveryAt) : '—'}
                 </span>
-                <Badge color={PO_STATUS_COLOR[po.status]}>{t(STATUS_KEY[po.status] ?? po.status)}</Badge>
+                <Badge color={PO_STATUS_COLOR[po.status]}>
+                  {t(STATUS_KEY[po.status] ?? po.status)}
+                </Badge>
                 <div className="text-right">
                   <div
                     className="font-mono text-[12.5px] font-semibold"
@@ -1629,7 +1645,8 @@ function GoodsReceiptsTab() {
                 className="text-[11.5px] truncate"
                 style={{ color: g.hasDiscrepancy ? 'var(--sig-amber)' : 'var(--ink-3)' }}
               >
-                {g.notes ?? (g.hasDiscrepancy ? t('purchase.partial_receipt') : t('purchase.full_receipt'))}
+                {g.notes ??
+                  (g.hasDiscrepancy ? t('purchase.partial_receipt') : t('purchase.full_receipt'))}
               </span>
             </div>
           ))}
@@ -1864,7 +1881,6 @@ function FooterStats({ pos }: { pos: PurchaseOrder[] }) {
 // ─── Main page ────────────────────────────────────────────────────────────────
 
 type Tab = 'requisitions' | 'rfq' | 'po' | 'grn' | 'suppliers';
-
 
 export function PurchasePage() {
   const { t } = useTranslation();

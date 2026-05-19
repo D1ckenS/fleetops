@@ -385,7 +385,16 @@
     "cat_marpol": "MARPOL",
     "cat_insurance": "Страхование",
     "cat_flag": "Государство флага",
-    "filter_all_cats": "Все категории"
+    "filter_all_cats": "Все категории",
+    "status_filter": "Статус",
+    "conditions_header": "Условия, рекомендации, меморандумы",
+    "raised": "Поднято",
+    "opened_at": "Открыто",
+    "due_by": "Срок",
+    "renewal_18months": "График обновления · 18 месяцев",
+    "legend_in_order": "в порядке",
+    "legend_window": "в окне",
+    "cert_col": "Сертификат"
   },
   "safety": {
     "title": "Безопасность",
@@ -472,7 +481,11 @@
     "finding_observation": "НАБЛЮД.",
     "finding_hazard": "ОПАСНОСТЬ",
     "inherent_risk": "Присущий риск",
-    "residual_risk": "Остаточный риск"
+    "residual_risk": "Остаточный риск",
+    "ffa_label": "Противопожарное оборудование",
+    "lsa_label": "Спасательные средства",
+    "other_safety": "Прочее защитное оборудование",
+    "check": "Проверить"
   },
   "qhse": {
     "title": "QHSE",
@@ -563,7 +576,13 @@
     "chair": "ПРЕДСЕДАТЕЛЬ",
     "actions": "МЕРОПРИЯТИЯ",
     "invitations_pending": "приглашения ожидают",
-    "open_minutes": "Открыть протокол"
+    "open_minutes": "Открыть протокол",
+    "category": "Категория",
+    "audits_12mo": "Аудиты · 12 мес.",
+    "no_voyages": "рейсов ещё нет",
+    "attendees": "участников",
+    "actions_done": "выполнено",
+    "target_lower": "цель"
   },
   "crewing": {
     "title": "Экипаж",
@@ -658,7 +677,10 @@
     "col_duration": "Продолжительность",
     "col_attendance": "Присутствие",
     "no_drills": "Учений за последние 90 дней нет.",
-    "renew": "Продлить"
+    "renew": "Продлить",
+    "crew_rotations": "Ротация экипажа — окно 8 месяцев",
+    "no_certs_on_record": "Сертификаты не зарегистрированы.",
+    "select_member_hint": "Выберите члена экипажа для просмотра контракта, соответствия МТК и сертификатов."
   },
   "flgo": {
     "title": "FLGO",
@@ -703,10 +725,18 @@
     "implemented": "Внедрено",
     "gaps": "Пробелы",
     "status_implemented": "ВНЕДРЕНО",
-    "status_gap": "ПРОБЕЛ"
+    "status_gap": "ПРОБЕЛ",
+    "load_error": "Не удалось загрузить отчёт.",
+    "click_report": "Нажмите для просмотра полного отчёта →",
+    "click_assessment": "Нажмите для просмотра оценки →",
+    "controls_implemented": "мер реализовано"
   },
   "analytics": {
-    "no_dashboards": "Дашборды не зарегистрированы"
+    "no_dashboards": "Дашборды не зарегистрированы",
+    "not_configured": "Аналитика не настроена",
+    "subtitle": "Интерактивные информационные панели на базе Apache Superset.",
+    "load_error": "Не удалось загрузить информационную панель:",
+    "open_link": "Открыть →"
   },
   "vessels_page": {
     "title": "Суда и пользователи",
@@ -786,7 +816,18 @@
     "submit_report": "Подать отчёт",
     "report_type": "Тип отчёта",
     "save_draft": "Сохранить как черновик",
-    "submission_history": "История подачи"
+    "submission_history": "История подачи",
+    "from": "С",
+    "to": "До",
+    "vessel_label": "Судно",
+    "society_label": "Классификационное общество",
+    "submitting": "Отправка…",
+    "download_json": "Скачать JSON",
+    "sso_step1": "Пользователь вводит ID организации на странице входа.",
+    "sso_step2": "Пользователь нажимает «Войти через Microsoft» или «Войти через Google».",
+    "sso_step3": "FleetOps перенаправляет на страницу входа выбранного провайдера.",
+    "sso_step4": "После аутентификации провайдер перенаправляет на указанный URI.",
+    "sso_step5": "FleetOps создаёт сессию — новые пользователи автоматически получают роль CREW."
   },
   "settings": {
     "language": "Язык",

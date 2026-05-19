@@ -277,9 +277,7 @@ export function MaintenanceHistoryTab() {
           }}
         >
           <span>🔒</span>
-          <span>
-            {t('maintenance.immutable_records')}
-          </span>
+          <span>{t('maintenance.immutable_records')}</span>
         </div>
       )}
     </div>

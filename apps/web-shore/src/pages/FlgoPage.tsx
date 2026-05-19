@@ -140,7 +140,13 @@ export function FlgoPage() {
         {(['tanks', 'soundings', 'bdn'] as Tab[]).map((tabId) => (
           <TabBtn
             key={tabId}
-            label={tabId === 'tanks' ? t('flgo.tab_tanks') : tabId === 'soundings' ? t('flgo.tab_soundings') : t('flgo.tab_bdn')}
+            label={
+              tabId === 'tanks'
+                ? t('flgo.tab_tanks')
+                : tabId === 'soundings'
+                  ? t('flgo.tab_soundings')
+                  : t('flgo.tab_bdn')
+            }
             active={tab === tabId}
             onClick={() => setTab(tabId)}
           />
@@ -148,7 +154,9 @@ export function FlgoPage() {
       </div>
 
       {loading ? (
-        <div style={{ textAlign: 'center', color: '#8893A0', padding: 40 }}>{t('common.loading')}</div>
+        <div style={{ textAlign: 'center', color: '#8893A0', padding: 40 }}>
+          {t('common.loading')}
+        </div>
       ) : (
         <>
           {/* ── Tanks tab ───────────────────────────────────────────────── */}
@@ -170,7 +178,12 @@ export function FlgoPage() {
                   borderBottom: '1px solid #EEEBE2',
                 }}
               >
-                {[t('flgo.col_tank'), t('flgo.col_type'), t('flgo.col_capacity'), t('flgo.col_rob_mt')].map((h) => (
+                {[
+                  t('flgo.col_tank'),
+                  t('flgo.col_type'),
+                  t('flgo.col_capacity'),
+                  t('flgo.col_rob_mt'),
+                ].map((h) => (
                   <span
                     key={h}
                     style={{
@@ -275,20 +288,22 @@ export function FlgoPage() {
                   borderBottom: '1px solid #EEEBE2',
                 }}
               >
-                {[t('flgo.col_date'), t('flgo.col_tank'), t('flgo.col_mt'), t('flgo.col_m3')].map((h) => (
-                  <span
-                    key={h}
-                    style={{
-                      fontSize: 10.5,
-                      fontWeight: 500,
-                      color: '#8893A0',
-                      letterSpacing: '0.06em',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    {h}
-                  </span>
-                ))}
+                {[t('flgo.col_date'), t('flgo.col_tank'), t('flgo.col_mt'), t('flgo.col_m3')].map(
+                  (h) => (
+                    <span
+                      key={h}
+                      style={{
+                        fontSize: 10.5,
+                        fontWeight: 500,
+                        color: '#8893A0',
+                        letterSpacing: '0.06em',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      {h}
+                    </span>
+                  ),
+                )}
               </div>
               {readings.length === 0 ? (
                 <div
@@ -362,7 +377,13 @@ export function FlgoPage() {
                   borderBottom: '1px solid #EEEBE2',
                 }}
               >
-                {[t('flgo.col_date'), t('flgo.col_bdn_no'), t('flgo.col_qty_mt'), t('flgo.col_sulphur'), t('flgo.col_grade')].map((h) => (
+                {[
+                  t('flgo.col_date'),
+                  t('flgo.col_bdn_no'),
+                  t('flgo.col_qty_mt'),
+                  t('flgo.col_sulphur'),
+                  t('flgo.col_grade'),
+                ].map((h) => (
                   <span
                     key={h}
                     style={{

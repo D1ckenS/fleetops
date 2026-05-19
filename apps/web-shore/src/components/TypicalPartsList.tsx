@@ -64,7 +64,9 @@ export function TypicalPartsList({ value, onChange }: Props) {
   return (
     <div>
       <div className="flex items-center justify-between mb-2">
-        <span className="text-sm font-medium text-slate-700">{t('maintenance.typical_parts_used')}</span>
+        <span className="text-sm font-medium text-slate-700">
+          {t('maintenance.typical_parts_used')}
+        </span>
         <button
           type="button"
           onClick={() => setShowAdd((v) => !v)}
@@ -75,9 +77,7 @@ export function TypicalPartsList({ value, onChange }: Props) {
       </div>
 
       {value.length === 0 && !showAdd && (
-        <p className="text-xs text-slate-400 italic">
-          {t('maintenance.no_typical_parts')}
-        </p>
+        <p className="text-xs text-slate-400 italic">{t('maintenance.no_typical_parts')}</p>
       )}
 
       {value.map((p) => (
@@ -128,4 +128,3 @@ export function TypicalPartsList({ value, onChange }: Props) {
     </div>
   );
 }
-

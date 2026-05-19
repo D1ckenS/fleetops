@@ -385,7 +385,16 @@
     "cat_marpol": "MARPOL",
     "cat_insurance": "Versicherung",
     "cat_flag": "Flaggenstaat",
-    "filter_all_cats": "Alle Kategorien"
+    "filter_all_cats": "Alle Kategorien",
+    "status_filter": "Status",
+    "conditions_header": "Auflagen, Empfehlungen, Hinweise",
+    "raised": "Gemeldet",
+    "opened_at": "Eröffnet",
+    "due_by": "Fällig bis",
+    "renewal_18months": "Verlängerungszeitraum · 18 Monate",
+    "legend_in_order": "in Ordnung",
+    "legend_window": "Fenster",
+    "cert_col": "Zertifikat"
   },
   "safety": {
     "title": "Sicherheit",
@@ -472,7 +481,11 @@
     "finding_observation": "BEOBACH.",
     "finding_hazard": "GEFAHR",
     "inherent_risk": "Inhärentes Risiko",
-    "residual_risk": "Restrisiko"
+    "residual_risk": "Restrisiko",
+    "ffa_label": "Feuerlöschgeräte",
+    "lsa_label": "Lebensrettungsgeräte",
+    "other_safety": "Sonstige Sicherheitsausrüstung",
+    "check": "Prüfen"
   },
   "qhse": {
     "title": "QHSE",
@@ -563,7 +576,13 @@
     "chair": "VORSITZ",
     "actions": "MASSNAHMEN",
     "invitations_pending": "Einladungen ausstehend",
-    "open_minutes": "Protokoll öffnen"
+    "open_minutes": "Protokoll öffnen",
+    "category": "Kategorie",
+    "audits_12mo": "Audits · 12 Mo.",
+    "no_voyages": "noch keine Reisen",
+    "attendees": "Teilnehmer",
+    "actions_done": "erledigt",
+    "target_lower": "Ziel"
   },
   "crewing": {
     "title": "Besatzung",
@@ -658,7 +677,10 @@
     "col_duration": "Dauer",
     "col_attendance": "Teilnahme",
     "no_drills": "Keine Übungen in den letzten 90 Tagen.",
-    "renew": "Erneuern"
+    "renew": "Erneuern",
+    "crew_rotations": "Besatzungsrotationen — 8-Monats-Fenster",
+    "no_certs_on_record": "Keine Zertifikate erfasst.",
+    "select_member_hint": "Wählen Sie ein Besatzungsmitglied für Vertrag, MLC-Einhaltung und Zertifikate."
   },
   "flgo": {
     "title": "FLGO",
@@ -703,10 +725,18 @@
     "implemented": "Umgesetzt",
     "gaps": "Lücken",
     "status_implemented": "UMGESETZT",
-    "status_gap": "LÜCKE"
+    "status_gap": "LÜCKE",
+    "load_error": "Bericht konnte nicht geladen werden.",
+    "click_report": "Klicken Sie, um den vollständigen Bericht anzuzeigen →",
+    "click_assessment": "Klicken Sie, um die Bewertung anzuzeigen →",
+    "controls_implemented": "Maßnahmen umgesetzt"
   },
   "analytics": {
-    "no_dashboards": "Keine Dashboards registriert"
+    "no_dashboards": "Keine Dashboards registriert",
+    "not_configured": "Analyse nicht konfiguriert",
+    "subtitle": "Interaktive Dashboards powered by Apache Superset.",
+    "load_error": "Dashboard konnte nicht geladen werden:",
+    "open_link": "Öffnen →"
   },
   "vessels_page": {
     "title": "Schiffe & Benutzer",
@@ -786,7 +816,18 @@
     "submit_report": "Bericht einreichen",
     "report_type": "Berichtstyp",
     "save_draft": "Als Entwurf speichern",
-    "submission_history": "Einreichungshistorie"
+    "submission_history": "Einreichungshistorie",
+    "from": "Von",
+    "to": "Bis",
+    "vessel_label": "Schiff",
+    "society_label": "Klassifikationsgesellschaft",
+    "submitting": "Einreichen…",
+    "download_json": "JSON herunterladen",
+    "sso_step1": "Benutzer gibt die Organisations-ID auf der Anmeldeseite ein.",
+    "sso_step2": "Der Benutzer klickt auf 'Mit Microsoft anmelden' oder 'Mit Google anmelden'.",
+    "sso_step3": "FleetOps leitet zur Anmeldeseite des gewählten Anbieters weiter.",
+    "sso_step4": "Nach der Authentifizierung leitet der Anbieter zurück zur Weiterleitungs-URI.",
+    "sso_step5": "FleetOps stellt eine Sitzung aus — neue Benutzer werden automatisch mit der CREW-Rolle bereitgestellt."
   },
   "settings": {
     "language": "Sprache",

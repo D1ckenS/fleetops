@@ -152,7 +152,13 @@ export function MaintenanceRunningHoursTab() {
             alignItems: 'center',
           }}
         >
-          {[t('maintenance.tab_components'), t('maintenance.hours_abbr'), t('maintenance.last_done'), t('maintenance.next_due'), ''].map((h, i) => (
+          {[
+            t('maintenance.tab_components'),
+            t('maintenance.hours_abbr'),
+            t('maintenance.last_done'),
+            t('maintenance.next_due'),
+            '',
+          ].map((h, i) => (
             <span
               key={i}
               style={{
@@ -245,7 +251,9 @@ export function MaintenanceRunningHoursTab() {
                       alignItems: 'center',
                     }}
                   >
-                    <span style={{ fontSize: 11, color: '#8893A0' }}>{t('maintenance.every')} {r.nextInterval} {t('maintenance.hours_abbr')}</span>
+                    <span style={{ fontSize: 11, color: '#8893A0' }}>
+                      {t('maintenance.every')} {r.nextInterval} {t('maintenance.hours_abbr')}
+                    </span>
                     {r.overdue ? (
                       <span
                         style={{
@@ -274,7 +282,9 @@ export function MaintenanceRunningHoursTab() {
                   <ProgressBar pct={r.pct} overdue={r.overdue} />
                 </>
               ) : (
-                <span style={{ fontSize: 11.5, color: '#B6BDC6' }}>{t('maintenance.no_rh_interval_jobs')}</span>
+                <span style={{ fontSize: 11.5, color: '#B6BDC6' }}>
+                  {t('maintenance.no_rh_interval_jobs')}
+                </span>
               )}
             </div>
 

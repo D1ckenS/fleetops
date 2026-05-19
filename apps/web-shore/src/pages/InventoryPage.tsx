@@ -226,7 +226,12 @@ function DetailPane({
   onBarcodes: (id: string, name: string) => void;
 }) {
   const { t } = useTranslation();
-  const STATUS_LABEL = { green: t('inventory.status_green'), amber: t('inventory.status_amber'), red: t('inventory.status_red'), purple: t('inventory.status_purple') };
+  const STATUS_LABEL = {
+    green: t('inventory.status_green'),
+    amber: t('inventory.status_amber'),
+    red: t('inventory.status_red'),
+    purple: t('inventory.status_purple'),
+  };
   const [movements, setMovements] = useState<Movement[]>([]);
   const [loadingMov, setLoadingMov] = useState(false);
 
@@ -416,7 +421,9 @@ function DetailPane({
             {t('inventory.movements_header')}
           </div>
           {loadingMov && (
-            <p style={{ padding: '8px 16px', fontSize: 11.5, color: T.ink3 }}>{t('common.loading')}</p>
+            <p style={{ padding: '8px 16px', fontSize: 11.5, color: T.ink3 }}>
+              {t('common.loading')}
+            </p>
           )}
           {!loadingMov && movements.length === 0 && (
             <p style={{ padding: '8px 16px', fontSize: 11.5, color: T.ink3 }}>
@@ -809,7 +816,14 @@ export function InventoryPage() {
             >
               <Dot status={s} />
               <span style={{ flex: 1, fontSize: 11.5, color: T.ink2 }}>
-                {({ green: t('inventory.filter_in_stock'), amber: t('inventory.filter_below_min'), red: t('inventory.filter_at_reorder'), purple: t('inventory.filter_zero') })[s]}
+                {
+                  {
+                    green: t('inventory.filter_in_stock'),
+                    amber: t('inventory.filter_below_min'),
+                    red: t('inventory.filter_at_reorder'),
+                    purple: t('inventory.filter_zero'),
+                  }[s]
+                }
               </span>
               <span style={{ fontFamily: '"Geist Mono",monospace', fontSize: 10.5, color: T.ink }}>
                 {statusCounts[s]}
@@ -842,7 +856,9 @@ export function InventoryPage() {
             flexShrink: 0,
           }}
         >
-          <span style={{ fontSize: 13, fontWeight: 600, color: T.ink }}>{t('inventory.title')}</span>
+          <span style={{ fontSize: 13, fontWeight: 600, color: T.ink }}>
+            {t('inventory.title')}
+          </span>
           <span style={{ color: T.ink3, fontSize: 11.5 }}>
             · {visible.length} of {parts.length}
           </span>

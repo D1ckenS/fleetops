@@ -104,16 +104,17 @@ interface Capa {
 
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 
-const PERMIT_KIND_META: Record<PermitKind, { labelKey: string; color: BadgeColor; short: string }> = {
-  hot: { labelKey: 'safety.permit_type_hot', color: 'red', short: 'HOT' },
-  enc: { labelKey: 'safety.permit_type_enc', color: 'red', short: 'ENC' },
-  aloft: { labelKey: 'safety.permit_type_aloft', color: 'amber', short: 'ALFT' },
-  overside: { labelKey: 'safety.permit_type_overside', color: 'amber', short: 'OS' },
-  elec: { labelKey: 'safety.permit_type_elec', color: 'amber', short: 'ELEC' },
-  cold: { labelKey: 'safety.permit_type_cold', color: 'blue', short: 'COLD' },
-  bunker: { labelKey: 'safety.permit_type_bunker', color: 'slate', short: 'BNK' },
-  crane: { labelKey: 'safety.permit_type_crane', color: 'amber', short: 'LIFT' },
-};
+const PERMIT_KIND_META: Record<PermitKind, { labelKey: string; color: BadgeColor; short: string }> =
+  {
+    hot: { labelKey: 'safety.permit_type_hot', color: 'red', short: 'HOT' },
+    enc: { labelKey: 'safety.permit_type_enc', color: 'red', short: 'ENC' },
+    aloft: { labelKey: 'safety.permit_type_aloft', color: 'amber', short: 'ALFT' },
+    overside: { labelKey: 'safety.permit_type_overside', color: 'amber', short: 'OS' },
+    elec: { labelKey: 'safety.permit_type_elec', color: 'amber', short: 'ELEC' },
+    cold: { labelKey: 'safety.permit_type_cold', color: 'blue', short: 'COLD' },
+    bunker: { labelKey: 'safety.permit_type_bunker', color: 'slate', short: 'BNK' },
+    crane: { labelKey: 'safety.permit_type_crane', color: 'amber', short: 'LIFT' },
+  };
 
 const statusMeta: Record<string, { color: BadgeColor; labelKey: string }> = {
   active: { color: 'green', labelKey: 'safety.status_active' },
@@ -304,7 +305,10 @@ function PermitsTab({ permits, loading }: { permits: WorkPermit[]; loading: bool
             {[
               [t('safety.valid_from'), sel.validFrom],
               [t('safety.valid_to'), sel.validTo],
-              [sel.status === 'active' ? t('safety.time_remaining') : t('common.status'), sel.countdown],
+              [
+                sel.status === 'active' ? t('safety.time_remaining') : t('common.status'),
+                sel.countdown,
+              ],
             ].map(([k, v]) => (
               <div key={k} className="px-4 py-3" style={{ background: 'var(--surface)' }}>
                 <div
@@ -370,7 +374,12 @@ function PermitsTab({ permits, loading }: { permits: WorkPermit[]; loading: bool
           {/* Hazards + PPE */}
           <div className="grid gap-3 px-4 py-0 pb-3" style={{ gridTemplateColumns: '1fr 1fr' }}>
             {[
-              { label: t('safety.hazards'), items: sel.hazards, prefix: '!', prefixColor: 'var(--sig-red)' },
+              {
+                label: t('safety.hazards'),
+                items: sel.hazards,
+                prefix: '!',
+                prefixColor: 'var(--sig-red)',
+              },
               {
                 label: t('safety.ppe_required'),
                 items: sel.ppe,
@@ -715,6 +724,7 @@ function FindingsTab({ findings, loading }: { findings: SafetyFinding[]; loading
 // ─── JHA tab ──────────────────────────────────────────────────────────────────
 
 function RiskMatrix({ l, s }: { l: number; s: number }) {
+  const { t } = useTranslation();
   const score = (li: number, si: number) => li * si;
   const cellColor = (sc: number) =>
     sc >= 15
@@ -780,12 +790,12 @@ function RiskMatrix({ l, s }: { l: number; s: number }) {
         </span>
         <span className="text-[11.5px]" style={{ color: 'var(--ink-3)' }}>
           {total >= 15
-            ? 'Intolerable — immediate control required'
+            ? t('safety.risk_intolerable')
             : total >= 8
-              ? 'Substantial — additional control needed'
+              ? t('safety.risk_substantial')
               : total >= 4
-                ? 'Moderate — control via SOPs/PPE'
-                : 'Acceptable — routine controls'}
+                ? t('safety.risk_moderate')
+                : t('safety.risk_acceptable')}
         </span>
       </div>
     </div>
@@ -825,7 +835,7 @@ function JhaTab({ jhas, loading }: { jhas: JHA[]; loading: boolean }) {
             className="text-[10.5px] font-semibold uppercase tracking-widest flex-1"
             style={{ color: 'var(--ink-3)' }}
           >
-            Library · {jhas.length} assessments
+            {t('safety.jha_library')} {jhas.length} {t('safety.assessments')}
           </span>
           <button
             className="w-6 h-6 flex items-center justify-center rounded-1 text-[13px]"
@@ -1025,9 +1035,9 @@ function EquipmentTab({ equipment, loading }: { equipment: SafetyEquipment[]; lo
     );
 
   const groups: { cat: 'FFA' | 'LSA' | 'OTH'; label: string }[] = [
-    { cat: 'FFA', label: 'Fire-fighting appliances' },
-    { cat: 'LSA', label: 'Life-saving appliances' },
-    { cat: 'OTH', label: 'Other safety equipment' },
+    { cat: 'FFA', label: t('safety.ffa_label') },
+    { cat: 'LSA', label: t('safety.lsa_label') },
+    { cat: 'OTH', label: t('safety.other_safety') },
   ];
 
   const flagged = equipment.filter((e) => e.status !== 'green').length;
@@ -1052,7 +1062,11 @@ function EquipmentTab({ equipment, loading }: { equipment: SafetyEquipment[]; lo
             sub: t('safety.require_attention'),
             accent: flagged > 0 ? 'var(--sig-amber)' : undefined,
           },
-          { label: t('safety.total_items'), value: equipment.length, sub: t('safety.all_categories') },
+          {
+            label: t('safety.total_items'),
+            value: equipment.length,
+            sub: t('safety.all_categories'),
+          },
         ].map((k) => (
           <div
             key={k.label}
@@ -1179,7 +1193,7 @@ function EquipmentTab({ equipment, loading }: { equipment: SafetyEquipment[]; lo
                           color: 'var(--ink-2)',
                         }}
                       >
-                        Check
+                        {t('safety.check')}
                       </button>
                     )}
                   </div>
@@ -1469,8 +1483,16 @@ export function SafetyPage() {
         <span className="text-[12px]" style={{ color: 'var(--ink-3)' }}>
           ISM 2006
         </span>
-        {activePermits > 0 && <Badge color="green">{activePermits} {t('safety.status_active')}</Badge>}
-        {awaitingPermits > 0 && <Badge color="amber">{awaitingPermits} {t('safety.status_awaiting')}</Badge>}
+        {activePermits > 0 && (
+          <Badge color="green">
+            {activePermits} {t('safety.status_active')}
+          </Badge>
+        )}
+        {awaitingPermits > 0 && (
+          <Badge color="amber">
+            {awaitingPermits} {t('safety.status_awaiting')}
+          </Badge>
+        )}
         <div className="flex-1" />
         <button
           className="px-3 py-1 rounded-2 text-[12px] font-medium border"
@@ -1496,13 +1518,15 @@ export function SafetyPage() {
         className="flex gap-0 flex-shrink-0 px-4 overflow-x-auto"
         style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)' }}
       >
-        {([
-          { id: 'permit', label: t('safety.tab_permits') },
-          { id: 'find', label: t('safety.tab_findings') },
-          { id: 'jha', label: t('safety.tab_jha') },
-          { id: 'eq', label: t('safety.tab_equipment') },
-          { id: 'capa', label: t('safety.tab_capa') },
-        ] as { id: Tab; label: string }[]).map((tabItem) => (
+        {(
+          [
+            { id: 'permit', label: t('safety.tab_permits') },
+            { id: 'find', label: t('safety.tab_findings') },
+            { id: 'jha', label: t('safety.tab_jha') },
+            { id: 'eq', label: t('safety.tab_equipment') },
+            { id: 'capa', label: t('safety.tab_capa') },
+          ] as { id: Tab; label: string }[]
+        ).map((tabItem) => (
           <button
             key={tabItem.id}
             onClick={() => setTab(tabItem.id)}

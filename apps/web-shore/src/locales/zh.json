@@ -385,7 +385,16 @@
     "cat_marpol": "MARPOL",
     "cat_insurance": "保险",
     "cat_flag": "船旗国",
-    "filter_all_cats": "所有类别"
+    "filter_all_cats": "所有类别",
+    "status_filter": "状态",
+    "conditions_header": "条件、建议、备忘录",
+    "raised": "提出",
+    "opened_at": "开启",
+    "due_by": "到期日",
+    "renewal_18months": "续期时间轴 · 18个月",
+    "legend_in_order": "正常",
+    "legend_window": "窗口期",
+    "cert_col": "证书"
   },
   "safety": {
     "title": "安全",
@@ -472,7 +481,11 @@
     "finding_observation": "观察",
     "finding_hazard": "危险",
     "inherent_risk": "固有风险",
-    "residual_risk": "剩余风险"
+    "residual_risk": "剩余风险",
+    "ffa_label": "消防设备",
+    "lsa_label": "救生设备",
+    "other_safety": "其他安全设备",
+    "check": "检查"
   },
   "qhse": {
     "title": "QHSE",
@@ -563,7 +576,13 @@
     "chair": "主席",
     "actions": "行动",
     "invitations_pending": "待回复邀请",
-    "open_minutes": "打开会议纪要"
+    "open_minutes": "打开会议纪要",
+    "category": "类别",
+    "audits_12mo": "审计 · 12个月",
+    "no_voyages": "尚无航次",
+    "attendees": "参与者",
+    "actions_done": "已完成",
+    "target_lower": "目标"
   },
   "crewing": {
     "title": "船员",
@@ -658,7 +677,10 @@
     "col_duration": "时长",
     "col_attendance": "出席",
     "no_drills": "过去90天内无演习记录。",
-    "renew": "续期"
+    "renew": "续期",
+    "crew_rotations": "船员轮换 — 8个月窗口",
+    "no_certs_on_record": "未记录证书。",
+    "select_member_hint": "选择船员查看合同、MLC合规状态和证书。"
   },
   "flgo": {
     "title": "FLGO",
@@ -703,10 +725,18 @@
     "implemented": "已实施",
     "gaps": "差距",
     "status_implemented": "已实施",
-    "status_gap": "差距"
+    "status_gap": "差距",
+    "load_error": "无法加载报告。",
+    "click_report": "点击查看完整报告 →",
+    "click_assessment": "点击查看评估 →",
+    "controls_implemented": "控制措施已实施"
   },
   "analytics": {
-    "no_dashboards": "未注册任何仪表板"
+    "no_dashboards": "未注册任何仪表板",
+    "not_configured": "分析未配置",
+    "subtitle": "由Apache Superset提供的交互式仪表板。",
+    "load_error": "无法加载仪表板：",
+    "open_link": "打开 →"
   },
   "vessels_page": {
     "title": "船舶与用户",
@@ -786,7 +816,18 @@
     "submit_report": "提交报告",
     "report_type": "报告类型",
     "save_draft": "保存为草稿",
-    "submission_history": "提交历史"
+    "submission_history": "提交历史",
+    "from": "从",
+    "to": "至",
+    "vessel_label": "船舶",
+    "society_label": "船级社",
+    "submitting": "提交中…",
+    "download_json": "下载JSON",
+    "sso_step1": "用户在登录页面输入组织ID。",
+    "sso_step2": "用户点击「通过Microsoft登录」或「通过Google登录」。",
+    "sso_step3": "FleetOps将用户重定向至所选提供商的登录页面。",
+    "sso_step4": "认证完成后，提供商将用户重定向回重定向URI。",
+    "sso_step5": "FleetOps发放会话 — 新用户自动分配CREW角色。"
   },
   "settings": {
     "language": "语言",

@@ -385,7 +385,16 @@
     "cat_marpol": "MARPOL",
     "cat_insurance": "Seguro",
     "cat_flag": "Estado ng bandila",
-    "filter_all_cats": "Lahat ng kategorya"
+    "filter_all_cats": "Lahat ng kategorya",
+    "status_filter": "Katayuan",
+    "conditions_header": "Mga kondisyon, rekomendasyon, memoranda",
+    "raised": "Itinataas",
+    "opened_at": "Binuksan",
+    "due_by": "Dapat bayaran bago",
+    "renewal_18months": "Takdang oras ng pagbabago · 18 buwan",
+    "legend_in_order": "nasa ayos",
+    "legend_window": "window",
+    "cert_col": "Sertipiko"
   },
   "safety": {
     "title": "Kaligtasan",
@@ -472,7 +481,11 @@
     "finding_observation": "PAGMAMASID",
     "finding_hazard": "PANGANIB",
     "inherent_risk": "Likas na panganib",
-    "residual_risk": "Natitirang panganib"
+    "residual_risk": "Natitirang panganib",
+    "ffa_label": "Mga kagamitan sa pagsugpo ng sunog",
+    "lsa_label": "Mga kagamitan sa pagliligtas ng buhay",
+    "other_safety": "Ibang kagamitan sa kaligtasan",
+    "check": "Suriin"
   },
   "qhse": {
     "title": "QHSE",
@@ -563,7 +576,13 @@
     "chair": "TAGAPANGULO",
     "actions": "MGA AKSYON",
     "invitations_pending": "mga imbitasyon na naghihintay",
-    "open_minutes": "Buksan ang Mga Minuto"
+    "open_minutes": "Buksan ang Mga Minuto",
+    "category": "Kategorya",
+    "audits_12mo": "Mga Audit · 12 buwan",
+    "no_voyages": "wala pang paglalayag",
+    "attendees": "mga dumalo",
+    "actions_done": "tapos na",
+    "target_lower": "target"
   },
   "crewing": {
     "title": "Tripulante",
@@ -658,7 +677,10 @@
     "col_duration": "Tagal",
     "col_attendance": "Pagdalo",
     "no_drills": "Walang naka-record na drill sa nakaraang 90 araw.",
-    "renew": "Baguhin"
+    "renew": "Baguhin",
+    "crew_rotations": "Rotasyon ng tripulasyon — 8-buwang window",
+    "no_certs_on_record": "Walang sertipikong naitala.",
+    "select_member_hint": "Pumili ng miyembro ng tripulasyon para makita ang kontrata, pagsunod sa MLC, at mga sertipiko."
   },
   "flgo": {
     "title": "FLGO",
@@ -703,10 +725,18 @@
     "implemented": "Naipatupad",
     "gaps": "Mga Puwang",
     "status_implemented": "ISINAGAWA",
-    "status_gap": "AGWAT"
+    "status_gap": "AGWAT",
+    "load_error": "Hindi mai-load ang ulat.",
+    "click_report": "I-click para makita ang buong ulat →",
+    "click_assessment": "I-click para makita ang pagtatasa →",
+    "controls_implemented": "mga kontrol na naipatupad"
   },
   "analytics": {
-    "no_dashboards": "Walang nakarehistrong dashboard"
+    "no_dashboards": "Walang nakarehistrong dashboard",
+    "not_configured": "Hindi pa na-configure ang Analytics",
+    "subtitle": "Mga interactive na dashboard na pinapagana ng Apache Superset.",
+    "load_error": "Hindi mai-load ang dashboard:",
+    "open_link": "Buksan →"
   },
   "vessels_page": {
     "title": "Mga Barko at Gumagamit",
@@ -786,7 +816,18 @@
     "submit_report": "Isumite ang Ulat",
     "report_type": "Uri ng Ulat",
     "save_draft": "I-save bilang Draft",
-    "submission_history": "Kasaysayan ng Pagsumite"
+    "submission_history": "Kasaysayan ng Pagsumite",
+    "from": "Mula",
+    "to": "Hanggang",
+    "vessel_label": "Barko",
+    "society_label": "Klasipikasyon ng Lipunan",
+    "submitting": "Isinusubmit…",
+    "download_json": "I-download ang JSON",
+    "sso_step1": "Inilalagay ng user ang ID ng Organisasyon sa pahina ng login.",
+    "sso_step2": "Nag-click ang user sa \"Mag-sign in gamit ang Microsoft\" o \"Mag-sign in gamit ang Google\".",
+    "sso_step3": "Nire-redirect ng FleetOps ang user sa pahina ng login ng napiling provider.",
+    "sso_step4": "Pagkatapos ng authentication, ire-redirect ng provider pabalik sa Redirect URI.",
+    "sso_step5": "Naglalabas ang FleetOps ng session — ang mga bagong user ay awtomatikong mibibigyan ng CREW role."
   },
   "settings": {
     "language": "Wika",

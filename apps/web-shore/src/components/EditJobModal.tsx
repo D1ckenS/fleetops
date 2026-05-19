@@ -135,7 +135,9 @@ export function EditJobModal({ open, job, componentName, onClose, onSaved }: Pro
           onChange={(e) => setDescription(e.target.value)}
         />
         <div>
-          <span className="block text-sm font-medium text-slate-700 mb-1">{t('common.interval')} *</span>
+          <span className="block text-sm font-medium text-slate-700 mb-1">
+            {t('common.interval')} *
+          </span>
           <div className="flex rounded-md border border-slate-200 overflow-hidden text-sm mb-2">
             {(['days', 'hours'] as const).map((m) => (
               <button
