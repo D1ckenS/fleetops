@@ -181,19 +181,19 @@ function Chip({
 
 // ─── Lifecycle stepper ───────────────────────────────────────────────────────
 
-const LIFECYCLE = [
-  { id: 'DRAFT', label: 'Draft' },
-  { id: 'SENT', label: 'Sent' },
-  { id: 'ACKNOWLEDGED', label: 'Confirmed' },
-  { id: 'IN_TRANSIT', label: 'In Transit' },
-  { id: 'PARTIALLY_RECEIVED', label: 'Partial' },
-  { id: 'RECEIVED', label: 'Received' },
-  { id: 'CLOSED', label: 'Closed' },
-] as const;
-
-type LifecycleId = (typeof LIFECYCLE)[number]['id'];
+type LifecycleId = 'DRAFT' | 'SENT' | 'ACKNOWLEDGED' | 'IN_TRANSIT' | 'PARTIALLY_RECEIVED' | 'RECEIVED' | 'CLOSED';
 
 function LifecycleStepper({ status }: { status: POStatus }) {
+  const { t } = useTranslation();
+  const LIFECYCLE = [
+    { id: 'DRAFT' as const, label: t('purchase.status_draft') },
+    { id: 'SENT' as const, label: t('purchase.status_sent') },
+    { id: 'ACKNOWLEDGED' as const, label: t('purchase.status_confirmed') },
+    { id: 'IN_TRANSIT' as const, label: t('purchase.status_in_transit') },
+    { id: 'PARTIALLY_RECEIVED' as const, label: t('purchase.status_partial') },
+    { id: 'RECEIVED' as const, label: t('purchase.status_received') },
+    { id: 'CLOSED' as const, label: t('purchase.status_closed') },
+  ];
   if (status === 'CANCELLED') {
     return (
       <div className="flex items-center gap-2 py-1">

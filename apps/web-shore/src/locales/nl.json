@@ -182,7 +182,12 @@
     "no_instances": "Geen taakinstanties gevonden.",
     "schedule_first": "Plan de eerste.",
     "immutable_records": "Alle records zijn onveranderlijk — updates en verwijderingen worden geweigerd op databaseniveau (DNV CG-0339).",
-    "source": "Bron"
+    "source": "Bron",
+    "project_status_planning": "Planning",
+    "project_status_active": "Actief",
+    "project_status_on_hold": "In de wacht",
+    "project_status_completed": "Voltooid",
+    "project_status_cancelled": "Geannuleerd"
   },
   "inventory": {
     "title": "Inventaris",
@@ -316,6 +321,11 @@
     "title": "Certificaten",
     "cert": "certificaat",
     "certs": "certificaten",
+    "cat_statutory": "Wettelijk",
+    "cat_class": "Klasse",
+    "cat_insurance": "Verzekering",
+    "cat_flag": "Vlagstaat",
+    "filter_all_cats": "Alle categorieën",
     "tab_register": "Register",
     "tab_surveys": "Inspecties",
     "tab_conditions": "Klassevoorwaarden",
@@ -366,7 +376,16 @@
     "detentions": "Detentions",
     "vetting_score": "Vetting-score",
     "no_data_yet": "nog geen gegevens",
-    "notification_rules": "Meldingsregels"
+    "notification_rules": "Meldingsregels",
+    "cat_statutory": "Wettelijk",
+    "cat_class": "Klasse",
+    "cat_mlc": "MLC",
+    "cat_ism": "ISM",
+    "cat_isps": "ISPS",
+    "cat_marpol": "MARPOL",
+    "cat_insurance": "Verzekering",
+    "cat_flag": "Vlagstaat",
+    "filter_all_cats": "Alle categorieën"
   },
   "safety": {
     "title": "Veiligheid",
@@ -378,6 +397,11 @@
     "tab_capa": "CAPA",
     "status_active": "ACTIEF",
     "status_awaiting": "IN AFWACHTING",
+    "status_closed": "GESLOTEN",
+    "status_suspended": "OPGESCHORT",
+    "status_investigation": "ONDERZOEK",
+    "status_action": "ACTIE",
+    "status_open": "OPEN",
     "toolbox_talk": "Toolboxgesprek",
     "no_permits": "Geen werkvergunningen gevonden.",
     "select_permit_hint": "Selecteer een werkvergunning om details te bekijken",
@@ -434,10 +458,28 @@
     "action": "Actie",
     "verification": "Verificatie",
     "verifying": "VERIFICATIE",
-    "no_items": "Geen items"
+    "no_items": "Geen items",
+    "permit_type_hot": "Heet werk",
+    "permit_type_enc": "Besloten ruimte",
+    "permit_type_aloft": "Werken op hoogte",
+    "permit_type_overside": "Over de zijkant",
+    "permit_type_elec": "Elektrische vergrendeling",
+    "permit_type_cold": "Koud werk",
+    "permit_type_bunker": "Bunkeren",
+    "permit_type_crane": "Kraan / hijsen",
+    "finding_near_miss": "BIJNA-INCIDENT",
+    "finding_nc": "NIET-CONFORM",
+    "finding_observation": "OBSERV.",
+    "finding_hazard": "GEVAAR",
+    "inherent_risk": "Inherent risico",
+    "residual_risk": "Restrisico"
   },
   "qhse": {
     "title": "QHSE",
+    "cat_safety": "Veiligheid",
+    "cat_quality": "Kwaliteit",
+    "cat_env": "Milieu",
+    "cat_health": "Gezondheid",
     "tab_objectives": "Doelstellingen",
     "tab_audits": "Audits",
     "tab_environmental": "Milieu",
@@ -659,7 +701,9 @@
     "priority_actions": "Prioriteitsacties",
     "controls": "Maatregelen",
     "implemented": "Geïmplementeerd",
-    "gaps": "Tekortkomingen"
+    "gaps": "Tekortkomingen",
+    "status_implemented": "GEÏMPLEMENTEERD",
+    "status_gap": "GAP"
   },
   "analytics": {
     "no_dashboards": "Geen dashboards geregistreerd"

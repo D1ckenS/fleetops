@@ -182,7 +182,12 @@
     "no_instances": "Keine Aufgabeninstanzen gefunden.",
     "schedule_first": "Erste planen.",
     "immutable_records": "Alle Datensätze sind unveränderlich — Aktualisierungen und Löschungen werden auf Datenbankebene abgelehnt (DNV CG-0339).",
-    "source": "Quelle"
+    "source": "Quelle",
+    "project_status_planning": "Planung",
+    "project_status_active": "Aktiv",
+    "project_status_on_hold": "Pausiert",
+    "project_status_completed": "Abgeschlossen",
+    "project_status_cancelled": "Storniert"
   },
   "inventory": {
     "title": "Inventar",
@@ -316,6 +321,11 @@
     "title": "Zertifikate",
     "cert": "Zertifikat",
     "certs": "Zertifikate",
+    "cat_statutory": "Gesetzlich",
+    "cat_class": "Klasse",
+    "cat_insurance": "Versicherung",
+    "cat_flag": "Flaggenstaat",
+    "filter_all_cats": "Alle Kategorien",
     "tab_register": "Register",
     "tab_surveys": "Besichtigungen",
     "tab_conditions": "Klassenauflagen",
@@ -366,7 +376,16 @@
     "detentions": "Festhaltungen",
     "vetting_score": "Vetting-Score",
     "no_data_yet": "Noch keine Daten",
-    "notification_rules": "Benachrichtigungsregeln"
+    "notification_rules": "Benachrichtigungsregeln",
+    "cat_statutory": "Gesetzlich",
+    "cat_class": "Klasse",
+    "cat_mlc": "MLC",
+    "cat_ism": "ISM",
+    "cat_isps": "ISPS",
+    "cat_marpol": "MARPOL",
+    "cat_insurance": "Versicherung",
+    "cat_flag": "Flaggenstaat",
+    "filter_all_cats": "Alle Kategorien"
   },
   "safety": {
     "title": "Sicherheit",
@@ -378,6 +397,11 @@
     "tab_capa": "CAPA",
     "status_active": "AKTIV",
     "status_awaiting": "WARTEND",
+    "status_closed": "GESCHLOSSEN",
+    "status_suspended": "AUSGESETZT",
+    "status_investigation": "UNTERSUCHUNG",
+    "status_action": "MASSNAHME",
+    "status_open": "OFFEN",
     "toolbox_talk": "Toolbox-Gespräch",
     "no_permits": "Keine Erlaubnisscheine gefunden.",
     "select_permit_hint": "Erlaubnisschein auswählen, um Details anzuzeigen",
@@ -434,10 +458,28 @@
     "action": "Maßnahme",
     "verification": "Verifikation",
     "verifying": "VERIFIZIERUNG",
-    "no_items": "Keine Einträge"
+    "no_items": "Keine Einträge",
+    "permit_type_hot": "Heißarbeiten",
+    "permit_type_enc": "Geschlossener Raum",
+    "permit_type_aloft": "Arbeit in der Höhe",
+    "permit_type_overside": "Über die Seite",
+    "permit_type_elec": "Elektrische Verriegelung",
+    "permit_type_cold": "Kaltarbeiten",
+    "permit_type_bunker": "Bunkern",
+    "permit_type_crane": "Kran / Heben",
+    "finding_near_miss": "BEINAHE-UNFALL",
+    "finding_nc": "NICHT-KONF.",
+    "finding_observation": "BEOBACH.",
+    "finding_hazard": "GEFAHR",
+    "inherent_risk": "Inhärentes Risiko",
+    "residual_risk": "Restrisiko"
   },
   "qhse": {
     "title": "QHSE",
+    "cat_safety": "Sicherheit",
+    "cat_quality": "Qualität",
+    "cat_env": "Umwelt",
+    "cat_health": "Gesundheit",
     "tab_objectives": "Ziele",
     "tab_audits": "Audits",
     "tab_environmental": "Umwelt",
@@ -659,7 +701,9 @@
     "priority_actions": "Prioritätsmaßnahmen",
     "controls": "Kontrollen",
     "implemented": "Umgesetzt",
-    "gaps": "Lücken"
+    "gaps": "Lücken",
+    "status_implemented": "UMGESETZT",
+    "status_gap": "LÜCKE"
   },
   "analytics": {
     "no_dashboards": "Keine Dashboards registriert"

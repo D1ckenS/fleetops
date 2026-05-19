@@ -104,33 +104,33 @@ interface Capa {
 
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 
-const PERMIT_KIND_META: Record<PermitKind, { label: string; color: BadgeColor; short: string }> = {
-  hot: { label: 'Hot work', color: 'red', short: 'HOT' },
-  enc: { label: 'Enclosed space', color: 'red', short: 'ENC' },
-  aloft: { label: 'Working aloft', color: 'amber', short: 'ALFT' },
-  overside: { label: 'Over the side', color: 'amber', short: 'OS' },
-  elec: { label: 'Electrical LO-TO', color: 'amber', short: 'ELEC' },
-  cold: { label: 'Cold work', color: 'blue', short: 'COLD' },
-  bunker: { label: 'Bunkering', color: 'slate', short: 'BNK' },
-  crane: { label: 'Crane / lifting', color: 'amber', short: 'LIFT' },
+const PERMIT_KIND_META: Record<PermitKind, { labelKey: string; color: BadgeColor; short: string }> = {
+  hot: { labelKey: 'safety.permit_type_hot', color: 'red', short: 'HOT' },
+  enc: { labelKey: 'safety.permit_type_enc', color: 'red', short: 'ENC' },
+  aloft: { labelKey: 'safety.permit_type_aloft', color: 'amber', short: 'ALFT' },
+  overside: { labelKey: 'safety.permit_type_overside', color: 'amber', short: 'OS' },
+  elec: { labelKey: 'safety.permit_type_elec', color: 'amber', short: 'ELEC' },
+  cold: { labelKey: 'safety.permit_type_cold', color: 'blue', short: 'COLD' },
+  bunker: { labelKey: 'safety.permit_type_bunker', color: 'slate', short: 'BNK' },
+  crane: { labelKey: 'safety.permit_type_crane', color: 'amber', short: 'LIFT' },
 };
 
-const statusMeta: Record<string, { color: BadgeColor; label: string }> = {
-  active: { color: 'green', label: 'ACTIVE' },
-  awaiting: { color: 'amber', label: 'AWAITING' },
-  closed: { color: 'slate', label: 'CLOSED' },
-  suspended: { color: 'red', label: 'SUSPENDED' },
-  investigation: { color: 'amber', label: 'INVESTIGATION' },
-  action: { color: 'blue', label: 'ACTION' },
-  verification: { color: 'purple', label: 'VERIFYING' },
-  open: { color: 'red', label: 'OPEN' },
+const statusMeta: Record<string, { color: BadgeColor; labelKey: string }> = {
+  active: { color: 'green', labelKey: 'safety.status_active' },
+  awaiting: { color: 'amber', labelKey: 'safety.status_awaiting' },
+  closed: { color: 'slate', labelKey: 'safety.status_closed' },
+  suspended: { color: 'red', labelKey: 'safety.status_suspended' },
+  investigation: { color: 'amber', labelKey: 'safety.status_investigation' },
+  action: { color: 'blue', labelKey: 'safety.status_action' },
+  verification: { color: 'purple', labelKey: 'safety.verifying' },
+  open: { color: 'red', labelKey: 'safety.status_open' },
 };
 
-const findingMeta: Record<FindingKind, { color: BadgeColor; label: string }> = {
-  'near-miss': { color: 'red', label: 'NEAR-MISS' },
-  NC: { color: 'amber', label: 'NON-CONF' },
-  observation: { color: 'blue', label: 'OBSERV' },
-  hazard: { color: 'purple', label: 'HAZARD' },
+const findingMeta: Record<FindingKind, { color: BadgeColor; labelKey: string }> = {
+  'near-miss': { color: 'red', labelKey: 'safety.finding_near_miss' },
+  NC: { color: 'amber', labelKey: 'safety.finding_nc' },
+  observation: { color: 'blue', labelKey: 'safety.finding_observation' },
+  hazard: { color: 'purple', labelKey: 'safety.finding_hazard' },
 };
 
 type Tab = 'permit' | 'find' | 'jha' | 'eq' | 'capa';
@@ -148,8 +148,9 @@ function EmptyState({ msg }: { msg: string }) {
 }
 
 function StatusBadge({ s }: { s: string }) {
-  const m = statusMeta[s] ?? { color: 'slate' as BadgeColor, label: s.toUpperCase() };
-  return <Badge color={m.color}>{m.label}</Badge>;
+  const { t } = useTranslation();
+  const m = statusMeta[s];
+  return <Badge color={m?.color ?? 'slate'}>{m ? t(m.labelKey) : s.toUpperCase()}</Badge>;
 }
 
 // ─── Permits tab ──────────────────────────────────────────────────────────────
@@ -213,7 +214,7 @@ function PermitsTab({ permits, loading }: { permits: WorkPermit[]; loading: bool
           <div className="flex-1 overflow-y-auto">
             {visible.map((p) => {
               const km = PERMIT_KIND_META[p.kind] ?? {
-                label: p.kind,
+                labelKey: p.kind,
                 color: 'slate' as BadgeColor,
                 short: p.kind,
               };
@@ -568,18 +569,18 @@ function FindingsTab({ findings, loading }: { findings: SafetyFinding[]; loading
       {/* KPI strip */}
       <div className="grid gap-2 p-4" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
         {[
-          { label: 'Open findings', value: open, sub: 'last 30 days' },
+          { label: t('safety.open_findings'), value: open, sub: t('safety.last_30_days') },
           {
-            label: 'Near-misses · 30d',
+            label: t('safety.ncs_raised'),
             value: nearMisses,
             sub: 'LTI rate 0.00',
             accent: nearMisses > 0 ? 'var(--sig-amber)' : undefined,
           },
-          { label: 'NCs raised · 30d', value: ncs, sub: '' },
+          { label: t('safety.ncs_raised'), value: ncs, sub: '' },
           {
-            label: 'Days since LTI',
+            label: t('safety.days_since_lti'),
             value: '—',
-            sub: 'no incidents recorded',
+            sub: t('safety.no_incidents'),
             accent: 'var(--sig-green)',
           },
         ].map((k) => (
@@ -679,7 +680,7 @@ function FindingsTab({ findings, loading }: { findings: SafetyFinding[]; loading
                   {f.raisedAt.split(' ').slice(0, 2).join(' ')}
                 </span>
                 <Badge color={findingMeta[f.kind]?.color ?? 'slate'}>
-                  {findingMeta[f.kind]?.label ?? f.kind}
+                  {findingMeta[f.kind] ? t(findingMeta[f.kind]!.labelKey) : f.kind}
                 </Badge>
                 <div className="min-w-0">
                   <div className="text-[12.5px] font-medium truncate">{f.title}</div>
@@ -935,14 +936,14 @@ function JhaTab({ jhas, loading }: { jhas: JHA[]; loading: boolean }) {
           <div className="grid gap-3 p-4" style={{ gridTemplateColumns: '1fr 1fr' }}>
             {[
               {
-                label: 'Inherent risk',
-                eyebrow: 'WITHOUT CONTROLS',
+                label: t('safety.inherent_risk'),
+                eyebrow: t('safety.without_controls'),
                 l: sel.inherentL,
                 s: sel.inherentS,
               },
               {
-                label: 'Residual risk',
-                eyebrow: 'WITH CONTROLS APPLIED',
+                label: t('safety.residual_risk'),
+                eyebrow: t('safety.with_controls'),
                 l: sel.residualL,
                 s: sel.residualS,
               },
@@ -1036,22 +1037,22 @@ function EquipmentTab({ equipment, loading }: { equipment: SafetyEquipment[]; lo
       <div className="grid gap-2 p-4" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
         {[
           {
-            label: 'FFA items',
+            label: t('safety.ffa_items'),
             value: equipment.filter((e) => e.category === 'FFA').length,
-            sub: `${equipment.filter((e) => e.category === 'FFA' && e.status !== 'green').length} flagged`,
+            sub: `${equipment.filter((e) => e.category === 'FFA' && e.status !== 'green').length} ${t('safety.flagged')}`,
           },
           {
-            label: 'LSA items',
+            label: t('safety.lsa_items'),
             value: equipment.filter((e) => e.category === 'LSA').length,
-            sub: `${equipment.filter((e) => e.category === 'LSA' && e.status !== 'green').length} flagged`,
+            sub: `${equipment.filter((e) => e.category === 'LSA' && e.status !== 'green').length} ${t('safety.flagged')}`,
           },
           {
-            label: 'Items flagged',
+            label: t('safety.items_flagged'),
             value: flagged,
-            sub: 'require attention',
+            sub: t('safety.require_attention'),
             accent: flagged > 0 ? 'var(--sig-amber)' : undefined,
           },
-          { label: 'Total items', value: equipment.length, sub: 'all categories' },
+          { label: t('safety.total_items'), value: equipment.length, sub: t('safety.all_categories') },
         ].map((k) => (
           <div
             key={k.label}
@@ -1217,21 +1218,21 @@ function CapaTab({ capas, loading }: { capas: Capa[]; loading: boolean }) {
       <div className="grid gap-2 p-4" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
         {[
           {
-            label: 'Open CAPA',
+            label: t('safety.open_capa'),
             value: open,
-            sub: 'in progress',
+            sub: t('safety.in_progress'),
             accent: open > 0 ? 'var(--sig-amber)' : undefined,
           },
-          { label: 'Avg cycle time', value: '—', sub: 'target ≤ 45d' },
+          { label: t('safety.avg_cycle_time'), value: '—', sub: t('safety.target_45d') },
           {
-            label: 'Overdue actions',
+            label: t('safety.overdue_actions'),
             value: capas.filter((c) => c.daysLeft !== null && c.daysLeft < 0).length,
             sub: '',
           },
           {
-            label: 'Closed',
+            label: t('safety.closed'),
             value: capas.filter((c) => c.stage === 'closed').length,
-            sub: 'all time',
+            sub: t('safety.all_time'),
           },
         ].map((k) => (
           <div

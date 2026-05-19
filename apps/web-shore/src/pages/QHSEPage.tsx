@@ -98,11 +98,11 @@ interface ManagementReview {
 
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 
-const CAT_META: Record<ObjCategory, { label: string; color: BadgeColor; short: string }> = {
-  safety: { label: 'Safety', color: 'red', short: 'SAFE' },
-  quality: { label: 'Quality', color: 'blue', short: 'QUAL' },
-  env: { label: 'Environmental', color: 'green', short: 'ENV' },
-  health: { label: 'Health', color: 'purple', short: 'HLTH' },
+const CAT_META: Record<ObjCategory, { labelKey: string; color: BadgeColor; short: string }> = {
+  safety: { labelKey: 'qhse.cat_safety', color: 'red', short: 'SAFE' },
+  quality: { labelKey: 'qhse.cat_quality', color: 'blue', short: 'QUAL' },
+  env: { labelKey: 'qhse.cat_env', color: 'green', short: 'ENV' },
+  health: { labelKey: 'qhse.cat_health', color: 'purple', short: 'HLTH' },
 };
 
 const toneColor = (t: string): BadgeColor =>
@@ -116,11 +116,11 @@ const toneColor = (t: string): BadgeColor =>
           ? 'green'
           : 'slate';
 
-const stageMeta: Record<number, { label: string; tone: string; bg: string }> = {
-  1: { label: 'Awareness', tone: 'var(--sig-red)', bg: '#F2DDD8' },
-  2: { label: 'Implementation', tone: 'var(--sig-amber)', bg: '#F4E7D0' },
-  3: { label: 'Measurement', tone: 'var(--sig-blue)', bg: '#DDE7F3' },
-  4: { label: 'Continuous improvement', tone: 'var(--sig-green)', bg: '#E2EEE6' },
+const stageMeta: Record<number, { labelKey: string; tone: string; bg: string }> = {
+  1: { labelKey: 'qhse.awareness', tone: 'var(--sig-red)', bg: '#F2DDD8' },
+  2: { labelKey: 'qhse.implementation', tone: 'var(--sig-amber)', bg: '#F4E7D0' },
+  3: { labelKey: 'qhse.measurement', tone: 'var(--sig-blue)', bg: '#DDE7F3' },
+  4: { labelKey: 'qhse.continuous_improvement', tone: 'var(--sig-green)', bg: '#E2EEE6' },
 };
 
 type Tab = 'obj' | 'audit' | 'env' | 'dryb' | 'review';
@@ -199,6 +199,7 @@ function Sparkline({ data, color }: { data: number[]; color: string }) {
 // ─── Objectives tab ───────────────────────────────────────────────────────────
 
 function ObjectivesTab({ objectives, loading }: { objectives: QhseObjective[]; loading: boolean }) {
+  const { t } = useTranslation();
   const [catFilter, setCatFilter] = useState<'all' | ObjCategory>('all');
   if (loading)
     return (
@@ -263,7 +264,7 @@ function ObjectivesTab({ objectives, loading }: { objectives: QhseObjective[]; l
                           : '#5E479F',
                 }}
               />
-              {v.label}
+              {t(v.labelKey)}
             </button>
           ),
         )}
@@ -287,7 +288,7 @@ function ObjectivesTab({ objectives, loading }: { objectives: QhseObjective[]; l
                     className="text-[10.5px] font-semibold uppercase tracking-widest"
                     style={{ color: 'var(--ink-3)' }}
                   >
-                    {m.label}
+                    {t(m.labelKey)}
                   </span>
                   <Badge color={m.color}>{m.short}</Badge>
                   <span className="text-[11px]" style={{ color: 'var(--ink-3)' }}>
@@ -910,6 +911,7 @@ function EnvironmentalTab({
 // ─── DryBMS tab ───────────────────────────────────────────────────────────────
 
 function DryBmsTab({ elements, loading }: { elements: DryBmsElement[]; loading: boolean }) {
+  const { t } = useTranslation();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   if (loading)
     return (
@@ -1188,7 +1190,7 @@ function DryBmsTab({ elements, loading }: { elements: DryBmsElement[]; loading: 
                         >
                           {s}
                         </span>
-                        <span className="text-[12px] font-semibold">{m.label}</span>
+                        <span className="text-[12px] font-semibold">{t(m.labelKey)}</span>
                       </div>
                       {isCurrent && sel.evidence && (
                         <div

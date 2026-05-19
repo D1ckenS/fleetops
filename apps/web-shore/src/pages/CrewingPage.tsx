@@ -725,6 +725,7 @@ function RotationTab({ crew, loading }: { crew: CrewMember[]; loading: boolean }
 // ─── Rest Hours tab ───────────────────────────────────────────────────────────
 
 function RestHoursTab({ crew, loading: crewLoading }: { crew: CrewMember[]; loading: boolean }) {
+  const { t } = useTranslation();
   const [crewId, setCrewId] = useState<string | null>(null);
   const [entries, setEntries] = useState<RestHourEntry[]>([]);
   const [entriesLoading, setEntriesLoading] = useState(false);
@@ -890,27 +891,27 @@ function RestHoursTab({ crew, loading: crewLoading }: { crew: CrewMember[]; load
                 <div className="grid grid-cols-4 gap-2.5 p-4">
                   {[
                     {
-                      label: 'Rest — daily avg',
+                      label: t('crewing.rest_daily_avg'),
                       value: `${restAvg} h`,
-                      sub: 'of ≥10 h required',
+                      sub: t('crewing.of_10h_required'),
                       bad: restAvg !== '—' && parseFloat(restAvg) < 10,
                     },
                     {
-                      label: 'Breaches — 24 h rule',
+                      label: t('crewing.breaches_24h'),
                       value: String(breaches24),
-                      sub: 'days < 10 h rest',
+                      sub: t('crewing.days_lt_10h'),
                       bad: breaches24 > 0,
                     },
                     {
-                      label: 'Breaches — 7-day rule',
+                      label: t('crewing.breaches_7d'),
                       value: String(breaches7),
-                      sub: 'rolling weeks < 77 h',
+                      sub: t('crewing.rolling_weeks'),
                       bad: breaches7 > 0,
                     },
                     {
-                      label: 'Compliance',
+                      label: t('crewing.compliance'),
                       value: `${Math.round(((14 - breaches24) / 14) * 100)}%`,
-                      sub: 'last 14 days',
+                      sub: t('crewing.last_14_days'),
                       bad: sel.mlcStatus === 'breach',
                     },
                   ].map((kpi) => (
@@ -1148,9 +1149,9 @@ function CertificatesTab() {
         </span>
         <div className="flex gap-1.5">
           {[
-            { id: 'all' as const, label: `All · ${certs.length}` },
-            { id: 'critical' as const, label: 'Expiring ≤ 7 d' },
-            { id: 'soon' as const, label: 'Expiring ≤ 90 d' },
+            { id: 'all' as const, label: `${t('common.all')} · ${certs.length}` },
+            { id: 'critical' as const, label: t('crewing.expiring_7d') },
+            { id: 'soon' as const, label: t('crewing.expiring_90d') },
           ].map((f) => (
             <Chip key={f.id} active={filter === f.id} onClick={() => setFilter(f.id)}>
               {f.label}

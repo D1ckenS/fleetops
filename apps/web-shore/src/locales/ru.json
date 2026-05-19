@@ -182,7 +182,12 @@
     "no_instances": "Экземпляры задач не найдены.",
     "schedule_first": "Создайте первый.",
     "immutable_records": "Все записи неизменяемы — обновления и удаления отклоняются на уровне базы данных (DNV CG-0339).",
-    "source": "Источник"
+    "source": "Источник",
+    "project_status_planning": "Планирование",
+    "project_status_active": "Активный",
+    "project_status_on_hold": "На паузе",
+    "project_status_completed": "Завершён",
+    "project_status_cancelled": "Отменён"
   },
   "inventory": {
     "title": "Склад",
@@ -316,6 +321,11 @@
     "title": "Сертификаты",
     "cert": "сертификат",
     "certs": "сертификаты",
+    "cat_statutory": "Нормативный",
+    "cat_class": "Класс",
+    "cat_insurance": "Страхование",
+    "cat_flag": "Государство флага",
+    "filter_all_cats": "Все категории",
     "tab_register": "Реестр",
     "tab_surveys": "Освидетельствования",
     "tab_conditions": "Условия класса",
@@ -366,7 +376,16 @@
     "detentions": "Задержания",
     "vetting_score": "Оценка вёттинга",
     "no_data_yet": "данных нет",
-    "notification_rules": "Правила уведомлений"
+    "notification_rules": "Правила уведомлений",
+    "cat_statutory": "Нормативный",
+    "cat_class": "Класс",
+    "cat_mlc": "MLC",
+    "cat_ism": "ISM",
+    "cat_isps": "ISPS",
+    "cat_marpol": "MARPOL",
+    "cat_insurance": "Страхование",
+    "cat_flag": "Государство флага",
+    "filter_all_cats": "Все категории"
   },
   "safety": {
     "title": "Безопасность",
@@ -378,6 +397,11 @@
     "tab_capa": "CAPA",
     "status_active": "АКТИВЕН",
     "status_awaiting": "ОЖИДАНИЕ",
+    "status_closed": "ЗАКРЫТО",
+    "status_suspended": "ПРИОСТАНОВЛЕНО",
+    "status_investigation": "РАССЛЕДОВАНИЕ",
+    "status_action": "ДЕЙСТВИЕ",
+    "status_open": "ОТКРЫТО",
     "toolbox_talk": "Инструктаж",
     "no_permits": "Нарядов-допусков не найдено.",
     "select_permit_hint": "Выберите наряд-допуск для просмотра",
@@ -434,10 +458,28 @@
     "action": "Мероприятие",
     "verification": "Верификация",
     "verifying": "ВЕРИФИКАЦИЯ",
-    "no_items": "Нет позиций"
+    "no_items": "Нет позиций",
+    "permit_type_hot": "Огневые работы",
+    "permit_type_enc": "Замкнутое пространство",
+    "permit_type_aloft": "Работа на высоте",
+    "permit_type_overside": "За бортом",
+    "permit_type_elec": "Электрический замок",
+    "permit_type_cold": "Холодные работы",
+    "permit_type_bunker": "Бункеровка",
+    "permit_type_crane": "Кран / подъём",
+    "finding_near_miss": "ПОЧТИ-АВАРИЯ",
+    "finding_nc": "НЕСООТВЕТСТВИЕ",
+    "finding_observation": "НАБЛЮД.",
+    "finding_hazard": "ОПАСНОСТЬ",
+    "inherent_risk": "Присущий риск",
+    "residual_risk": "Остаточный риск"
   },
   "qhse": {
     "title": "QHSE",
+    "cat_safety": "Безопасность",
+    "cat_quality": "Качество",
+    "cat_env": "Экологический",
+    "cat_health": "Здоровье",
     "tab_objectives": "Цели",
     "tab_audits": "Аудиты",
     "tab_environmental": "Экология",
@@ -659,7 +701,9 @@
     "priority_actions": "Приоритетные мероприятия",
     "controls": "Меры контроля",
     "implemented": "Внедрено",
-    "gaps": "Пробелы"
+    "gaps": "Пробелы",
+    "status_implemented": "ВНЕДРЕНО",
+    "status_gap": "ПРОБЕЛ"
   },
   "analytics": {
     "no_dashboards": "Дашборды не зарегистрированы"

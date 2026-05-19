@@ -182,7 +182,12 @@
     "no_instances": "لم يتم العثور على مهام.",
     "schedule_first": "جدول أول مهمة.",
     "immutable_records": "جميع السجلات غير قابلة للتغيير — يتم رفض التحديثات والحذف على مستوى قاعدة البيانات (DNV CG-0339).",
-    "source": "المصدر"
+    "source": "المصدر",
+    "project_status_planning": "التخطيط",
+    "project_status_active": "نشط",
+    "project_status_on_hold": "معلق",
+    "project_status_completed": "مكتمل",
+    "project_status_cancelled": "ملغى"
   },
   "inventory": {
     "title": "المخزون",
@@ -316,6 +321,11 @@
     "title": "الشهادات",
     "cert": "شهادة",
     "certs": "شهادات",
+    "cat_statutory": "قانوني",
+    "cat_class": "الفئة",
+    "cat_insurance": "التأمين",
+    "cat_flag": "دولة العلم",
+    "filter_all_cats": "جميع الفئات",
     "tab_register": "السجل",
     "tab_surveys": "المعاينات",
     "tab_conditions": "شروط الفئة",
@@ -366,7 +376,16 @@
     "detentions": "الاحتجازات",
     "vetting_score": "درجة التدقيق",
     "no_data_yet": "لا توجد بيانات بعد",
-    "notification_rules": "قواعد الإشعارات"
+    "notification_rules": "قواعد الإشعارات",
+    "cat_statutory": "قانوني",
+    "cat_class": "الفئة",
+    "cat_mlc": "MLC",
+    "cat_ism": "ISM",
+    "cat_isps": "ISPS",
+    "cat_marpol": "MARPOL",
+    "cat_insurance": "التأمين",
+    "cat_flag": "دولة العلم",
+    "filter_all_cats": "جميع الفئات"
   },
   "safety": {
     "title": "السلامة",
@@ -378,6 +397,11 @@
     "tab_capa": "CAPA",
     "status_active": "نشط",
     "status_awaiting": "قيد الانتظار",
+    "status_closed": "مغلق",
+    "status_suspended": "معلق",
+    "status_investigation": "تحقيق",
+    "status_action": "إجراء",
+    "status_open": "مفتوح",
     "toolbox_talk": "اجتماع صندوق الأدوات",
     "no_permits": "لا توجد تصاريح مطابقة.",
     "select_permit_hint": "اختر تصريحاً لعرض التفاصيل",
@@ -434,10 +458,28 @@
     "action": "الإجراء",
     "verification": "التحقق",
     "verifying": "قيد التحقق",
-    "no_items": "لا توجد عناصر"
+    "no_items": "لا توجد عناصر",
+    "permit_type_hot": "أعمال ساخنة",
+    "permit_type_enc": "مساحة مغلقة",
+    "permit_type_aloft": "العمل على الارتفاع",
+    "permit_type_overside": "فوق الجانب",
+    "permit_type_elec": "قفل كهربائي",
+    "permit_type_cold": "أعمال باردة",
+    "permit_type_bunker": "تزود بالوقود",
+    "permit_type_crane": "رافعة / رفع",
+    "finding_near_miss": "اقتراب خطر",
+    "finding_nc": "عدم مطابقة",
+    "finding_observation": "ملاحظة",
+    "finding_hazard": "خطر",
+    "inherent_risk": "المخاطر الكامنة",
+    "residual_risk": "المخاطر المتبقية"
   },
   "qhse": {
     "title": "QHSE",
+    "cat_safety": "السلامة",
+    "cat_quality": "الجودة",
+    "cat_env": "البيئة",
+    "cat_health": "الصحة",
     "tab_objectives": "الأهداف",
     "tab_audits": "عمليات التدقيق",
     "tab_environmental": "البيئة",
@@ -659,7 +701,9 @@
     "priority_actions": "الإجراءات ذات الأولوية",
     "controls": "الضوابط",
     "implemented": "مُنفَّذ",
-    "gaps": "الثغرات"
+    "gaps": "الثغرات",
+    "status_implemented": "مُنفَّذ",
+    "status_gap": "فجوة"
   },
   "analytics": {
     "no_dashboards": "لم يتم تسجيل أي لوحات تحكم"

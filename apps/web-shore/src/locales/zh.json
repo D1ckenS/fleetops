@@ -182,7 +182,12 @@
     "no_instances": "未找到工作实例。",
     "schedule_first": "安排第一个。",
     "immutable_records": "所有记录均不可更改——更新和删除在数据库级别被拒绝 (DNV CG-0339)。",
-    "source": "来源"
+    "source": "来源",
+    "project_status_planning": "规划中",
+    "project_status_active": "进行中",
+    "project_status_on_hold": "暂停",
+    "project_status_completed": "已完成",
+    "project_status_cancelled": "已取消"
   },
   "inventory": {
     "title": "库存",
@@ -316,6 +321,11 @@
     "title": "证书",
     "cert": "证书",
     "certs": "证书",
+    "cat_statutory": "法定",
+    "cat_class": "船级",
+    "cat_insurance": "保险",
+    "cat_flag": "船旗国",
+    "filter_all_cats": "所有类别",
     "tab_register": "注册",
     "tab_surveys": "检验",
     "tab_conditions": "船级条件",
@@ -366,7 +376,16 @@
     "detentions": "滞留",
     "vetting_score": "审核评分",
     "no_data_yet": "暂无数据",
-    "notification_rules": "通知规则"
+    "notification_rules": "通知规则",
+    "cat_statutory": "法定",
+    "cat_class": "船级",
+    "cat_mlc": "MLC",
+    "cat_ism": "ISM",
+    "cat_isps": "ISPS",
+    "cat_marpol": "MARPOL",
+    "cat_insurance": "保险",
+    "cat_flag": "船旗国",
+    "filter_all_cats": "所有类别"
   },
   "safety": {
     "title": "安全",
@@ -378,6 +397,11 @@
     "tab_capa": "CAPA",
     "status_active": "有效",
     "status_awaiting": "等待",
+    "status_closed": "已关闭",
+    "status_suspended": "已暂停",
+    "status_investigation": "调查中",
+    "status_action": "行动中",
+    "status_open": "开放",
     "toolbox_talk": "安全工具箱会议",
     "no_permits": "未找到工作许可。",
     "select_permit_hint": "选择许可查看详情",
@@ -434,10 +458,28 @@
     "action": "行动",
     "verification": "验证",
     "verifying": "验证中",
-    "no_items": "无项目"
+    "no_items": "无项目",
+    "permit_type_hot": "动火作业",
+    "permit_type_enc": "密闭空间",
+    "permit_type_aloft": "高处作业",
+    "permit_type_overside": "舷外作业",
+    "permit_type_elec": "电气锁定",
+    "permit_type_cold": "冷作业",
+    "permit_type_bunker": "加油",
+    "permit_type_crane": "起重/吊装",
+    "finding_near_miss": "险兆",
+    "finding_nc": "不符合",
+    "finding_observation": "观察",
+    "finding_hazard": "危险",
+    "inherent_risk": "固有风险",
+    "residual_risk": "剩余风险"
   },
   "qhse": {
     "title": "QHSE",
+    "cat_safety": "安全",
+    "cat_quality": "质量",
+    "cat_env": "环境",
+    "cat_health": "健康",
     "tab_objectives": "目标",
     "tab_audits": "审核",
     "tab_environmental": "环境",
@@ -659,7 +701,9 @@
     "priority_actions": "优先行动",
     "controls": "控制措施",
     "implemented": "已实施",
-    "gaps": "差距"
+    "gaps": "差距",
+    "status_implemented": "已实施",
+    "status_gap": "差距"
   },
   "analytics": {
     "no_dashboards": "未注册任何仪表板"

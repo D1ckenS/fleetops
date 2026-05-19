@@ -182,7 +182,12 @@
     "no_instances": "Δεν βρέθηκαν εργασίες.",
     "schedule_first": "Προγραμματίστε την πρώτη.",
     "immutable_records": "Όλα τα αρχεία είναι αμετάβλητα — οι ενημερώσεις και διαγραφές απορρίπτονται σε επίπεδο βάσης δεδομένων (DNV CG-0339).",
-    "source": "Πηγή"
+    "source": "Πηγή",
+    "project_status_planning": "Προγραμματισμός",
+    "project_status_active": "Ενεργό",
+    "project_status_on_hold": "Σε αναμονή",
+    "project_status_completed": "Ολοκληρωμένο",
+    "project_status_cancelled": "Ακυρωμένο"
   },
   "inventory": {
     "title": "Αποθήκη",
@@ -316,6 +321,11 @@
     "title": "Πιστοποιητικά",
     "cert": "πιστοποιητικό",
     "certs": "πιστοποιητικά",
+    "cat_statutory": "Νόμιμο",
+    "cat_class": "Κατηγορία",
+    "cat_insurance": "Ασφάλεια",
+    "cat_flag": "Κράτος σημαίας",
+    "filter_all_cats": "Όλες οι κατηγορίες",
     "tab_register": "Μητρώο",
     "tab_surveys": "Επιθεωρήσεις",
     "tab_conditions": "Όροι κλάσης",
@@ -366,7 +376,16 @@
     "detentions": "Κρατήσεις",
     "vetting_score": "Βαθμός vetting",
     "no_data_yet": "χωρίς δεδομένα",
-    "notification_rules": "Κανόνες ειδοποίησης"
+    "notification_rules": "Κανόνες ειδοποίησης",
+    "cat_statutory": "Νόμιμο",
+    "cat_class": "Κατηγορία",
+    "cat_mlc": "MLC",
+    "cat_ism": "ISM",
+    "cat_isps": "ISPS",
+    "cat_marpol": "MARPOL",
+    "cat_insurance": "Ασφάλεια",
+    "cat_flag": "Κράτος σημαίας",
+    "filter_all_cats": "Όλες οι κατηγορίες"
   },
   "safety": {
     "title": "Ασφάλεια",
@@ -378,6 +397,11 @@
     "tab_capa": "CAPA",
     "status_active": "ΕΝΕΡΓΗ",
     "status_awaiting": "ΣΕ ΑΝΑΜΟΝΗ",
+    "status_closed": "ΚΛΕΙΣΤΟ",
+    "status_suspended": "ΑΝΑΣΤΟΛΗ",
+    "status_investigation": "ΔΙΕΡΕΥΝΗΣΗ",
+    "status_action": "ΕΝΕΡΓΕΙΑ",
+    "status_open": "ΑΝΟΙΧΤΟ",
     "toolbox_talk": "Συζήτηση εργαλειοθήκης",
     "no_permits": "Δεν βρέθηκαν άδειες.",
     "select_permit_hint": "Επιλέξτε άδεια για λεπτομέρειες",
@@ -434,10 +458,28 @@
     "action": "Ενέργεια",
     "verification": "Επαλήθευση",
     "verifying": "ΕΠΑΛΗΘΕΥΣΗ",
-    "no_items": "Χωρίς στοιχεία"
+    "no_items": "Χωρίς στοιχεία",
+    "permit_type_hot": "Θερμές εργασίες",
+    "permit_type_enc": "Κλειστός χώρος",
+    "permit_type_aloft": "Εργασία σε ύψος",
+    "permit_type_overside": "Πάνω από την πλευρά",
+    "permit_type_elec": "Ηλεκτρική ασφάλιση",
+    "permit_type_cold": "Ψυχρές εργασίες",
+    "permit_type_bunker": "Ανεφοδιασμός",
+    "permit_type_crane": "Γερανός / ανύψωση",
+    "finding_near_miss": "ΠΑΡΟΛΙΓΟΝ",
+    "finding_nc": "ΜΗ-ΣΥΜΜ.",
+    "finding_observation": "ΠΑΡΑΤΗΡ.",
+    "finding_hazard": "ΚΙΝΔΥΝΟΣ",
+    "inherent_risk": "Εγγενής κίνδυνος",
+    "residual_risk": "Υπολειπόμενος κίνδυνος"
   },
   "qhse": {
     "title": "QHSE",
+    "cat_safety": "Ασφάλεια",
+    "cat_quality": "Ποιότητα",
+    "cat_env": "Περιβαλλοντικό",
+    "cat_health": "Υγεία",
     "tab_objectives": "Στόχοι",
     "tab_audits": "Ελέγχοι",
     "tab_environmental": "Περιβάλλον",
@@ -659,7 +701,9 @@
     "priority_actions": "Ενέργειες προτεραιότητας",
     "controls": "Έλεγχοι",
     "implemented": "Υλοποιήθηκε",
-    "gaps": "Κενά"
+    "gaps": "Κενά",
+    "status_implemented": "ΕΦΑΡΜΟΣΤΗΚΕ",
+    "status_gap": "ΚΕΝΟ"
   },
   "analytics": {
     "no_dashboards": "Δεν υπάρχουν καταχωρημένα dashboards"

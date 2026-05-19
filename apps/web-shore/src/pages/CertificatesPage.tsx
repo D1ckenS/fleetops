@@ -64,15 +64,15 @@ interface Inspection {
 
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 
-const CAT_META: Record<CertCat, { label: string; color: BadgeColor; short: string }> = {
-  statutory: { label: 'Statutory', color: 'slate', short: 'STAT' },
-  class: { label: 'Class', color: 'blue', short: 'CLASS' },
-  mlc: { label: 'MLC', color: 'purple', short: 'MLC' },
-  ism: { label: 'ISM', color: 'purple', short: 'ISM' },
-  isps: { label: 'ISPS', color: 'purple', short: 'ISPS' },
-  marpol: { label: 'MARPOL', color: 'green', short: 'MARP' },
-  insurance: { label: 'Insurance', color: 'amber', short: 'INS' },
-  flag: { label: 'Flag state', color: 'slate', short: 'FLAG' },
+const CAT_META: Record<CertCat, { labelKey: string; color: BadgeColor; short: string }> = {
+  statutory: { labelKey: 'certificates.cat_statutory', color: 'slate', short: 'STAT' },
+  class: { labelKey: 'certificates.cat_class', color: 'blue', short: 'CLASS' },
+  mlc: { labelKey: 'certificates.cat_mlc', color: 'purple', short: 'MLC' },
+  ism: { labelKey: 'certificates.cat_ism', color: 'purple', short: 'ISM' },
+  isps: { labelKey: 'certificates.cat_isps', color: 'purple', short: 'ISPS' },
+  marpol: { labelKey: 'certificates.cat_marpol', color: 'green', short: 'MARP' },
+  insurance: { labelKey: 'certificates.cat_insurance', color: 'amber', short: 'INS' },
+  flag: { labelKey: 'certificates.cat_flag', color: 'slate', short: 'FLAG' },
 };
 
 const toneColor = (t: string): BadgeColor =>
@@ -181,8 +181,8 @@ function RegisterTab({ certs, loading }: { certs: Certificate[]; loading: boolea
               value={catFilter}
               onChange={setCatFilter}
               options={[
-                { value: 'all', label: 'All categories' },
-                ...Object.entries(CAT_META).map(([k, v]) => ({ value: k, label: v.label })),
+                { value: 'all', label: t('certificates.filter_all_cats') },
+                ...Object.entries(CAT_META).map(([k, v]) => ({ value: k, label: t(v.labelKey) })),
               ]}
               size="sm"
             />
@@ -325,7 +325,7 @@ function RegisterTab({ certs, loading }: { certs: Certificate[]; loading: boolea
                         {sel.id}
                       </span>
                       <Badge color={CAT_META[sel.category]?.color ?? 'slate'}>
-                        {CAT_META[sel.category]?.label}
+                        {CAT_META[sel.category] ? t(CAT_META[sel.category].labelKey) : ''}
                       </Badge>
                     </div>
                     <div
@@ -740,15 +740,15 @@ function InspectionsTab({ inspections, loading }: { inspections: Inspection[]; l
       {/* KPI strip */}
       <div className="grid gap-2 p-4" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
         {[
-          { label: 'PSC inspections', value: pscCount, sub: 'last 24 months' },
-          { label: 'Deficiencies', value: totalDef, sub: 'all closed' },
+          { label: t('certificates.psc_inspections'), value: pscCount, sub: t('certificates.last_24_months') },
+          { label: t('certificates.deficiencies'), value: totalDef, sub: t('certificates.all_closed') },
           {
-            label: 'Detentions',
+            label: t('certificates.detentions'),
             value: detentions,
-            sub: 'last 24 months',
+            sub: t('certificates.last_24_months'),
             accent: detentions > 0 ? 'var(--sig-red)' : undefined,
           },
-          { label: 'Vetting score', value: '—', sub: 'no data yet' },
+          { label: t('certificates.vetting_score'), value: '—', sub: t('certificates.no_data_yet') },
         ].map((k) => (
           <div
             key={k.label}

@@ -54,16 +54,17 @@ type View = 'overview' | 'dnv' | 'iso27001';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-const STATUS_STYLE: Record<string, { bg: string; fg: string; label: string }> = {
-  PASS: { bg: '#E2EEE6', fg: '#2F7D4F', label: 'PASS' },
-  FAIL: { bg: '#F2DDD8', fg: '#AB382E', label: 'FAIL' },
-  PARTIAL: { bg: '#F4E7D0', fg: '#B5731E', label: 'PARTIAL' },
-  NOT_APPLICABLE: { bg: '#F4F2EC', fg: '#8893A0', label: 'N/A' },
-  IMPLEMENTED: { bg: '#E2EEE6', fg: '#2F7D4F', label: 'IMPLEMENTED' },
-  GAP: { bg: '#F2DDD8', fg: '#AB382E', label: 'GAP' },
+const STATUS_STYLE: Record<string, { bg: string; fg: string; labelKey: string }> = {
+  PASS: { bg: '#E2EEE6', fg: '#2F7D4F', labelKey: 'compliance.status_pass' },
+  FAIL: { bg: '#F2DDD8', fg: '#AB382E', labelKey: 'compliance.status_fail' },
+  PARTIAL: { bg: '#F4E7D0', fg: '#B5731E', labelKey: 'compliance.status_partial' },
+  NOT_APPLICABLE: { bg: '#F4F2EC', fg: '#8893A0', labelKey: 'compliance.status_na' },
+  IMPLEMENTED: { bg: '#E2EEE6', fg: '#2F7D4F', labelKey: 'compliance.status_implemented' },
+  GAP: { bg: '#F2DDD8', fg: '#AB382E', labelKey: 'compliance.status_gap' },
 };
 
 function StatusBadge({ status }: { status: string }) {
+  const { t } = useTranslation();
   const s = STATUS_STYLE[status] ?? STATUS_STYLE.NOT_APPLICABLE!;
   return (
     <span
@@ -78,7 +79,7 @@ function StatusBadge({ status }: { status: string }) {
         whiteSpace: 'nowrap',
       }}
     >
-      {s.label}
+      {t(s.labelKey)}
     </span>
   );
 }

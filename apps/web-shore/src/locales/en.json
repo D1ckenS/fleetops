@@ -182,7 +182,12 @@
     "no_instances": "No job instances found.",
     "schedule_first": "Schedule the first one.",
     "immutable_records": "All records are immutable — updates and deletions are rejected at the database level (DNV CG-0339).",
-    "source": "Source"
+    "source": "Source",
+    "project_status_planning": "Planning",
+    "project_status_active": "Active",
+    "project_status_on_hold": "On Hold",
+    "project_status_completed": "Completed",
+    "project_status_cancelled": "Cancelled"
   },
   "inventory": {
     "title": "Inventory",
@@ -316,6 +321,11 @@
     "title": "Certificates",
     "cert": "cert",
     "certs": "certs",
+    "cat_statutory": "Statutory",
+    "cat_class": "Class",
+    "cat_insurance": "Insurance",
+    "cat_flag": "Flag state",
+    "filter_all_cats": "All categories",
     "tab_register": "Register",
     "tab_surveys": "Surveys",
     "tab_conditions": "Conditions of class",
@@ -375,7 +385,16 @@
     "detentions": "Detentions",
     "vetting_score": "Vetting score",
     "no_data_yet": "no data yet",
-    "notification_rules": "Notification rules"
+    "notification_rules": "Notification rules",
+    "cat_statutory": "Statutory",
+    "cat_class": "Class",
+    "cat_mlc": "MLC",
+    "cat_ism": "ISM",
+    "cat_isps": "ISPS",
+    "cat_marpol": "MARPOL",
+    "cat_insurance": "Insurance",
+    "cat_flag": "Flag state",
+    "filter_all_cats": "All categories"
   },
   "safety": {
     "title": "Safety",
@@ -387,6 +406,11 @@
     "tab_capa": "CAPA",
     "status_active": "ACTIVE",
     "status_awaiting": "AWAITING",
+    "status_closed": "CLOSED",
+    "status_suspended": "SUSPENDED",
+    "status_investigation": "INVESTIGATION",
+    "status_action": "ACTION",
+    "status_open": "OPEN",
     "toolbox_talk": "Toolbox talk",
     "no_permits": "No permits match this filter.",
     "select_permit_hint": "Select a permit to view details",
@@ -453,10 +477,28 @@
     "action": "Action",
     "verification": "Verification",
     "verifying": "VERIFYING",
-    "no_items": "No items"
+    "no_items": "No items",
+    "permit_type_hot": "Hot work",
+    "permit_type_enc": "Enclosed space",
+    "permit_type_aloft": "Working aloft",
+    "permit_type_overside": "Over the side",
+    "permit_type_elec": "Electrical LO-TO",
+    "permit_type_cold": "Cold work",
+    "permit_type_bunker": "Bunkering",
+    "permit_type_crane": "Crane / lifting",
+    "finding_near_miss": "NEAR-MISS",
+    "finding_nc": "NON-CONF",
+    "finding_observation": "OBSERV",
+    "finding_hazard": "HAZARD",
+    "inherent_risk": "Inherent risk",
+    "residual_risk": "Residual risk"
   },
   "qhse": {
     "title": "QHSE",
+    "cat_safety": "Safety",
+    "cat_quality": "Quality",
+    "cat_env": "Environmental",
+    "cat_health": "Health",
     "tab_objectives": "Objectives",
     "tab_audits": "Audits",
     "tab_environmental": "Environmental",
@@ -680,7 +722,9 @@
     "priority_actions": "Priority Actions",
     "controls": "Controls",
     "implemented": "Implemented",
-    "gaps": "Gaps"
+    "gaps": "Gaps",
+    "status_implemented": "IMPLEMENTED",
+    "status_gap": "GAP"
   },
   "analytics": {
     "no_dashboards": "No dashboards registered"

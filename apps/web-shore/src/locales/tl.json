@@ -182,7 +182,12 @@
     "no_instances": "Walang nahanap na mga trabaho.",
     "schedule_first": "Itala ang una.",
     "immutable_records": "Lahat ng tala ay hindi nababago — ang mga update at tanggal ay tinatanggihan sa antas ng database (DNV CG-0339).",
-    "source": "Pinagmulan"
+    "source": "Pinagmulan",
+    "project_status_planning": "Pagpaplano",
+    "project_status_active": "Aktibo",
+    "project_status_on_hold": "Nakahinto",
+    "project_status_completed": "Natapos",
+    "project_status_cancelled": "Nakansela"
   },
   "inventory": {
     "title": "Imbentaryo",
@@ -316,6 +321,11 @@
     "title": "Mga Sertipiko",
     "cert": "sertipiko",
     "certs": "mga sertipiko",
+    "cat_statutory": "Pormal",
+    "cat_class": "Klase",
+    "cat_insurance": "Seguro",
+    "cat_flag": "Estado ng bandila",
+    "filter_all_cats": "Lahat ng kategorya",
     "tab_register": "Rehistro",
     "tab_surveys": "Mga Survey",
     "tab_conditions": "Mga Kundisyon ng Klase",
@@ -366,7 +376,16 @@
     "detentions": "Mga Detensiyon",
     "vetting_score": "Puntos ng Vetting",
     "no_data_yet": "wala pang datos",
-    "notification_rules": "Mga Patakaran sa Abiso"
+    "notification_rules": "Mga Patakaran sa Abiso",
+    "cat_statutory": "Pormal",
+    "cat_class": "Klase",
+    "cat_mlc": "MLC",
+    "cat_ism": "ISM",
+    "cat_isps": "ISPS",
+    "cat_marpol": "MARPOL",
+    "cat_insurance": "Seguro",
+    "cat_flag": "Estado ng bandila",
+    "filter_all_cats": "Lahat ng kategorya"
   },
   "safety": {
     "title": "Kaligtasan",
@@ -378,6 +397,11 @@
     "tab_capa": "CAPA",
     "status_active": "AKTIBO",
     "status_awaiting": "NAGHIHINTAY",
+    "status_closed": "SARADO",
+    "status_suspended": "NASUSPINDE",
+    "status_investigation": "IMBESTIGASYON",
+    "status_action": "AKSYON",
+    "status_open": "BUKAS",
     "toolbox_talk": "Toolbox Talk",
     "no_permits": "Walang nahanap na permiso.",
     "select_permit_hint": "Pumili ng permiso upang makita ang mga detalye",
@@ -434,10 +458,28 @@
     "action": "Aksyon",
     "verification": "Beripisasyon",
     "verifying": "BINEBERIPIKA",
-    "no_items": "Walang Aytem"
+    "no_items": "Walang Aytem",
+    "permit_type_hot": "Mainit na trabaho",
+    "permit_type_enc": "Saradong espasyo",
+    "permit_type_aloft": "Trabaho sa taas",
+    "permit_type_overside": "Sa gilid",
+    "permit_type_elec": "Elektrikal na LO-TO",
+    "permit_type_cold": "Malamig na trabaho",
+    "permit_type_bunker": "Pag-iimbak ng gasolina",
+    "permit_type_crane": "Kreyन / pag-angat",
+    "finding_near_miss": "MALAPIT NA AKSIDENTE",
+    "finding_nc": "HINDI-SUMUSUNOD",
+    "finding_observation": "PAGMAMASID",
+    "finding_hazard": "PANGANIB",
+    "inherent_risk": "Likas na panganib",
+    "residual_risk": "Natitirang panganib"
   },
   "qhse": {
     "title": "QHSE",
+    "cat_safety": "Kaligtasan",
+    "cat_quality": "Kalidad",
+    "cat_env": "Pangkalikasan",
+    "cat_health": "Kalusugan",
     "tab_objectives": "Mga Layunin",
     "tab_audits": "Mga Audit",
     "tab_environmental": "Kalikasan",
@@ -659,7 +701,9 @@
     "priority_actions": "Mga Priyoridad na Aksyon",
     "controls": "Mga Kontrol",
     "implemented": "Naipatupad",
-    "gaps": "Mga Puwang"
+    "gaps": "Mga Puwang",
+    "status_implemented": "ISINAGAWA",
+    "status_gap": "AGWAT"
   },
   "analytics": {
     "no_dashboards": "Walang nakarehistrong dashboard"
