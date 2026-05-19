@@ -504,7 +504,9 @@
     "ffa_label": "Fire-fighting appliances",
     "lsa_label": "Life-saving appliances",
     "other_safety": "Other safety equipment",
-    "check": "Check"
+    "check": "Check",
+    "supervisor_abbrev": "Sup.",
+    "items": "ITEMS"
   },
   "qhse": {
     "title": "QHSE",

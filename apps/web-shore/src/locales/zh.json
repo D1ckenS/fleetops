@@ -485,7 +485,9 @@
     "ffa_label": "消防设备",
     "lsa_label": "救生设备",
     "other_safety": "其他安全设备",
-    "check": "检查"
+    "check": "检查",
+    "supervisor_abbrev": "主管",
+    "items": "项目"
   },
   "qhse": {
     "title": "QHSE",

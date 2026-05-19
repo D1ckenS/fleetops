@@ -485,7 +485,9 @@
     "ffa_label": "Mga kagamitan sa pagsugpo ng sunog",
     "lsa_label": "Mga kagamitan sa pagliligtas ng buhay",
     "other_safety": "Ibang kagamitan sa kaligtasan",
-    "check": "Suriin"
+    "check": "Suriin",
+    "supervisor_abbrev": "Sup.",
+    "items": "MGA AYTEM"
   },
   "qhse": {
     "title": "QHSE",

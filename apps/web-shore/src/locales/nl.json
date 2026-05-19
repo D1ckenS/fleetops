@@ -485,7 +485,9 @@
     "ffa_label": "Brandbestrijdingsmiddelen",
     "lsa_label": "Reddingsmiddelen",
     "other_safety": "Overige veiligheidsuitrusting",
-    "check": "Controleren"
+    "check": "Controleren",
+    "supervisor_abbrev": "Sup.",
+    "items": "ITEMS"
   },
   "qhse": {
     "title": "QHSE",

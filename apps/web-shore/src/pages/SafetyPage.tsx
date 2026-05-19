@@ -202,7 +202,10 @@ function PermitsTab({ permits, loading }: { permits: WorkPermit[]; loading: bool
         >
           {(['all', 'active', 'awaiting', 'closed'] as const).map((f) => (
             <button key={f} onClick={() => setFilter(f)} style={chipStyle(filter === f)}>
-              {f.charAt(0).toUpperCase() + f.slice(1)}
+              {f === 'all'
+                ? t('common.all')
+                : t(`safety.status_${f}`).charAt(0) +
+                  t(`safety.status_${f}`).slice(1).toLowerCase()}
               <span className="font-mono text-[10px] ml-1 opacity-70">
                 {f === 'all' ? permits.length : permits.filter((p) => p.status === f).length}
               </span>
@@ -249,7 +252,8 @@ function PermitsTab({ permits, loading }: { permits: WorkPermit[]; loading: bool
                     {p.location}
                   </div>
                   <div className="text-[10.5px]" style={{ color: 'var(--ink-3)' }}>
-                    Sup. {p.supervisor} · <span className="font-mono">{p.countdown}</span>
+                    {t('safety.supervisor_abbrev')} {p.supervisor} ·{' '}
+                    <span className="font-mono">{p.countdown}</span>
                   </div>
                 </div>
               );
@@ -340,17 +344,19 @@ function PermitsTab({ permits, loading }: { permits: WorkPermit[]; loading: bool
                     className="text-[10.5px] font-semibold uppercase tracking-widest"
                     style={{ color: 'var(--ink-3)' }}
                   >
-                    Gas monitoring · interval {sel.gasChecks.interval}
+                    {t('safety.gas_monitoring')} {sel.gasChecks.interval}
                   </span>
                   <div className="flex-1" />
-                  <Badge color="green">NEXT {sel.gasChecks.next}</Badge>
+                  <Badge color="green">
+                    {t('safety.next')} {sel.gasChecks.next}
+                  </Badge>
                 </div>
                 <div
                   className="grid gap-px"
                   style={{ gridTemplateColumns: 'repeat(5, 1fr)', background: 'var(--hairline)' }}
                 >
                   {[
-                    ['Last check', sel.gasChecks.last],
+                    [t('safety.last_check'), sel.gasChecks.last],
                     ['LEL', sel.gasChecks.lel],
                     ['O₂', sel.gasChecks.o2],
                     ['H₂S', sel.gasChecks.h2s],
@@ -671,7 +677,7 @@ function FindingsTab({ findings, loading }: { findings: SafetyFinding[]; loading
             <span>{t('common.status')}</span>
           </div>
           {visible.length === 0 ? (
-            <EmptyState msg="No findings match this filter. Safety findings, near-misses and observations will appear here." />
+            <EmptyState msg={t('safety.no_findings')} />
           ) : (
             visible.map((f) => (
               <div
@@ -1112,7 +1118,7 @@ function EquipmentTab({ equipment, loading }: { equipment: SafetyEquipment[]; lo
               >
                 <span className="text-[12px] font-semibold">{label}</span>
                 <Badge color="slate">
-                  {cat} · {items.length} ITEMS
+                  {cat} · {items.length} {t('safety.items')}
                 </Badge>
                 <div className="flex-1" />
                 <button
@@ -1124,7 +1130,7 @@ function EquipmentTab({ equipment, loading }: { equipment: SafetyEquipment[]; lo
                     color: 'var(--ink-2)',
                   }}
                 >
-                  + Log check
+                  {t('safety.log_check')}
                 </button>
               </div>
               <div

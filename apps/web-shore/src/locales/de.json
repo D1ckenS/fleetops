@@ -485,7 +485,9 @@
     "ffa_label": "Feuerlöschgeräte",
     "lsa_label": "Lebensrettungsgeräte",
     "other_safety": "Sonstige Sicherheitsausrüstung",
-    "check": "Prüfen"
+    "check": "Prüfen",
+    "supervisor_abbrev": "Vors.",
+    "items": "OBJEKTE"
   },
   "qhse": {
     "title": "QHSE",

@@ -485,7 +485,9 @@
     "ffa_label": "معدات مكافحة الحريق",
     "lsa_label": "معدات إنقاذ الأرواح",
     "other_safety": "معدات السلامة الأخرى",
-    "check": "فحص"
+    "check": "فحص",
+    "supervisor_abbrev": "Sup.",
+    "items": "عناصر"
   },
   "qhse": {
     "title": "QHSE",

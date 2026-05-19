@@ -485,7 +485,9 @@
     "ffa_label": "Πυροσβεστικά μέσα",
     "lsa_label": "Μέσα διάσωσης",
     "other_safety": "Λοιπός εξοπλισμός ασφαλείας",
-    "check": "Έλεγχος"
+    "check": "Έλεγχος",
+    "supervisor_abbrev": "Επόπτ.",
+    "items": "ΑΝΤΙΚΕΙΜΕΝΑ"
   },
   "qhse": {
     "title": "QHSE",
