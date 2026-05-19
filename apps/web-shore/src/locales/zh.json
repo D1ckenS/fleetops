@@ -1,5 +1,8 @@
 {
-  "app": { "name": "FleetOps", "tagline": "海事船队管理系统" },
+  "app": {
+    "name": "FleetOps",
+    "tagline": "海事船队管理系统"
+  },
   "nav": {
     "start": "首页",
     "maintenance": "维护",
@@ -76,7 +79,17 @@
     "not_applicable": "不适用",
     "days": "天",
     "hours": "小时",
-    "or": "或"
+    "or": "或",
+    "notes_placeholder": "观察，发现…",
+    "qty": "数量",
+    "title": "标题",
+    "interval": "间隔",
+    "priority": "优先级",
+    "component": "组件",
+    "username": "用户名",
+    "confirm_password": "确认密码",
+    "select_placeholder": "— 选择 —",
+    "part": "零件"
   },
   "vessel": {
     "no_vessel_selected": "未选择船舶",
@@ -156,7 +169,20 @@
     "delete_component_confirm": "删除设备？此操作无法撤销。",
     "hours_worked": "工作小时数",
     "parts_consumed": "消耗配件",
-    "photos": "照片"
+    "photos": "照片",
+    "scheduled_tasks": "该船的计划维护任务",
+    "no_rh_interval_jobs": "无运行小时间隔任务",
+    "log_reading": "记录读数",
+    "no_templates": "还没有工作模板。请通过组件选项卡添加。",
+    "typical_parts_used": "常用零件",
+    "no_typical_parts": "未定义零件。这些将预填充签核表格。",
+    "no_parts_recorded": "未记录零件。如果未使用任何零件，请留空。",
+    "add_part": "+ 添加零件",
+    "signed_by": "签署人",
+    "no_instances": "未找到工作实例。",
+    "schedule_first": "安排第一个。",
+    "immutable_records": "所有记录均不可更改——更新和删除在数据库级别被拒绝 (DNV CG-0339)。",
+    "source": "来源"
   },
   "inventory": {
     "title": "库存",
@@ -189,7 +215,12 @@
     "movement_transfer_in": "调入",
     "movement_transfer_out": "调出",
     "no_parts": "暂无配件",
-    "add_first_part": "创建您的第一个配件。"
+    "add_first_part": "创建您的第一个配件。",
+    "select_part_hint": "点击零件查看库存水平和移动历史。",
+    "stock_by_location": "按位置的库存",
+    "movements_header": "移动",
+    "no_movements": "未记录移动。",
+    "columns_picker": "列"
   },
   "purchase": {
     "title": "采购",
@@ -624,7 +655,9 @@
     "implemented": "已实施",
     "gaps": "差距"
   },
-  "analytics": { "no_dashboards": "未注册任何仪表板" },
+  "analytics": {
+    "no_dashboards": "未注册任何仪表板"
+  },
   "vessels_page": {
     "title": "船舶与用户",
     "vessel": "船舶",
@@ -637,7 +670,9 @@
     "imo": "IMO",
     "users_assigned_to": "分配给的用户",
     "no_vessel_users": "暂无用户分配到该船舶。",
-    "fleet_wide_users": "船队级用户（未分配船舶）"
+    "fleet_wide_users": "船队级用户（未分配船舶）",
+    "vessel_name": "船名",
+    "imo_optional": "IMO编号（可选）"
   },
   "companies": {
     "title": "公司",
@@ -651,6 +686,12 @@
     "col_action": "操作",
     "no_companies": "暂无公司。",
     "add_admin": "+ 管理员",
+    "company_name": "公司名称",
+    "short_name_optional": "简称（可选）",
+    "admin_email": "管理员邮箱",
+    "admin_username": "管理员用户名",
+    "admin_password": "管理员密码",
+    "create_company": "创建公司",
     "edit": "编辑"
   },
   "integrations": {
@@ -697,7 +738,10 @@
     "save_draft": "保存为草稿",
     "submission_history": "提交历史"
   },
-  "settings": { "language": "语言", "select_language": "选择语言" },
+  "settings": {
+    "language": "语言",
+    "select_language": "选择语言"
+  },
   "profile": {
     "title": "个人资料",
     "personal_info": "个人信息",

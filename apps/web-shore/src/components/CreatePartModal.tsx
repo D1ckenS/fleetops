@@ -53,7 +53,7 @@ export function CreatePartModal({ open, onClose, onCreated }: Props) {
   return (
     <Modal
       open={open}
-      title="New Part"
+      title={t('inventory.new_part')}
       onClose={handleClose}
       footer={
         <>
@@ -72,7 +72,7 @@ export function CreatePartModal({ open, onClose, onCreated }: Props) {
         )}
         <Input
           id="part-name"
-          label="Name *"
+          label={t('inventory.part_name')}
           value={form.name}
           onChange={set('name')}
           placeholder="Engine Oil SAE 40"
@@ -82,7 +82,7 @@ export function CreatePartModal({ open, onClose, onCreated }: Props) {
           <div className="flex-1">
             <Input
               id="part-num"
-              label="Part Number"
+              label={t('inventory.part_number')}
               value={form.partNumber}
               onChange={set('partNumber')}
               placeholder="OIL-001"
@@ -91,7 +91,7 @@ export function CreatePartModal({ open, onClose, onCreated }: Props) {
           <div className="w-32">
             <Input
               id="part-unit"
-              label="Unit"
+              label={t('inventory.unit')}
               value={form.unit}
               onChange={set('unit')}
               placeholder="pcs / L / kg"
@@ -100,7 +100,7 @@ export function CreatePartModal({ open, onClose, onCreated }: Props) {
         </div>
         <TextArea
           id="part-desc"
-          label="Description"
+          label={t('common.description')}
           rows={2}
           value={form.description}
           onChange={set('description')}

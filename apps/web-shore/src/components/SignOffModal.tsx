@@ -194,8 +194,8 @@ export function SignOffModal({
 
         <TextArea
           id="notes"
-          label="Notes"
-          placeholder="Observations, findings…"
+          label={t('common.notes')}
+          placeholder={t('common.notes_placeholder')}
           rows={3}
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
@@ -210,13 +210,13 @@ export function SignOffModal({
               onClick={() => setShowAddLine((v) => !v)}
               className="text-xs text-blue-600 hover:underline"
             >
-              {showAddLine ? 'Cancel' : '+ Add part'}
+              {showAddLine ? t('common.cancel') : t('maintenance.add_part')}
             </button>
           </div>
 
           {consumed.length === 0 && !showAddLine && (
             <p className="text-xs text-slate-400 italic">
-              No parts recorded. Leave empty if none used.
+              {t('maintenance.no_parts_recorded')}
             </p>
           )}
 
@@ -258,27 +258,27 @@ export function SignOffModal({
           {showAddLine && (
             <div className="mt-2 flex items-end gap-2 bg-slate-50 p-2 rounded-md">
               <div className="flex-1">
-                <label className="block text-xs text-slate-500 mb-1">Part</label>
+                <label className="block text-xs text-slate-500 mb-1">{t('common.part')}</label>
                 <Select
                   value={addPartId}
                   onChange={setAddPartId}
                   options={parts.map((p) => ({ value: p.id, label: p.name }))}
-                  placeholder="— Select —"
+                  placeholder={t('common.select_placeholder')}
                   size="sm"
                 />
               </div>
               <div className="w-32">
-                <label className="block text-xs text-slate-500 mb-1">Location</label>
+                <label className="block text-xs text-slate-500 mb-1">{t('inventory.location')}</label>
                 <Select
                   value={addLocationId}
                   onChange={setAddLocationId}
                   options={locations.map((l) => ({ value: l.id, label: l.name }))}
-                  placeholder="— Select —"
+                  placeholder={t('common.select_placeholder')}
                   size="sm"
                 />
               </div>
               <div className="w-20">
-                <label className="block text-xs text-slate-500 mb-1">Qty</label>
+                <label className="block text-xs text-slate-500 mb-1">{t('common.qty')}</label>
                 <Input
                   id="add-qty"
                   type="number"

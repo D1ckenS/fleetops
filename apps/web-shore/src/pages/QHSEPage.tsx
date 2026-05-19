@@ -377,6 +377,7 @@ function AuditsTab({
   auditFindings: AuditFinding[];
   loading: boolean;
 }) {
+  const { t } = useTranslation();
   if (loading)
     return (
       <div className="flex-1 flex items-center justify-center">
@@ -449,16 +450,16 @@ function AuditsTab({
               borderBottom: '1px solid var(--hairline)',
             }}
           >
-            <span>ID</span>
-            <span>Kind</span>
-            <span>Scope</span>
-            <span>Auditor</span>
-            <span>When</span>
-            <span>Findings</span>
+            <span>{t('qhse.col_id')}</span>
+            <span>{t('qhse.col_kind')}</span>
+            <span>{t('qhse.col_scope')}</span>
+            <span>{t('qhse.col_auditor')}</span>
+            <span>{t('qhse.col_when')}</span>
+            <span>{t('qhse.col_findings')}</span>
             <span />
           </div>
           {audits.length === 0 ? (
-            <EmptyState msg="No audits scheduled. Internal and external audits will appear here." />
+            <EmptyState msg={t('qhse.no_audits')} />
           ) : (
             audits.map((a) => (
               <div
@@ -528,12 +529,12 @@ function AuditsTab({
                 borderBottom: '1px solid var(--hairline)',
               }}
             >
-              <span>ID</span>
-              <span>Class</span>
-              <span>From</span>
-              <span>Finding / SMS ref</span>
-              <span>Owner / due</span>
-              <span>Days left</span>
+              <span>{t('qhse.col_id')}</span>
+              <span>{t('qhse.col_class')}</span>
+              <span>{t('qhse.col_from')}</span>
+              <span>{t('qhse.col_finding_ref')}</span>
+              <span>{t('qhse.col_owner_due')}</span>
+              <span>{t('qhse.col_days_left')}</span>
               <span />
             </div>
             {auditFindings.map((f) => (

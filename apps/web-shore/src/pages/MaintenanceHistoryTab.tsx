@@ -278,8 +278,7 @@ export function MaintenanceHistoryTab() {
         >
           <span>🔒</span>
           <span>
-            All records are immutable — updates and deletions are rejected at the database level
-            (DNV CG-0339).
+            {t('maintenance.immutable_records')}
           </span>
         </div>
       )}

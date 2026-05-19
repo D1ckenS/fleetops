@@ -1,5 +1,8 @@
 {
-  "app": { "name": "FleetOps", "tagline": "Maritiem Vlootbeheer" },
+  "app": {
+    "name": "FleetOps",
+    "tagline": "Maritiem Vlootbeheer"
+  },
   "nav": {
     "start": "Start",
     "maintenance": "Onderhoud",
@@ -76,7 +79,17 @@
     "not_applicable": "N.v.t.",
     "days": "dagen",
     "hours": "u",
-    "or": "of"
+    "or": "of",
+    "notes_placeholder": "Opmerkingen, bevindingen…",
+    "qty": "Hoeveelheid",
+    "title": "Titel",
+    "interval": "Interval",
+    "priority": "Prioriteit",
+    "component": "Component",
+    "username": "Gebruikersnaam",
+    "confirm_password": "Wachtwoord bevestigen",
+    "select_placeholder": "— Selecteren —",
+    "part": "Onderdeel"
   },
   "vessel": {
     "no_vessel_selected": "Geen schip geselecteerd",
@@ -156,7 +169,20 @@
     "delete_component_confirm": "Component verwijderen? Dit kan niet ongedaan worden gemaakt.",
     "hours_worked": "Gewerkte uren",
     "parts_consumed": "Verbruikte onderdelen",
-    "photos": "Foto's"
+    "photos": "Foto's",
+    "scheduled_tasks": "Geplande onderhoudstaken voor dit schip",
+    "no_rh_interval_jobs": "Geen BS-intervalopdrachen",
+    "log_reading": "Meting vastleggen",
+    "no_templates": "Nog geen taaksjablonen. Voeg er een toe via het tabblad Componenten.",
+    "typical_parts_used": "Typisch gebruikte onderdelen",
+    "no_typical_parts": "Geen onderdelen gedefinieerd. Deze vullen het aftekeningsformulier vooraf in.",
+    "no_parts_recorded": "Geen onderdelen geregistreerd. Laat leeg als er geen zijn gebruikt.",
+    "add_part": "+ Onderdeel toevoegen",
+    "signed_by": "Ondertekend door",
+    "no_instances": "Geen taakinstanties gevonden.",
+    "schedule_first": "Plan de eerste.",
+    "immutable_records": "Alle records zijn onveranderlijk — updates en verwijderingen worden geweigerd op databaseniveau (DNV CG-0339).",
+    "source": "Bron"
   },
   "inventory": {
     "title": "Inventaris",
@@ -189,7 +215,12 @@
     "movement_transfer_in": "Inkomende transfer",
     "movement_transfer_out": "Uitgaande transfer",
     "no_parts": "Nog geen onderdelen",
-    "add_first_part": "Maak uw eerste onderdeel aan."
+    "add_first_part": "Maak uw eerste onderdeel aan.",
+    "select_part_hint": "Klik op een onderdeel om voorraden en bewegingen te bekijken.",
+    "stock_by_location": "Voorraad per locatie",
+    "movements_header": "Bewegingen",
+    "no_movements": "Geen bewegingen geregistreerd.",
+    "columns_picker": "Kolommen"
   },
   "purchase": {
     "title": "Inkoop",
@@ -624,7 +655,9 @@
     "implemented": "Geïmplementeerd",
     "gaps": "Tekortkomingen"
   },
-  "analytics": { "no_dashboards": "Geen dashboards geregistreerd" },
+  "analytics": {
+    "no_dashboards": "Geen dashboards geregistreerd"
+  },
   "vessels_page": {
     "title": "Schepen & Gebruikers",
     "vessel": "schip",
@@ -637,7 +670,9 @@
     "imo": "IMO",
     "users_assigned_to": "Gebruikers toegewezen aan",
     "no_vessel_users": "Nog geen gebruikers aan dit schip toegewezen.",
-    "fleet_wide_users": "Vlootbrede gebruikers (geen schip toegewezen)"
+    "fleet_wide_users": "Vlootbrede gebruikers (geen schip toegewezen)",
+    "vessel_name": "Scheepsnaam",
+    "imo_optional": "IMO-nummer (optioneel)"
   },
   "companies": {
     "title": "Bedrijven",
@@ -651,7 +686,13 @@
     "col_action": "Actie",
     "no_companies": "Nog geen bedrijven.",
     "add_admin": "+ Admin",
-    "edit": "Bewerken"
+    "edit": "Bewerken",
+    "company_name": "Bedrijfsnaam",
+    "short_name_optional": "Korte naam (optioneel)",
+    "admin_email": "Admin e-mail",
+    "admin_username": "Admin gebruikersnaam",
+    "admin_password": "Admin wachtwoord",
+    "create_company": "Bedrijf aanmaken"
   },
   "integrations": {
     "title": "Integraties",
@@ -697,7 +738,10 @@
     "save_draft": "Als concept opslaan",
     "submission_history": "Indieningshistorie"
   },
-  "settings": { "language": "Taal", "select_language": "Taal selecteren" },
+  "settings": {
+    "language": "Taal",
+    "select_language": "Taal selecteren"
+  },
   "profile": {
     "title": "Profiel",
     "personal_info": "Persoonlijke informatie",

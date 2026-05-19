@@ -1,5 +1,8 @@
 {
-  "app": { "name": "FleetOps", "tagline": "نظام إدارة الأسطول البحري" },
+  "app": {
+    "name": "FleetOps",
+    "tagline": "نظام إدارة الأسطول البحري"
+  },
   "nav": {
     "start": "الرئيسية",
     "maintenance": "الصيانة",
@@ -76,7 +79,17 @@
     "not_applicable": "غير قابل للتطبيق",
     "days": "أيام",
     "hours": "ساعات",
-    "or": "أو"
+    "or": "أو",
+    "notes_placeholder": "الملاحظات والنتائج…",
+    "qty": "الكمية",
+    "title": "العنوان",
+    "interval": "الفترة",
+    "priority": "الأولوية",
+    "component": "مكوّن",
+    "username": "اسم المستخدم",
+    "confirm_password": "تأكيد كلمة المرور",
+    "select_placeholder": "— اختر —",
+    "part": "قطعة"
   },
   "vessel": {
     "no_vessel_selected": "لم يتم تحديد سفينة",
@@ -156,7 +169,20 @@
     "delete_component_confirm": "حذف المكوّن؟ لا يمكن التراجع عن هذا الإجراء.",
     "hours_worked": "ساعات العمل",
     "parts_consumed": "قطع الغيار المستخدمة",
-    "photos": "الصور"
+    "photos": "الصور",
+    "scheduled_tasks": "مهام الصيانة المجدولة لهذه السفينة",
+    "no_rh_interval_jobs": "لا توجد مهام فترة ساعات التشغيل",
+    "log_reading": "تسجيل القراءة",
+    "no_templates": "لا توجد قوالب مهام بعد. أضف واحدًا عبر تبويب المكونات.",
+    "typical_parts_used": "الأجزاء المستخدمة عادةً",
+    "no_typical_parts": "لم يتم تحديد أي قطع. ستملأ هذه نموذج التوقيع مسبقًا.",
+    "no_parts_recorded": "لم يتم تسجيل أي قطع. اتركه فارغًا إذا لم يُستخدم أي منها.",
+    "add_part": "+ إضافة قطعة",
+    "signed_by": "موقّع من",
+    "no_instances": "لم يتم العثور على مهام.",
+    "schedule_first": "جدول أول مهمة.",
+    "immutable_records": "جميع السجلات غير قابلة للتغيير — يتم رفض التحديثات والحذف على مستوى قاعدة البيانات (DNV CG-0339).",
+    "source": "المصدر"
   },
   "inventory": {
     "title": "المخزون",
@@ -189,7 +215,12 @@
     "movement_transfer_in": "تحويل واردة",
     "movement_transfer_out": "تحويل صادرة",
     "no_parts": "لا توجد قطع غيار بعد",
-    "add_first_part": "أنشئ أول قطعة غيار."
+    "add_first_part": "أنشئ أول قطعة غيار.",
+    "select_part_hint": "انقر على قطعة لعرض مستويات المخزون وتاريخ الحركة.",
+    "stock_by_location": "المخزون حسب الموقع",
+    "movements_header": "الحركات",
+    "no_movements": "لم يتم تسجيل أي حركات.",
+    "columns_picker": "الأعمدة"
   },
   "purchase": {
     "title": "المشتريات",
@@ -624,7 +655,9 @@
     "implemented": "مُنفَّذ",
     "gaps": "الثغرات"
   },
-  "analytics": { "no_dashboards": "لم يتم تسجيل أي لوحات تحكم" },
+  "analytics": {
+    "no_dashboards": "لم يتم تسجيل أي لوحات تحكم"
+  },
   "vessels_page": {
     "title": "السفن والمستخدمون",
     "vessel": "سفينة",
@@ -637,7 +670,9 @@
     "imo": "رقم IMO",
     "users_assigned_to": "المستخدمون المُعيَّنون لـ",
     "no_vessel_users": "لا يوجد مستخدمون مُعيَّنون لهذه السفينة.",
-    "fleet_wide_users": "مستخدمو الأسطول (غير مُعيَّنون لسفينة)"
+    "fleet_wide_users": "مستخدمو الأسطول (غير مُعيَّنون لسفينة)",
+    "vessel_name": "اسم السفينة",
+    "imo_optional": "رقم IMO (اختياري)"
   },
   "companies": {
     "title": "الشركات",
@@ -651,6 +686,12 @@
     "col_action": "الإجراء",
     "no_companies": "لا توجد شركات بعد.",
     "add_admin": "+ مسؤول",
+    "company_name": "اسم الشركة",
+    "short_name_optional": "الاسم المختصر (اختياري)",
+    "admin_email": "البريد الإلكتروني للمسؤول",
+    "admin_username": "اسم مستخدم المسؤول",
+    "admin_password": "كلمة مرور المسؤول",
+    "create_company": "إنشاء شركة",
     "edit": "تعديل"
   },
   "integrations": {
@@ -697,7 +738,10 @@
     "save_draft": "حفظ كمسودة",
     "submission_history": "سجل التقديمات"
   },
-  "settings": { "language": "اللغة", "select_language": "اختر اللغة" },
+  "settings": {
+    "language": "اللغة",
+    "select_language": "اختر اللغة"
+  },
   "profile": {
     "title": "الملف الشخصي",
     "personal_info": "المعلومات الشخصية",

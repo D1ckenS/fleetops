@@ -274,7 +274,7 @@ export function MaintenanceRunningHoursTab() {
                   <ProgressBar pct={r.pct} overdue={r.overdue} />
                 </>
               ) : (
-                <span style={{ fontSize: 11.5, color: '#B6BDC6' }}>No RH interval jobs</span>
+                <span style={{ fontSize: 11.5, color: '#B6BDC6' }}>{t('maintenance.no_rh_interval_jobs')}</span>
               )}
             </div>
 
@@ -303,7 +303,7 @@ export function MaintenanceRunningHoursTab() {
                   whiteSpace: 'nowrap',
                 }}
               >
-                Log reading
+                {t('maintenance.log_reading')}
               </button>
             </div>
           </div>

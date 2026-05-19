@@ -73,7 +73,7 @@ export function LogRunningHoursModal({
             {t('common.cancel')}
           </Button>
           <Button loading={saving} onClick={handleSubmit}>
-            Log Reading
+            {t('maintenance.log_reading')}
           </Button>
         </>
       }
@@ -98,7 +98,7 @@ export function LogRunningHoursModal({
           autoFocus
         />
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Source</label>
+          <label className="block text-sm font-medium text-slate-700 mb-1">{t('maintenance.source')}</label>
           <div className="flex rounded-md border border-slate-200 overflow-hidden text-sm">
             {SOURCES.map((s) => (
               <button

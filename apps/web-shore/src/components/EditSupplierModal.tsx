@@ -75,7 +75,7 @@ export function EditSupplierModal({ supplier, onClose, onSaved }: Props) {
   return (
     <Modal
       open
-      title="Edit Supplier"
+      title={t('common.edit')}
       onClose={onClose}
       footer={
         <>
@@ -99,7 +99,7 @@ export function EditSupplierModal({ supplier, onClose, onSaved }: Props) {
         )}
         <Input
           id="sup-name"
-          label="Company name *"
+          label={`${t('companies.company_name')} *`}
           value={form.name}
           onChange={set('name')}
           autoFocus
@@ -107,13 +107,13 @@ export function EditSupplierModal({ supplier, onClose, onSaved }: Props) {
         <div className="grid grid-cols-2 gap-3">
           <Input
             id="sup-contact"
-            label="Contact person"
+            label={t('purchase.col_contact')}
             value={form.contactName}
             onChange={set('contactName')}
           />
           <Input
             id="sup-email"
-            label="Email"
+            label={t('purchase.col_email')}
             type="email"
             value={form.contactEmail}
             onChange={set('contactEmail')}
@@ -126,7 +126,7 @@ export function EditSupplierModal({ supplier, onClose, onSaved }: Props) {
           />
           <Input
             id="sup-country"
-            label="Country"
+            label={t('purchase.col_country')}
             value={form.country}
             onChange={set('country')}
             placeholder="NL"
@@ -134,7 +134,7 @@ export function EditSupplierModal({ supplier, onClose, onSaved }: Props) {
         </div>
         <TextArea
           id="sup-addr"
-          label="Address"
+          label={t('inventory.location')}
           rows={2}
           value={form.address}
           onChange={set('address')}

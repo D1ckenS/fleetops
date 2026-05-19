@@ -122,20 +122,20 @@ export function EditJobModal({ open, job, componentName, onClose, onSaved }: Pro
         )}
         <Input
           id="ej-title"
-          label="Title *"
+          label={`${t('common.title')} *`}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           autoFocus
         />
         <TextArea
           id="ej-desc"
-          label="Description"
+          label={t('common.description')}
           rows={2}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
         <div>
-          <span className="block text-sm font-medium text-slate-700 mb-1">Interval *</span>
+          <span className="block text-sm font-medium text-slate-700 mb-1">{t('common.interval')} *</span>
           <div className="flex rounded-md border border-slate-200 overflow-hidden text-sm mb-2">
             {(['days', 'hours'] as const).map((m) => (
               <button
@@ -143,14 +143,14 @@ export function EditJobModal({ open, job, componentName, onClose, onSaved }: Pro
                 onClick={() => setMode(m)}
                 className={`flex-1 py-1.5 px-3 transition-colors ${mode === m ? 'bg-blue-600 text-white font-medium' : 'bg-white text-slate-600 hover:bg-slate-50'}`}
               >
-                {m === 'days' ? 'Calendar days' : 'Running hours'}
+                {m === 'days' ? t('maintenance.days') : t('maintenance.hours_abbr')}
               </button>
             ))}
           </div>
           {mode === 'days' ? (
             <Input
               id="ej-days"
-              label="Every N days"
+              label={t('maintenance.interval_days')}
               type="number"
               min="1"
               step="1"
@@ -160,7 +160,7 @@ export function EditJobModal({ open, job, componentName, onClose, onSaved }: Pro
           ) : (
             <Input
               id="ej-hours"
-              label="Every N running hours"
+              label={t('maintenance.interval_hours')}
               type="number"
               min="1"
               step="1"
@@ -172,7 +172,7 @@ export function EditJobModal({ open, job, componentName, onClose, onSaved }: Pro
         <div className="flex gap-3">
           <div className="flex-1">
             <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="ej-priority">
-              Priority
+              {t('common.priority')}
             </label>
             <Select
               value={priority}

@@ -276,6 +276,7 @@ function LifecycleStepper({ status }: { status: POStatus }) {
 // ─── GRN form (inline within PO detail pane) ─────────────────────────────────
 
 function GrnForm({ po, onPosted }: { po: PurchaseOrder; onPosted: () => void }) {
+  const { t } = useTranslation();
   const [qtys, setQtys] = useState<Record<string, string>>(() =>
     Object.fromEntries(po.lines.map((l) => [l.id, l.quantity])),
   );
@@ -308,7 +309,7 @@ function GrnForm({ po, onPosted }: { po: PurchaseOrder; onPosted: () => void }) 
         className="text-[10.5px] font-semibold uppercase tracking-widest mb-3"
         style={{ color: 'var(--ink-3)' }}
       >
-        Post Goods Receipt
+        {t('purchase.post_grn')}
       </div>
       {error && (
         <div
@@ -321,9 +322,9 @@ function GrnForm({ po, onPosted }: { po: PurchaseOrder; onPosted: () => void }) 
       <table className="w-full text-left text-xs mb-3">
         <thead>
           <tr style={{ color: 'var(--ink-3)' }}>
-            <th className="pb-1.5 font-medium">Description</th>
-            <th className="pb-1.5 text-right font-medium">Ordered</th>
-            <th className="pb-1.5 text-right font-medium w-20">Received</th>
+            <th className="pb-1.5 font-medium">{t('common.description')}</th>
+            <th className="pb-1.5 text-right font-medium">{t('purchase.ordered')}</th>
+            <th className="pb-1.5 text-right font-medium w-20">{t('purchase.received_qty')}</th>
           </tr>
         </thead>
         <tbody>
@@ -352,15 +353,15 @@ function GrnForm({ po, onPosted }: { po: PurchaseOrder; onPosted: () => void }) 
       </table>
       <TextArea
         id="grn-notes"
-        label="Notes"
+        label={t('common.notes')}
         rows={2}
         value={notes}
         onChange={(e) => setNotes(e.target.value)}
-        placeholder="Delivery note number, condition remarks…"
+        placeholder={t('purchase.delivery_note_placeholder')}
       />
       <div className="mt-3 flex justify-end">
         <Button size="sm" loading={saving} onClick={handlePost}>
-          Post GRN
+          {t('purchase.post_grn')}
         </Button>
       </div>
     </div>
@@ -378,6 +379,7 @@ function PODetailPane({
   onClose: () => void;
   onUpdated: () => void;
 }) {
+  const { t } = useTranslation();
   const [po, setPo] = useState<PurchaseOrder | null>(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
@@ -478,7 +480,7 @@ function PODetailPane({
                   className="text-[10.5px] font-semibold uppercase tracking-widest mb-1"
                   style={{ color: 'var(--ink-3)' }}
                 >
-                  Total
+                  {t('purchase.col_total')}
                 </div>
                 <div
                   className="font-mono text-[17px] font-semibold"
@@ -492,7 +494,7 @@ function PODetailPane({
                   className="text-[10.5px] font-semibold uppercase tracking-widest mb-1"
                   style={{ color: 'var(--ink-3)' }}
                 >
-                  Lines · received
+                  {t('purchase.lines_received')}
                 </div>
                 <div
                   className="font-mono text-[17px] font-semibold"
@@ -511,7 +513,7 @@ function PODetailPane({
                   className="px-4 pt-3 pb-1 text-[10.5px] font-semibold uppercase tracking-widest"
                   style={{ color: 'var(--ink-3)' }}
                 >
-                  Lines
+                  {t('purchase.lines')}
                 </div>
                 {po.lines.map((l) => {
                   const received =
@@ -569,7 +571,7 @@ function PODetailPane({
                   className="px-4 pt-3 pb-1 text-[10.5px] font-semibold uppercase tracking-widest"
                   style={{ color: 'var(--ink-3)' }}
                 >
-                  Goods Receipts
+                  {t('purchase.tab_grns')}
                 </div>
                 {po.receipts.map((r) => (
                   <div
@@ -610,7 +612,7 @@ function PODetailPane({
                   className="text-[10.5px] font-semibold uppercase tracking-widest mb-1"
                   style={{ color: 'var(--ink-3)' }}
                 >
-                  Notes
+                  {t('common.notes')}
                 </div>
                 <div className="text-[12px]" style={{ color: 'var(--ink-2)' }}>
                   {po.notes}
@@ -649,7 +651,7 @@ function PODetailPane({
                   loading={actionLoading}
                   onClick={() => doAction('send')}
                 >
-                  Send to supplier
+                  {t('purchase.send_to_supplier')}
                 </Button>
               </>
             )}
@@ -662,14 +664,14 @@ function PODetailPane({
                   loading={actionLoading}
                   onClick={() => doAction('send')}
                 >
-                  Resend
+                  {t('purchase.resend')}
                 </Button>
               </>
             )}
             {!['DRAFT', 'SENT', 'CANCELLED', 'CLOSED'].includes(po.status) &&
               !canReceive(po.status) && (
                 <div className="flex-1 text-center text-xs" style={{ color: 'var(--ink-3)' }}>
-                  No actions available
+                  {t('purchase.no_actions')}
                 </div>
               )}
             {['DRAFT', 'SENT', 'ACKNOWLEDGED', 'IN_TRANSIT', 'PARTIALLY_RECEIVED'].includes(
@@ -761,11 +763,11 @@ function RequisitionsTab() {
           borderBottom: '1px solid var(--border)',
         }}
       >
-        <span>Req</span>
-        <span>Item / notes</span>
-        <span className="text-right">Value</span>
-        <span>Status</span>
-        <span>Requested</span>
+        <span>{t('purchase.col_req')}</span>
+        <span>{t('purchase.col_item_notes')}</span>
+        <span className="text-right">{t('purchase.col_value')}</span>
+        <span>{t('common.status')}</span>
+        <span>{t('certificates.issued')}</span>
         <span />
       </div>
 
@@ -851,7 +853,7 @@ function RequisitionsTab() {
                       loading={actionLoading === `${r.id}-submit`}
                       onClick={() => doAction(r.id, 'submit')}
                     >
-                      Submit
+                      {t('common.submit')}
                     </Button>
                   )}
                   {r.status === 'SUBMITTED' && (
@@ -861,10 +863,10 @@ function RequisitionsTab() {
                         loading={actionLoading === `${r.id}-approve`}
                         onClick={() => doAction(r.id, 'approve')}
                       >
-                        Approve
+                        {t('common.approve')}
                       </Button>
                       <Button size="sm" variant="danger" onClick={() => setRejectTarget(r.id)}>
-                        Reject
+                        {t('common.reject')}
                       </Button>
                     </>
                   )}
@@ -883,11 +885,11 @@ function RequisitionsTab() {
                   <table className="w-full text-[11px] mt-2">
                     <thead>
                       <tr style={{ color: 'var(--ink-3)' }}>
-                        <th className="text-left pb-1.5 font-medium">Description</th>
-                        <th className="text-right pb-1.5 font-medium">Qty</th>
-                        <th className="text-right pb-1.5 font-medium">Unit</th>
-                        <th className="text-right pb-1.5 font-medium">Est. Unit Price</th>
-                        <th className="text-right pb-1.5 font-medium">Est. Total</th>
+                        <th className="text-left pb-1.5 font-medium">{t('common.description')}</th>
+                        <th className="text-right pb-1.5 font-medium">{t('purchase.col_qty')}</th>
+                        <th className="text-right pb-1.5 font-medium">{t('purchase.col_unit')}</th>
+                        <th className="text-right pb-1.5 font-medium">{t('purchase.col_est_unit_price')}</th>
+                        <th className="text-right pb-1.5 font-medium">{t('purchase.col_est_total')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -947,6 +949,7 @@ function RequisitionsTab() {
 // ─── RFQs tab ─────────────────────────────────────────────────────────────────
 
 function RFQsTab() {
+  const { t } = useTranslation();
   const [rfqs, setRfqs] = useState<Rfq[]>([]);
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -1018,7 +1021,7 @@ function RFQsTab() {
           )}
           {!loading && rfqs.length === 0 && (
             <div className="p-6 text-xs text-center" style={{ color: 'var(--ink-3)' }}>
-              No RFQs yet.
+              {t('purchase.no_pos')}
             </div>
           )}
           {!loading &&
@@ -1068,7 +1071,7 @@ function RFQsTab() {
             className="flex-1 flex items-center justify-center text-xs"
             style={{ color: 'var(--ink-3)' }}
           >
-            Select an RFQ to compare quotes.
+            {t('purchase.select_rfq_hint')}
           </div>
         )}
         {selectedRfq && (
@@ -1103,7 +1106,7 @@ function RFQsTab() {
                 )}
               </div>
               <Button size="sm" variant="secondary">
-                Email suppliers
+                {t('purchase.email_suppliers')}
               </Button>
             </div>
 
@@ -1123,7 +1126,7 @@ function RFQsTab() {
                     color: 'var(--ink-3)',
                   }}
                 >
-                  Quotes are still coming in.
+                  {t('purchase.quotes_coming_in')}
                   {selectedRfq.dueAt && ` Closes ${fmtDate(selectedRfq.dueAt)}.`}
                 </div>
               )}
@@ -1151,7 +1154,7 @@ function RFQsTab() {
                           className="text-[10.5px] font-semibold uppercase tracking-widest"
                           style={{ color: 'var(--ink-3)' }}
                         >
-                          Compare
+                          {t('purchase.compare')}
                         </span>
                       </div>
                       {quotes.map((q) => (
@@ -1212,7 +1215,7 @@ function RFQsTab() {
                         className="px-3 py-2.5 flex items-center text-[11px] font-medium uppercase tracking-widest"
                         style={{ background: 'var(--surface)', color: 'var(--ink-3)' }}
                       >
-                        Notes
+                        {t('common.notes')}
                       </div>
                       {quotes.map((q) => (
                         <div
@@ -1229,7 +1232,7 @@ function RFQsTab() {
                         className="px-3 py-2.5 flex items-center text-[11px] font-medium uppercase tracking-widest"
                         style={{ background: 'var(--surface-2)', color: 'var(--ink-3)' }}
                       >
-                        Valid until
+                        {t('purchase.valid_until')}
                       </div>
                       {quotes.map((q) => (
                         <div
@@ -1251,11 +1254,11 @@ function RFQsTab() {
                         >
                           {q.status === 'accepted' ? (
                             <Button size="sm" style={{ width: '100%' }} disabled>
-                              Awarded
+                              {t('purchase.awarded')}
                             </Button>
                           ) : q.status === 'rejected' ? (
                             <span className="text-xs" style={{ color: 'var(--ink-4)' }}>
-                              Rejected
+                              {t('purchase.status_rejected')}
                             </span>
                           ) : (
                             <Button
@@ -1265,7 +1268,7 @@ function RFQsTab() {
                               loading={actionLoading === q.id}
                               onClick={() => awardQuote(q.id)}
                             >
-                              Award & convert to PO
+                              {t('purchase.award_convert_po')}
                             </Button>
                           )}
                         </div>
@@ -1373,12 +1376,12 @@ function PurchaseOrdersTab() {
             borderBottom: '1px solid var(--border)',
           }}
         >
-          <span>PO</span>
-          <span>Supplier / note</span>
-          <span>Port</span>
-          <span>ETA</span>
-          <span>Stage</span>
-          <span className="text-right">Total</span>
+          <span>{t('purchase.col_po')}</span>
+          <span>{t('purchase.col_supplier_note')}</span>
+          <span>{t('purchase.col_port')}</span>
+          <span>{t('purchase.col_eta')}</span>
+          <span>{t('purchase.col_stage')}</span>
+          <span className="text-right">{t('purchase.col_total')}</span>
         </div>
 
         {/* Rows */}
@@ -1486,7 +1489,7 @@ function PurchaseOrdersTab() {
           }}
         >
           <p className="text-xs text-center px-8" style={{ color: 'var(--ink-3)' }}>
-            Select a purchase order to inspect lines, approvals, and receipt status.
+            {t('purchase.select_po_hint')}
           </p>
         </aside>
       )}
@@ -1569,11 +1572,11 @@ function GoodsReceiptsTab() {
         }}
       >
         <span>GRN</span>
-        <span>Against PO</span>
-        <span>Supplier</span>
-        <span>Date</span>
-        <span>Receipt</span>
-        <span>Discrepancy</span>
+        <span>{t('purchase.col_against_po')}</span>
+        <span>{t('purchase.col_supplier')}</span>
+        <span>{t('common.date')}</span>
+        <span>{t('purchase.col_receipt')}</span>
+        <span>{t('purchase.col_discrepancy')}</span>
       </div>
 
       <div className="flex-1 overflow-y-auto" style={{ background: 'var(--surface)' }}>
@@ -1616,7 +1619,7 @@ function GoodsReceiptsTab() {
                 className="text-[11.5px] truncate"
                 style={{ color: g.hasDiscrepancy ? 'var(--sig-amber)' : 'var(--ink-3)' }}
               >
-                {g.notes ?? (g.hasDiscrepancy ? 'Partial receipt' : 'Full receipt')}
+                {g.notes ?? (g.hasDiscrepancy ? t('purchase.partial_receipt') : t('purchase.full_receipt'))}
               </span>
             </div>
           ))}
@@ -1675,7 +1678,7 @@ function SuppliersTab() {
         style={{ background: 'var(--surface)', borderBottom: '1px solid var(--hairline)' }}
       >
         <span className="text-xs" style={{ color: 'var(--ink-3)' }}>
-          Vendors available when creating purchase orders.
+          {t('purchase.vendors_available')}
         </span>
         <Button size="sm" onClick={() => setCreating(true)}>
           {t('purchase.new_supplier')}
@@ -1692,10 +1695,10 @@ function SuppliersTab() {
           borderBottom: '1px solid var(--border)',
         }}
       >
-        <span>Name</span>
-        <span>Contact</span>
-        <span>Email</span>
-        <span>Country</span>
+        <span>{t('purchase.col_name')}</span>
+        <span>{t('purchase.col_contact')}</span>
+        <span>{t('purchase.col_email')}</span>
+        <span>{t('purchase.col_country')}</span>
         <span />
       </div>
 
@@ -1759,14 +1762,14 @@ function SuppliersTab() {
                   style={{ color: 'var(--ink-2)' }}
                   onClick={() => setEditing(s)}
                 >
-                  Edit
+                  {t('common.edit')}
                 </button>
                 <button
                   className="text-xs font-medium"
                   style={{ color: 'var(--sig-red)' }}
                   onClick={() => handleDelete(s.id, s.name)}
                 >
-                  Delete
+                  {t('common.delete')}
                 </button>
               </div>
             </div>
@@ -1798,6 +1801,7 @@ function SuppliersTab() {
 // ─── Footer stats bar ─────────────────────────────────────────────────────────
 
 function FooterStats({ pos }: { pos: PurchaseOrder[] }) {
+  const { t } = useTranslation();
   const inTransit = pos.filter((p) =>
     ['IN_TRANSIT', 'PARTIALLY_RECEIVED'].includes(p.status),
   ).length;
@@ -1819,24 +1823,24 @@ function FooterStats({ pos }: { pos: PurchaseOrder[] }) {
         <b className="font-mono" style={{ color: 'var(--ink)' }}>
           {pos.length}
         </b>{' '}
-        POs
+        {t('purchase.pos_count')}
       </span>
       <span style={{ color: 'var(--hairline)' }}>·</span>
       <span>
         <b className="font-mono" style={{ color: 'var(--sig-amber)' }}>
           {inTransit}
         </b>{' '}
-        in transit
+        {t('purchase.in_transit')}
       </span>
       <span style={{ color: 'var(--hairline)' }}>·</span>
       <span>
         <b className="font-mono" style={{ color: 'var(--sig-blue)' }}>
           {active}
         </b>{' '}
-        active
+        {t('purchase.active')}
       </span>
       <div className="flex-1" />
-      <span style={{ color: 'var(--ink-3)' }}>Open PO value</span>
+      <span style={{ color: 'var(--ink-3)' }}>{t('purchase.open_po_value')}</span>
       <span
         className="font-mono text-[13px] font-semibold"
         style={{ color: 'var(--ink)', fontVariantNumeric: 'tabular-nums' }}

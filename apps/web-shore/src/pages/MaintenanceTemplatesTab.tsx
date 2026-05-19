@@ -146,7 +146,7 @@ export function MaintenanceTemplatesTab({
           <div
             style={{ padding: '32px 16px', textAlign: 'center', color: '#8893A0', fontSize: 12 }}
           >
-            No job templates yet. Add one via the Components tab.
+            {t('maintenance.no_templates')}
           </div>
         )}
 

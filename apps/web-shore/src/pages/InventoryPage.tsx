@@ -255,7 +255,7 @@ function DetailPane({
         }}
       >
         <p style={{ fontSize: 12.5, color: T.ink3, textAlign: 'center' }}>
-          Click a part to see stock levels and movement history.
+          {t('inventory.select_part_hint')}
         </p>
       </aside>
     );
@@ -334,7 +334,7 @@ function DetailPane({
           <StockBar rob={rob} min={min} max={max} reorder={reorder} />
         ) : (
           <p style={{ padding: '14px 16px', fontSize: 12, color: T.ink3 }}>
-            No stock levels configured.
+            {t('inventory.no_parts')}
           </p>
         )}
 
@@ -351,7 +351,7 @@ function DetailPane({
                 color: T.ink3,
               }}
             >
-              Stock by location
+              {t('inventory.stock_by_location')}
             </div>
             {part.stockLevels.map((l) => (
               <div
@@ -413,14 +413,14 @@ function DetailPane({
               color: T.ink3,
             }}
           >
-            Movements
+            {t('inventory.movements_header')}
           </div>
           {loadingMov && (
-            <p style={{ padding: '8px 16px', fontSize: 11.5, color: T.ink3 }}>Loading…</p>
+            <p style={{ padding: '8px 16px', fontSize: 11.5, color: T.ink3 }}>{t('common.loading')}</p>
           )}
           {!loadingMov && movements.length === 0 && (
             <p style={{ padding: '8px 16px', fontSize: 11.5, color: T.ink3 }}>
-              No movements recorded.
+              {t('inventory.no_movements')}
             </p>
           )}
           {movements.slice(0, 8).map((m) => {
@@ -731,7 +731,7 @@ export function InventoryPage() {
               color: T.ink3,
             }}
           >
-            Locations
+            {t('inventory.locations')}
           </span>
         </div>
         <div
@@ -745,7 +745,7 @@ export function InventoryPage() {
           }}
         >
           {[
-            { id: 'all', name: 'All locations', count: parts.length },
+            { id: 'all', name: t('inventory.locations'), count: parts.length },
             ...locations.map((l) => ({ id: l.id, name: l.name, count: countByLoc.get(l.id) ?? 0 })),
           ].map((l) => (
             <button
@@ -900,7 +900,7 @@ export function InventoryPage() {
                 fontFamily: 'inherit',
               }}
             >
-              Columns · {visibleCols.length}
+              {t('inventory.columns_picker')} · {visibleCols.length}
             </button>
             {colPickerOpen && (
               <>
@@ -1006,7 +1006,7 @@ export function InventoryPage() {
 
             {loading && (
               <div style={{ padding: 40, textAlign: 'center', color: T.ink3, fontSize: 13 }}>
-                Loading…
+                {t('common.loading')}
               </div>
             )}
             {!loading && visible.length === 0 && (

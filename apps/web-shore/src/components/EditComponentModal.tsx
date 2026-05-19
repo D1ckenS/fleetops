@@ -65,7 +65,7 @@ export function EditComponentModal({ open, component, onClose, onSaved }: Props)
   return (
     <Modal
       open={open}
-      title="Edit Component"
+      title={t('common.edit')}
       onClose={handleClose}
       footer={
         <>
@@ -84,21 +84,21 @@ export function EditComponentModal({ open, component, onClose, onSaved }: Props)
         )}
         <Input
           id="ec-name"
-          label="Name *"
+          label={`${t('common.name')} *`}
           value={name}
           onChange={(e) => setName(e.target.value)}
           autoFocus
         />
         <TextArea
           id="ec-desc"
-          label="Description"
+          label={t('common.description')}
           rows={2}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
         <Input
           id="ec-sfi"
-          label="SFI Code"
+          label={t('maintenance.sfi_code')}
           value={sfi}
           onChange={(e) => setSfi(e.target.value)}
           placeholder="230.01"

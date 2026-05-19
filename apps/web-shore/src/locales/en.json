@@ -1,5 +1,8 @@
 {
-  "app": { "name": "FleetOps", "tagline": "Maritime Fleet Management" },
+  "app": {
+    "name": "FleetOps",
+    "tagline": "Maritime Fleet Management"
+  },
   "nav": {
     "start": "Start",
     "maintenance": "Maintenance",
@@ -55,6 +58,7 @@
     "status": "Status",
     "date": "Date",
     "notes": "Notes",
+    "notes_placeholder": "Observations, findings…",
     "actions": "Actions",
     "none": "None",
     "unknown": "Unknown",
@@ -76,7 +80,16 @@
     "not_applicable": "N/A",
     "days": "days",
     "hours": "h",
-    "or": "or"
+    "or": "or",
+    "qty": "Qty",
+    "title": "Title",
+    "interval": "Interval",
+    "priority": "Priority",
+    "component": "Component",
+    "username": "Username",
+    "confirm_password": "Confirm password",
+    "select_placeholder": "— Select —",
+    "part": "Part"
   },
   "vessel": {
     "no_vessel_selected": "No vessel selected",
@@ -156,7 +169,20 @@
     "delete_component_confirm": "Delete component? This cannot be undone.",
     "hours_worked": "Hours Worked",
     "parts_consumed": "Parts Consumed",
-    "photos": "Photos"
+    "photos": "Photos",
+    "scheduled_tasks": "Scheduled maintenance tasks for this vessel",
+    "no_rh_interval_jobs": "No RH interval jobs",
+    "log_reading": "Log reading",
+    "no_templates": "No job templates yet. Add one via the Components tab.",
+    "typical_parts_used": "Typical parts used",
+    "no_typical_parts": "No parts defined. These pre-fill the sign-off form.",
+    "no_parts_recorded": "No parts recorded. Leave empty if none used.",
+    "add_part": "+ Add part",
+    "signed_by": "Signed by",
+    "no_instances": "No job instances found.",
+    "schedule_first": "Schedule the first one.",
+    "immutable_records": "All records are immutable — updates and deletions are rejected at the database level (DNV CG-0339).",
+    "source": "Source"
   },
   "inventory": {
     "title": "Inventory",
@@ -189,7 +215,12 @@
     "movement_transfer_in": "Transfer In",
     "movement_transfer_out": "Transfer Out",
     "no_parts": "No parts yet",
-    "add_first_part": "Create your first part to get started."
+    "add_first_part": "Create your first part to get started.",
+    "select_part_hint": "Click a part to see stock levels and movement history.",
+    "stock_by_location": "Stock by location",
+    "movements_header": "Movements",
+    "no_movements": "No movements recorded.",
+    "columns_picker": "Columns"
   },
   "purchase": {
     "title": "Purchase",
@@ -660,7 +691,9 @@
     "imo": "IMO",
     "users_assigned_to": "Users assigned to",
     "no_vessel_users": "No users assigned to this vessel yet.",
-    "fleet_wide_users": "Fleet-wide users (no vessel assigned)"
+    "fleet_wide_users": "Fleet-wide users (no vessel assigned)",
+    "vessel_name": "Vessel name",
+    "imo_optional": "IMO number (optional)"
   },
   "companies": {
     "title": "Companies",
@@ -674,7 +707,13 @@
     "col_action": "Action",
     "no_companies": "No companies yet.",
     "add_admin": "+ Admin",
-    "edit": "Edit"
+    "edit": "Edit",
+    "company_name": "Company name",
+    "short_name_optional": "Short name (optional)",
+    "admin_email": "Admin email",
+    "admin_username": "Admin username",
+    "admin_password": "Admin password",
+    "create_company": "Create company"
   },
   "integrations": {
     "title": "Integrations",

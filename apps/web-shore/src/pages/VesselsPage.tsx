@@ -43,6 +43,7 @@ const ROLE_COLORS: Record<string, 'blue' | 'amber' | 'green' | 'slate' | 'purple
 // ─── Modals ──────────────────────────────────────────────────────────────────
 
 function CreateVesselModal({ onClose, onCreated }: { onClose: () => void; onCreated: () => void }) {
+  const { t } = useTranslation();
   const [name, setName] = useState('');
   const [imo, setImo] = useState('');
   const [saving, setSaving] = useState(false);
@@ -66,11 +67,11 @@ function CreateVesselModal({ onClose, onCreated }: { onClose: () => void; onCrea
   };
 
   return (
-    <Modal open title="Add vessel" onClose={onClose} size="sm">
+    <Modal open title={t('vessels_page.add_vessel')} onClose={onClose} size="sm">
       <div className="flex flex-col gap-3 p-4">
         <div>
           <label className="text-[11.5px] font-medium mb-1 block" style={{ color: 'var(--ink-2)' }}>
-            Vessel name *
+            {t('vessels_page.vessel_name')} *
           </label>
           <Input
             value={name}
@@ -81,7 +82,7 @@ function CreateVesselModal({ onClose, onCreated }: { onClose: () => void; onCrea
         </div>
         <div>
           <label className="text-[11.5px] font-medium mb-1 block" style={{ color: 'var(--ink-2)' }}>
-            IMO number
+            {t('vessels_page.imo_optional')}
           </label>
           <Input value={imo} onChange={(e) => setImo(e.target.value)} placeholder="9999999" />
         </div>
@@ -92,10 +93,10 @@ function CreateVesselModal({ onClose, onCreated }: { onClose: () => void; onCrea
         )}
         <div className="flex justify-end gap-2 pt-1">
           <Button variant="secondary" onClick={onClose}>
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button onClick={submit} loading={saving}>
-            Add vessel
+            {t('vessels_page.add_vessel')}
           </Button>
         </div>
       </div>
@@ -112,6 +113,7 @@ function EditVesselModal({
   onClose: () => void;
   onSaved: () => void;
 }) {
+  const { t } = useTranslation();
   const [name, setName] = useState(vessel.name);
   const [imo, setImo] = useState(vessel.imoNumber ?? '');
   const [saving, setSaving] = useState(false);
@@ -138,17 +140,17 @@ function EditVesselModal({
   };
 
   return (
-    <Modal open title="Edit vessel" onClose={onClose} size="sm">
+    <Modal open title={t('common.edit')} onClose={onClose} size="sm">
       <div className="flex flex-col gap-3 p-4">
         <div>
           <label className="text-[11.5px] font-medium mb-1 block" style={{ color: 'var(--ink-2)' }}>
-            Vessel name *
+            {t('vessels_page.vessel_name')} *
           </label>
           <Input value={name} onChange={(e) => setName(e.target.value)} autoFocus />
         </div>
         <div>
           <label className="text-[11.5px] font-medium mb-1 block" style={{ color: 'var(--ink-2)' }}>
-            IMO number
+            {t('vessels_page.imo_optional')}
           </label>
           <Input value={imo} onChange={(e) => setImo(e.target.value)} placeholder="9999999" />
         </div>
@@ -159,10 +161,10 @@ function EditVesselModal({
         )}
         <div className="flex justify-end gap-2 pt-1">
           <Button variant="secondary" onClick={onClose}>
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button onClick={submit} loading={saving}>
-            Save
+            {t('common.save')}
           </Button>
         </div>
       </div>
@@ -184,6 +186,7 @@ function AddUserModal({
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const { t } = useTranslation();
   const [role, setRole] = useState<Role>('OFFICER');
   const [vesselId, setVesselId] = useState<string>(defaultVesselId ?? '');
   const [saving, setSaving] = useState(false);
@@ -213,11 +216,11 @@ function AddUserModal({
   };
 
   return (
-    <Modal open title="Add user" onClose={onClose} size="sm">
+    <Modal open title={t('vessels_page.add_user')} onClose={onClose} size="sm">
       <div className="flex flex-col gap-3 p-4">
         <div>
           <label className="text-[11.5px] font-medium mb-1 block" style={{ color: 'var(--ink-2)' }}>
-            Email *
+            {t('profile.email')} *
           </label>
           <Input
             value={email}
@@ -228,7 +231,7 @@ function AddUserModal({
         </div>
         <div>
           <label className="text-[11.5px] font-medium mb-1 block" style={{ color: 'var(--ink-2)' }}>
-            Username * <span style={{ color: 'var(--ink-3)' }}>(used to log in)</span>
+            {t('common.username')} * <span style={{ color: 'var(--ink-3)' }}>(used to log in)</span>
           </label>
           <Input
             value={username}
@@ -239,7 +242,7 @@ function AddUserModal({
         </div>
         <div>
           <label className="text-[11.5px] font-medium mb-1 block" style={{ color: 'var(--ink-2)' }}>
-            Password *
+            {t('auth.password')} *
           </label>
           <Input
             type="password"
@@ -250,7 +253,7 @@ function AddUserModal({
         </div>
         <div>
           <label className="text-[11.5px] font-medium mb-1 block" style={{ color: 'var(--ink-2)' }}>
-            Role
+            {t('profile.role')}
           </label>
           <Select
             value={role}
@@ -281,10 +284,10 @@ function AddUserModal({
         )}
         <div className="flex justify-end gap-2 pt-1">
           <Button variant="secondary" onClick={onClose}>
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button onClick={submit} loading={saving}>
-            Add user
+            {t('vessels_page.add_user')}
           </Button>
         </div>
       </div>
@@ -303,6 +306,7 @@ function EditUserModal({
   onClose: () => void;
   onSaved: () => void;
 }) {
+  const { t } = useTranslation();
   const [role, setRole] = useState<Role>(user.role as Role);
   const [vesselId, setVesselId] = useState<string>(user.vesselId ?? '');
   const [saving, setSaving] = useState(false);
@@ -322,14 +326,14 @@ function EditUserModal({
   };
 
   return (
-    <Modal open title="Edit user" onClose={onClose} size="sm">
+    <Modal open title={t('common.edit')} onClose={onClose} size="sm">
       <div className="flex flex-col gap-3 p-4">
         <p className="text-[12.5px] m-0" style={{ color: 'var(--ink-2)' }}>
           {user.email}
         </p>
         <div>
           <label className="text-[11.5px] font-medium mb-1 block" style={{ color: 'var(--ink-2)' }}>
-            Role
+            {t('profile.role')}
           </label>
           <Select
             value={role}
@@ -357,10 +361,10 @@ function EditUserModal({
         )}
         <div className="flex justify-end gap-2 pt-1">
           <Button variant="secondary" onClick={onClose}>
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button onClick={submit} loading={saving}>
-            Save
+            {t('common.save')}
           </Button>
         </div>
       </div>

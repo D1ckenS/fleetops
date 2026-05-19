@@ -1,5 +1,8 @@
 {
-  "app": { "name": "FleetOps", "tagline": "Морское управление флотом" },
+  "app": {
+    "name": "FleetOps",
+    "tagline": "Морское управление флотом"
+  },
   "nav": {
     "start": "Главная",
     "maintenance": "Обслуживание",
@@ -76,7 +79,17 @@
     "not_applicable": "Н/П",
     "days": "дней",
     "hours": "ч",
-    "or": "или"
+    "or": "или",
+    "notes_placeholder": "Наблюдения, выводы…",
+    "qty": "Кол-во",
+    "title": "Заголовок",
+    "interval": "Интервал",
+    "priority": "Приоритет",
+    "component": "Компонент",
+    "username": "Имя пользователя",
+    "confirm_password": "Подтвердите пароль",
+    "select_placeholder": "— Выбрать —",
+    "part": "Деталь"
   },
   "vessel": {
     "no_vessel_selected": "Судно не выбрано",
@@ -156,7 +169,20 @@
     "delete_component_confirm": "Удалить компонент? Это действие нельзя отменить.",
     "hours_worked": "Отработанные часы",
     "parts_consumed": "Использованные детали",
-    "photos": "Фотографии"
+    "photos": "Фотографии",
+    "scheduled_tasks": "Запланированные задачи технического обслуживания для этого судна",
+    "no_rh_interval_jobs": "Нет задач с интервалом по часам работы",
+    "log_reading": "Записать показание",
+    "no_templates": "Шаблонов задач пока нет. Добавьте через вкладку Компоненты.",
+    "typical_parts_used": "Типичные используемые запчасти",
+    "no_typical_parts": "Запчасти не определены. Они заполняют форму подписания заранее.",
+    "no_parts_recorded": "Запчасти не зарегистрированы. Оставьте пустым, если не использовались.",
+    "add_part": "+ Добавить деталь",
+    "signed_by": "Подписано",
+    "no_instances": "Экземпляры задач не найдены.",
+    "schedule_first": "Создайте первый.",
+    "immutable_records": "Все записи неизменяемы — обновления и удаления отклоняются на уровне базы данных (DNV CG-0339).",
+    "source": "Источник"
   },
   "inventory": {
     "title": "Склад",
@@ -189,7 +215,12 @@
     "movement_transfer_in": "Передача (приход)",
     "movement_transfer_out": "Передача (расход)",
     "no_parts": "Нет деталей",
-    "add_first_part": "Создайте первую деталь."
+    "add_first_part": "Создайте первую деталь.",
+    "select_part_hint": "Нажмите на деталь, чтобы просмотреть уровни запасов и историю движений.",
+    "stock_by_location": "Запасы по местам хранения",
+    "movements_header": "Движения",
+    "no_movements": "Движения не зарегистрированы.",
+    "columns_picker": "Столбцы"
   },
   "purchase": {
     "title": "Закупки",
@@ -624,7 +655,9 @@
     "implemented": "Внедрено",
     "gaps": "Пробелы"
   },
-  "analytics": { "no_dashboards": "Дашборды не зарегистрированы" },
+  "analytics": {
+    "no_dashboards": "Дашборды не зарегистрированы"
+  },
   "vessels_page": {
     "title": "Суда и пользователи",
     "vessel": "судно",
@@ -637,7 +670,9 @@
     "imo": "ИМО",
     "users_assigned_to": "Пользователи назначены на",
     "no_vessel_users": "Пользователей нет на судне.",
-    "fleet_wide_users": "Пользователи флота (без судна)"
+    "fleet_wide_users": "Пользователи флота (без судна)",
+    "vessel_name": "Название судна",
+    "imo_optional": "Номер IMO (необязательно)"
   },
   "companies": {
     "title": "Компании",
@@ -651,6 +686,12 @@
     "col_action": "Действие",
     "no_companies": "Компаний нет.",
     "add_admin": "+ Администратор",
+    "company_name": "Название компании",
+    "short_name_optional": "Краткое название (необязательно)",
+    "admin_email": "Email администратора",
+    "admin_username": "Имя пользователя администратора",
+    "admin_password": "Пароль администратора",
+    "create_company": "Создать компанию",
     "edit": "Редактировать"
   },
   "integrations": {
@@ -697,7 +738,10 @@
     "save_draft": "Сохранить как черновик",
     "submission_history": "История подачи"
   },
-  "settings": { "language": "Язык", "select_language": "Выбрать язык" },
+  "settings": {
+    "language": "Язык",
+    "select_language": "Выбрать язык"
+  },
   "profile": {
     "title": "Профиль",
     "personal_info": "Личная информация",

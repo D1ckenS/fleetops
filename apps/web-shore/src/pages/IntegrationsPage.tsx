@@ -129,6 +129,7 @@ function LabeledInput({
 }
 
 function SaveBtn({ loading, onClick }: { loading: boolean; onClick: () => void }) {
+  const { t } = useTranslation();
   return (
     <button
       onClick={onClick}
@@ -145,12 +146,13 @@ function SaveBtn({ loading, onClick }: { loading: boolean; onClick: () => void }
         opacity: loading ? 0.7 : 1,
       }}
     >
-      {loading ? 'Saving…' : 'Save'}
+      {loading ? t('common.saving') : t('common.save')}
     </button>
   );
 }
 
 function StatusBadge({ ok }: { ok: boolean }) {
+  const { t } = useTranslation();
   return (
     <span
       style={{
@@ -162,7 +164,7 @@ function StatusBadge({ ok }: { ok: boolean }) {
         borderRadius: 4,
       }}
     >
-      {ok ? 'Configured' : 'Not configured'}
+      {ok ? t('common.configured') : t('common.not_configured')}
     </span>
   );
 }

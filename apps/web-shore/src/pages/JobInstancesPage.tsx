@@ -79,7 +79,7 @@ export function JobInstancesPage() {
         <div>
           <h1 className="text-xl font-bold text-slate-900">{t('maintenance.tab_jobs')}</h1>
           <p className="text-sm text-slate-500 mt-0.5">
-            Scheduled maintenance tasks for this vessel
+            {t('maintenance.scheduled_tasks')}
           </p>
         </div>
         <Button onClick={() => setScheduleOpen(true)}>{t('maintenance.new_instance')}</Button>
@@ -94,9 +94,9 @@ export function JobInstancesPage() {
         {error && <div className="p-6 text-sm text-red-600">{error}</div>}
         {!loading && !error && instances.length === 0 && (
           <div className="p-8 text-center text-slate-500 text-sm">
-            No job instances found.{' '}
+            {t('maintenance.no_instances')}{' '}
             <button className="text-blue-600 hover:underline" onClick={() => setScheduleOpen(true)}>
-              Schedule the first one.
+              {t('maintenance.schedule_first')}
             </button>
           </div>
         )}

@@ -1,5 +1,8 @@
 {
-  "app": { "name": "FleetOps", "tagline": "Maritime Flottenmanagement" },
+  "app": {
+    "name": "FleetOps",
+    "tagline": "Maritime Flottenmanagement"
+  },
   "nav": {
     "start": "Start",
     "maintenance": "Wartung",
@@ -76,7 +79,17 @@
     "not_applicable": "N/A",
     "days": "Tage",
     "hours": "Std",
-    "or": "oder"
+    "or": "oder",
+    "notes_placeholder": "Beobachtungen, Befunde…",
+    "qty": "Menge",
+    "title": "Titel",
+    "interval": "Intervall",
+    "priority": "Priorität",
+    "component": "Komponente",
+    "username": "Benutzername",
+    "confirm_password": "Passwort bestätigen",
+    "select_placeholder": "— Auswählen —",
+    "part": "Teil"
   },
   "vessel": {
     "no_vessel_selected": "Kein Schiff ausgewählt",
@@ -156,7 +169,20 @@
     "delete_component_confirm": "Komponente löschen? Dies kann nicht rückgängig gemacht werden.",
     "hours_worked": "Geleistete Stunden",
     "parts_consumed": "Verbrauchte Teile",
-    "photos": "Fotos"
+    "photos": "Fotos",
+    "scheduled_tasks": "Geplante Wartungsaufgaben für dieses Schiff",
+    "no_rh_interval_jobs": "Keine Betriebsstunden-Intervall-Aufgaben",
+    "log_reading": "Ablesung erfassen",
+    "no_templates": "Noch keine Aufgabenvorlagen. Fügen Sie eine über den Komponenten-Tab hinzu.",
+    "typical_parts_used": "Typische verwendete Teile",
+    "no_typical_parts": "Keine Teile definiert. Diese füllen das Abzeichnungsformular vor.",
+    "no_parts_recorded": "Keine Teile erfasst. Leer lassen, wenn keine verwendet.",
+    "add_part": "+ Teil hinzufügen",
+    "signed_by": "Unterzeichnet von",
+    "no_instances": "Keine Aufgabeninstanzen gefunden.",
+    "schedule_first": "Erste planen.",
+    "immutable_records": "Alle Datensätze sind unveränderlich — Aktualisierungen und Löschungen werden auf Datenbankebene abgelehnt (DNV CG-0339).",
+    "source": "Quelle"
   },
   "inventory": {
     "title": "Inventar",
@@ -189,7 +215,12 @@
     "movement_transfer_in": "Eingang Transfer",
     "movement_transfer_out": "Ausgang Transfer",
     "no_parts": "Noch keine Teile",
-    "add_first_part": "Erstellen Sie Ihr erstes Teil."
+    "add_first_part": "Erstellen Sie Ihr erstes Teil.",
+    "select_part_hint": "Klicken Sie auf ein Teil, um Bestände und Bewegungen anzuzeigen.",
+    "stock_by_location": "Bestand nach Lagerort",
+    "movements_header": "Bewegungen",
+    "no_movements": "Keine Bewegungen erfasst.",
+    "columns_picker": "Spalten"
   },
   "purchase": {
     "title": "Einkauf",
@@ -624,7 +655,9 @@
     "implemented": "Umgesetzt",
     "gaps": "Lücken"
   },
-  "analytics": { "no_dashboards": "Keine Dashboards registriert" },
+  "analytics": {
+    "no_dashboards": "Keine Dashboards registriert"
+  },
   "vessels_page": {
     "title": "Schiffe & Benutzer",
     "vessel": "Schiff",
@@ -637,7 +670,9 @@
     "imo": "IMO",
     "users_assigned_to": "Benutzer zugewiesen an",
     "no_vessel_users": "Noch keine Benutzer diesem Schiff zugewiesen.",
-    "fleet_wide_users": "Flottenweite Benutzer (kein Schiff zugewiesen)"
+    "fleet_wide_users": "Flottenweite Benutzer (kein Schiff zugewiesen)",
+    "vessel_name": "Schiffsname",
+    "imo_optional": "IMO-Nummer (optional)"
   },
   "companies": {
     "title": "Unternehmen",
@@ -651,7 +686,13 @@
     "col_action": "Aktion",
     "no_companies": "Noch keine Unternehmen.",
     "add_admin": "+ Admin",
-    "edit": "Bearbeiten"
+    "edit": "Bearbeiten",
+    "company_name": "Unternehmensname",
+    "short_name_optional": "Kurzname (optional)",
+    "admin_email": "Admin-E-Mail",
+    "admin_username": "Admin-Benutzername",
+    "admin_password": "Admin-Passwort",
+    "create_company": "Unternehmen erstellen"
   },
   "integrations": {
     "title": "Integrationen",
@@ -697,7 +738,10 @@
     "save_draft": "Als Entwurf speichern",
     "submission_history": "Einreichungshistorie"
   },
-  "settings": { "language": "Sprache", "select_language": "Sprache auswählen" },
+  "settings": {
+    "language": "Sprache",
+    "select_language": "Sprache auswählen"
+  },
   "profile": {
     "title": "Profil",
     "personal_info": "Persönliche Informationen",

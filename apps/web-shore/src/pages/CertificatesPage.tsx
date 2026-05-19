@@ -210,12 +210,12 @@ function RegisterTab({ certs, loading }: { certs: Certificate[]; loading: boolea
             borderBottom: '1px solid var(--border)',
           }}
         >
-          <span>Cert ID</span>
-          <span>Cat</span>
-          <span>Title</span>
-          <span>Authority</span>
-          <span>Expires</span>
-          <span style={{ textAlign: 'right' }}>Days left</span>
+          <span>{t('certificates.col_id')}</span>
+          <span>{t('certificates.col_cat')}</span>
+          <span>{t('certificates.col_title')}</span>
+          <span>{t('certificates.col_authority')}</span>
+          <span>{t('certificates.col_expires')}</span>
+          <span style={{ textAlign: 'right' }}>{t('certificates.col_days_left')}</span>
           <span />
         </div>
 
@@ -821,13 +821,13 @@ function InspectionsTab({ inspections, loading }: { inspections: Inspection[]; l
               borderBottom: '1px solid var(--hairline)',
             }}
           >
-            <span>Date</span>
-            <span>ID</span>
-            <span>Kind / MoU</span>
-            <span>Port</span>
-            <span>Findings</span>
-            <span style={{ textAlign: 'right' }}>Defs</span>
-            <span>Detained</span>
+            <span>{t('common.date')}</span>
+            <span>{t('certificates.col_id')}</span>
+            <span>{t('certificates.col_kind_mou')}</span>
+            <span>{t('purchase.col_port')}</span>
+            <span>{t('certificates.col_findings')}</span>
+            <span style={{ textAlign: 'right' }}>{t('certificates.col_defs')}</span>
+            <span>{t('certificates.col_detained')}</span>
             <span />
           </div>
           {inspections.length === 0 ? (

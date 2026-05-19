@@ -1,5 +1,8 @@
 {
-  "app": { "name": "FleetOps", "tagline": "Pamamahala ng Pandagat na Sasakyang-dagat" },
+  "app": {
+    "name": "FleetOps",
+    "tagline": "Pamamahala ng Pandagat na Sasakyang-dagat"
+  },
   "nav": {
     "start": "Simula",
     "maintenance": "Pagpapanatili",
@@ -76,7 +79,17 @@
     "not_applicable": "Hindi Applicable",
     "days": "araw",
     "hours": "oras",
-    "or": "o"
+    "or": "o",
+    "notes_placeholder": "Mga obserbasyon, natuklasan…",
+    "qty": "Dami",
+    "title": "Pamagat",
+    "interval": "Agwat",
+    "priority": "Priyoridad",
+    "component": "Bahagi",
+    "username": "Username",
+    "confirm_password": "Kumpirmahin ang password",
+    "select_placeholder": "— Pumili —",
+    "part": "Bahagi"
   },
   "vessel": {
     "no_vessel_selected": "Walang piling barko",
@@ -156,7 +169,20 @@
     "delete_component_confirm": "Burahin ang bahagi? Hindi ito mababawi.",
     "hours_worked": "Mga Oras ng Trabaho",
     "parts_consumed": "Mga Bahaging Ginamit",
-    "photos": "Mga Larawan"
+    "photos": "Mga Larawan",
+    "scheduled_tasks": "Mga nakatalagang gawain ng pagpapanatili para sa barkong ito",
+    "no_rh_interval_jobs": "Walang mga trabahong may agwat ng takbo na oras",
+    "log_reading": "Mag-log ng pagbabasa",
+    "no_templates": "Wala pang mga template ng trabaho. Magdagdag ng isa sa pamamagitan ng tab na Mga Bahagi.",
+    "typical_parts_used": "Karaniwang ginagamit na mga bahagi",
+    "no_typical_parts": "Walang tinukoy na mga bahagi. Ang mga ito ay mapupunan na ang form ng sign-off.",
+    "no_parts_recorded": "Walang bahaging naitala. Iwanang blangko kung walang ginamit.",
+    "add_part": "+ Magdagdag ng bahagi",
+    "signed_by": "Nilagdaan ni",
+    "no_instances": "Walang nahanap na mga trabaho.",
+    "schedule_first": "Itala ang una.",
+    "immutable_records": "Lahat ng tala ay hindi nababago — ang mga update at tanggal ay tinatanggihan sa antas ng database (DNV CG-0339).",
+    "source": "Pinagmulan"
   },
   "inventory": {
     "title": "Imbentaryo",
@@ -189,7 +215,12 @@
     "movement_transfer_in": "Transfer Papasok",
     "movement_transfer_out": "Transfer Palabas",
     "no_parts": "Wala pang mga bahagi",
-    "add_first_part": "Lumikha ng inyong unang bahagi."
+    "add_first_part": "Lumikha ng inyong unang bahagi.",
+    "select_part_hint": "I-click ang isang bahagi upang makita ang mga antas ng stock at kasaysayan ng paggalaw.",
+    "stock_by_location": "Stock ayon sa lokasyon",
+    "movements_header": "Mga Galaw",
+    "no_movements": "Walang mga galaw na naitala.",
+    "columns_picker": "Mga Kolum"
   },
   "purchase": {
     "title": "Pagbili",
@@ -624,7 +655,9 @@
     "implemented": "Naipatupad",
     "gaps": "Mga Puwang"
   },
-  "analytics": { "no_dashboards": "Walang nakarehistrong dashboard" },
+  "analytics": {
+    "no_dashboards": "Walang nakarehistrong dashboard"
+  },
   "vessels_page": {
     "title": "Mga Barko at Gumagamit",
     "vessel": "barko",
@@ -637,7 +670,9 @@
     "imo": "IMO",
     "users_assigned_to": "Mga gumagamit na nakatoka sa",
     "no_vessel_users": "Wala pang gumagamit na nakatoka sa barkong ito.",
-    "fleet_wide_users": "Mga gumagamit ng buong fleet (walang barkong nakatoka)"
+    "fleet_wide_users": "Mga gumagamit ng buong fleet (walang barkong nakatoka)",
+    "vessel_name": "Pangalan ng barko",
+    "imo_optional": "IMO number (opsyonal)"
   },
   "companies": {
     "title": "Mga Kumpanya",
@@ -651,6 +686,12 @@
     "col_action": "Aksyon",
     "no_companies": "Wala pang mga kumpanya.",
     "add_admin": "+ Admin",
+    "company_name": "Pangalan ng kumpanya",
+    "short_name_optional": "Maikling pangalan (opsyonal)",
+    "admin_email": "Email ng admin",
+    "admin_username": "Username ng admin",
+    "admin_password": "Password ng admin",
+    "create_company": "Lumikha ng kumpanya",
     "edit": "I-edit"
   },
   "integrations": {
@@ -697,7 +738,10 @@
     "save_draft": "I-save bilang Draft",
     "submission_history": "Kasaysayan ng Pagsumite"
   },
-  "settings": { "language": "Wika", "select_language": "Pumili ng Wika" },
+  "settings": {
+    "language": "Wika",
+    "select_language": "Pumili ng Wika"
+  },
   "profile": {
     "title": "Profile",
     "personal_info": "Personal na impormasyon",

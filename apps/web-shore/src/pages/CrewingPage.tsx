@@ -226,6 +226,7 @@ function Chip({
 // ─── Crew tab ─────────────────────────────────────────────────────────────────
 
 function CrewDetailPane({ c, onClose }: { c: CrewMember; onClose: () => void }) {
+  const { t } = useTranslation();
   const [certs, setCerts] = useState<CrewCert[]>([]);
 
   useEffect(() => {
@@ -393,13 +394,13 @@ function CrewDetailPane({ c, onClose }: { c: CrewMember; onClose: () => void }) 
             cursor: 'pointer',
           }}
         >
-          Roster
+          {t('crewing.roster')}
         </button>
         <button
           className="flex-1 py-1.5 rounded-2 text-xs font-medium"
           style={{ background: 'var(--navy)', color: '#fff', border: 'none', cursor: 'pointer' }}
         >
-          Open profile
+          {t('crewing.open_profile')}
         </button>
       </div>
     </aside>
@@ -452,12 +453,12 @@ function CrewTab({ crew, loading }: { crew: CrewMember[]; loading: boolean }) {
           }}
         >
           <span />
-          <span>Crew / rank</span>
-          <span>Dept</span>
-          <span>Nat</span>
-          <span>Sign-off</span>
-          <span>MLC rest</span>
-          <span>Certs</span>
+          <span>{t('crewing.col_crew_rank')}</span>
+          <span>{t('crewing.col_dept')}</span>
+          <span>{t('crewing.col_nat')}</span>
+          <span>{t('crewing.col_signoff')}</span>
+          <span>{t('crewing.col_mlc_rest')}</span>
+          <span>{t('crewing.col_certs')}</span>
         </div>
 
         {/* Rows */}
@@ -1112,6 +1113,7 @@ function RestHoursTab({ crew, loading: crewLoading }: { crew: CrewMember[]; load
 // ─── Certificates tab ─────────────────────────────────────────────────────────
 
 function CertificatesTab() {
+  const { t } = useTranslation();
   const [certs, setCerts] = useState<CrewCert[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'critical' | 'soon'>('all');
@@ -1180,12 +1182,12 @@ function CertificatesTab() {
           borderBottom: '1px solid var(--border)',
         }}
       >
-        <span>Cert</span>
-        <span>Crew</span>
-        <span>Type</span>
-        <span>Issuing authority</span>
-        <span>Expires</span>
-        <span>Days left</span>
+        <span>{t('crewing.col_cert')}</span>
+        <span>{t('crewing.col_crew')}</span>
+        <span>{t('crewing.col_type')}</span>
+        <span>{t('crewing.col_authority')}</span>
+        <span>{t('crewing.col_expires')}</span>
+        <span>{t('crewing.col_days_left')}</span>
         <span />
       </div>
 

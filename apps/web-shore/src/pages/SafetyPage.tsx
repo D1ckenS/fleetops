@@ -162,6 +162,7 @@ function StatusBadge({ s }: { s: string }) {
 // ─── Permits tab ──────────────────────────────────────────────────────────────
 
 function PermitsTab({ permits, loading }: { permits: WorkPermit[]; loading: boolean }) {
+  const { t } = useTranslation();
   const [selected, setSelected] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | PermitStatus>('all');
 
@@ -214,7 +215,7 @@ function PermitsTab({ permits, loading }: { permits: WorkPermit[]; loading: bool
           ))}
         </div>
         {visible.length === 0 ? (
-          <EmptyState msg="No permits match this filter." />
+          <EmptyState msg={t('safety.no_permits')} />
         ) : (
           <div className="flex-1 overflow-y-auto">
             {visible.map((p) => {
@@ -269,7 +270,7 @@ function PermitsTab({ permits, loading }: { permits: WorkPermit[]; loading: bool
           style={{ background: 'var(--bg)' }}
         >
           <p className="text-xs" style={{ color: 'var(--ink-3)' }}>
-            Select a permit to view details
+            {t('safety.select_permit_hint')}
           </p>
         </div>
       ) : (
@@ -307,9 +308,9 @@ function PermitsTab({ permits, loading }: { permits: WorkPermit[]; loading: bool
             }}
           >
             {[
-              ['Valid from', sel.validFrom],
-              ['Valid to', sel.validTo],
-              [sel.status === 'active' ? 'Time remaining' : 'Status', sel.countdown],
+              [t('safety.valid_from'), sel.validFrom],
+              [t('safety.valid_to'), sel.validTo],
+              [sel.status === 'active' ? t('safety.time_remaining') : t('common.status'), sel.countdown],
             ].map(([k, v]) => (
               <div key={k} className="px-4 py-3" style={{ background: 'var(--surface)' }}>
                 <div
@@ -375,9 +376,9 @@ function PermitsTab({ permits, loading }: { permits: WorkPermit[]; loading: bool
           {/* Hazards + PPE */}
           <div className="grid gap-3 px-4 py-0 pb-3" style={{ gridTemplateColumns: '1fr 1fr' }}>
             {[
-              { label: 'Hazards', items: sel.hazards, prefix: '!', prefixColor: 'var(--sig-red)' },
+              { label: t('safety.hazards'), items: sel.hazards, prefix: '!', prefixColor: 'var(--sig-red)' },
               {
-                label: 'PPE required',
+                label: t('safety.ppe_required'),
                 items: sel.ppe,
                 prefix: '✓',
                 prefixColor: 'var(--sig-green)',
@@ -429,7 +430,7 @@ function PermitsTab({ permits, loading }: { permits: WorkPermit[]; loading: bool
                   background: 'var(--surface-sunk)',
                 }}
               >
-                Sign-offs
+                {t('safety.sign_offs')}
               </div>
               {sel.coSigners.map((s, i) => (
                 <div
@@ -474,7 +475,7 @@ function PermitsTab({ permits, loading }: { permits: WorkPermit[]; loading: bool
                   cursor: 'pointer',
                 }}
               >
-                Suspend
+                {t('safety.suspend')}
               </button>
             )}
             {sel.status === 'awaiting' && (
@@ -487,7 +488,7 @@ function PermitsTab({ permits, loading }: { permits: WorkPermit[]; loading: bool
                   color: 'var(--ink)',
                 }}
               >
-                Request changes
+                {t('safety.request_changes')}
               </button>
             )}
             {sel.status === 'awaiting' && (
@@ -500,7 +501,7 @@ function PermitsTab({ permits, loading }: { permits: WorkPermit[]; loading: bool
                   cursor: 'pointer',
                 }}
               >
-                Approve &amp; issue
+                {t('safety.approve_issue')}
               </button>
             )}
             {sel.status === 'active' && (
@@ -513,7 +514,7 @@ function PermitsTab({ permits, loading }: { permits: WorkPermit[]; loading: bool
                   cursor: 'pointer',
                 }}
               >
-                Log gas check
+                {t('safety.log_gas_check')}
               </button>
             )}
             {sel.status === 'closed' && (
@@ -526,7 +527,7 @@ function PermitsTab({ permits, loading }: { permits: WorkPermit[]; loading: bool
                   color: 'var(--ink)',
                 }}
               >
-                Clone
+                {t('safety.clone')}
               </button>
             )}
           </div>
@@ -539,6 +540,7 @@ function PermitsTab({ permits, loading }: { permits: WorkPermit[]; loading: bool
 // ─── Findings tab ─────────────────────────────────────────────────────────────
 
 function FindingsTab({ findings, loading }: { findings: SafetyFinding[]; loading: boolean }) {
+  const { t } = useTranslation();
   const [filter, setFilter] = useState<'all' | 'open' | FindingKind>('all');
 
   const visible = findings.filter((f) =>
@@ -628,11 +630,11 @@ function FindingsTab({ findings, loading }: { findings: SafetyFinding[]; loading
               className="text-[10.5px] font-semibold uppercase tracking-widest flex-1"
               style={{ color: 'var(--ink-3)' }}
             >
-              Findings register
+              {t('safety.findings_register')}
             </span>
             {(['all', 'open', 'near-miss', 'NC', 'observation'] as const).map((f) => (
               <button key={f} onClick={() => setFilter(f)} style={chipStyle(filter === f)}>
-                {f === 'near-miss' ? 'Near-miss' : f.charAt(0).toUpperCase() + f.slice(1)}
+                {f === 'near-miss' ? t('safety.near_miss') : f.charAt(0).toUpperCase() + f.slice(1)}
               </button>
             ))}
             <button
@@ -644,7 +646,7 @@ function FindingsTab({ findings, loading }: { findings: SafetyFinding[]; loading
                 cursor: 'pointer',
               }}
             >
-              + Raise
+              {t('safety.findings_register')}
             </button>
           </div>
           <div
@@ -656,14 +658,14 @@ function FindingsTab({ findings, loading }: { findings: SafetyFinding[]; loading
               borderBottom: '1px solid var(--hairline)',
             }}
           >
-            <span>ID</span>
-            <span>Date</span>
-            <span>Kind</span>
-            <span>Title / location</span>
-            <span>Raised by</span>
-            <span>Sev</span>
-            <span>CAPA</span>
-            <span>Status</span>
+            <span>{t('safety.col_id')}</span>
+            <span>{t('common.date')}</span>
+            <span>{t('safety.col_kind')}</span>
+            <span>{t('safety.col_title_location')}</span>
+            <span>{t('safety.col_raised_by')}</span>
+            <span>{t('safety.col_sev')}</span>
+            <span>{t('safety.col_capa')}</span>
+            <span>{t('common.status')}</span>
           </div>
           {visible.length === 0 ? (
             <EmptyState msg="No findings match this filter. Safety findings, near-misses and observations will appear here." />
@@ -797,6 +799,7 @@ function RiskMatrix({ l, s }: { l: number; s: number }) {
 }
 
 function JhaTab({ jhas, loading }: { jhas: JHA[]; loading: boolean }) {
+  const { t } = useTranslation();
   const [selected, setSelected] = useState<string | null>(null);
   const sel = jhas.find((j) => j.id === selected) ?? jhas[0] ?? null;
 
@@ -887,7 +890,7 @@ function JhaTab({ jhas, loading }: { jhas: JHA[]; loading: boolean }) {
           style={{ background: 'var(--bg)' }}
         >
           <p className="text-xs" style={{ color: 'var(--ink-3)' }}>
-            Select a JHA to view risk matrices and controls
+            {t('safety.select_jha_hint')}
           </p>
         </div>
       ) : (
@@ -914,7 +917,7 @@ function JhaTab({ jhas, loading }: { jhas: JHA[]; loading: boolean }) {
                   color: 'var(--ink)',
                 }}
               >
-                Revise
+                {t('safety.revise')}
               </button>
               <button
                 className="px-2 py-1 rounded-1 text-[11px]"
@@ -925,7 +928,7 @@ function JhaTab({ jhas, loading }: { jhas: JHA[]; loading: boolean }) {
                   cursor: 'pointer',
                 }}
               >
-                Open as permit JHA
+                {t('safety.open_as_permit_jha')}
               </button>
             </div>
             <h2 className="text-[18px] font-semibold m-0" style={{ letterSpacing: '-0.005em' }}>
@@ -989,7 +992,7 @@ function JhaTab({ jhas, loading }: { jhas: JHA[]; loading: boolean }) {
                   background: 'var(--surface-sunk)',
                 }}
               >
-                Key controls
+                {t('safety.key_controls')}
               </div>
               {sel.keyControls.map((c, i) => (
                 <div
@@ -1019,6 +1022,7 @@ function JhaTab({ jhas, loading }: { jhas: JHA[]; loading: boolean }) {
 // ─── Equipment tab ────────────────────────────────────────────────────────────
 
 function EquipmentTab({ equipment, loading }: { equipment: SafetyEquipment[]; loading: boolean }) {
+  const { t } = useTranslation();
   if (loading)
     return (
       <div className="flex-1 flex items-center justify-center">
@@ -1124,12 +1128,12 @@ function EquipmentTab({ equipment, loading }: { equipment: SafetyEquipment[]; lo
                   borderBottom: '1px solid var(--hairline)',
                 }}
               >
-                <span>ID</span>
-                <span>Item</span>
-                <span>Location</span>
-                <span>Status</span>
-                <span>Last check</span>
-                <span>Next check</span>
+                <span>{t('safety.col_id')}</span>
+                <span>{t('common.name')}</span>
+                <span>{t('inventory.location')}</span>
+                <span>{t('common.status')}</span>
+                <span>{t('safety.last_check')}</span>
+                <span>{t('certificates.next_survey')}</span>
                 <span />
               </div>
               {items.length === 0 ? (
@@ -1198,6 +1202,7 @@ function EquipmentTab({ equipment, loading }: { equipment: SafetyEquipment[]; lo
 // ─── CAPA tab ─────────────────────────────────────────────────────────────────
 
 function CapaTab({ capas, loading }: { capas: Capa[]; loading: boolean }) {
+  const { t } = useTranslation();
   if (loading)
     return (
       <div className="flex-1 flex items-center justify-center">
@@ -1298,7 +1303,7 @@ function CapaTab({ capas, loading }: { capas: Capa[]; loading: boolean }) {
               <div className="p-2 flex flex-col gap-1.5">
                 {items.length === 0 ? (
                   <div className="py-4 text-center text-[11px]" style={{ color: 'var(--ink-3)' }}>
-                    No items
+                    {t('safety.no_items')}
                   </div>
                 ) : (
                   items.map((c) => (

@@ -66,9 +66,10 @@ interface NodeActions {
 }
 
 function JobRow({ job, actions }: { job: Job; actions: NodeActions }) {
+  const { t } = useTranslation();
   const intervalLabel = job.intervalDays
-    ? `Every ${job.intervalDays} days`
-    : `Every ${job.intervalRunningHours} h`;
+    ? `${t('maintenance.every')} ${job.intervalDays} ${t('maintenance.days')}`
+    : `${t('maintenance.every')} ${job.intervalRunningHours} ${t('maintenance.hours_abbr')}`;
   return (
     <div className="flex items-center gap-2 py-1.5 px-3 group text-xs hover:bg-slate-50 rounded">
       <span className="text-slate-400">└</span>
@@ -84,13 +85,13 @@ function JobRow({ job, actions }: { job: Job; actions: NodeActions }) {
           onClick={() => actions.onScheduleJob(job.id, job.componentId)}
           className="px-2 py-0.5 rounded border border-slate-300 text-slate-600 hover:border-blue-400 hover:text-blue-600 transition-colors"
         >
-          + Instance
+          {t('maintenance.add_instance')}
         </button>
         <button
           onClick={() => actions.onEditJob(job, '')}
           className="px-2 py-0.5 rounded border border-slate-300 text-slate-600 hover:border-slate-500 hover:text-slate-800 transition-colors"
         >
-          Edit
+          {t('common.edit')}
         </button>
       </div>
     </div>
@@ -108,6 +109,7 @@ function ComponentNode({
   actions: NodeActions;
   jobsByComponentId: Map<string, Job[]>;
 }) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(depth < 2);
   const jobs = jobsByComponentId.get(node.id) ?? [];
   const hasContent = node.children.length > 0 || jobs.length > 0;
@@ -141,31 +143,31 @@ function ComponentNode({
             onClick={() => actions.onLogHours(node)}
             className="text-xs px-2 py-0.5 rounded border border-slate-300 text-slate-600 hover:border-green-400 hover:text-green-700 transition-colors"
           >
-            Log h
+            {t('maintenance.log_reading')}
           </button>
           <button
             onClick={() => actions.onAddJob(node.id, node.name)}
             className="text-xs px-2 py-0.5 rounded border border-slate-300 text-slate-600 hover:border-blue-400 hover:text-blue-600 transition-colors"
           >
-            + Job
+            {t('maintenance.new_job')}
           </button>
           <button
             onClick={() => actions.onAddChild(node.id, node.name)}
             className="text-xs px-2 py-0.5 rounded border border-slate-300 text-slate-600 hover:border-slate-500 hover:text-slate-800 transition-colors"
           >
-            + Child
+            {t('maintenance.add_child')}
           </button>
           <button
             onClick={() => actions.onEditComponent(node)}
             className="text-xs px-2 py-0.5 rounded border border-slate-300 text-slate-600 hover:border-slate-500 hover:text-slate-800 transition-colors"
           >
-            Edit
+            {t('common.edit')}
           </button>
           <button
             onClick={() => actions.onDeleteComponent(node.id, node.name)}
             className="text-xs px-2 py-0.5 rounded border border-red-200 text-red-400 hover:border-red-400 hover:text-red-600 transition-colors"
           >
-            Delete
+            {t('common.delete')}
           </button>
         </div>
       </div>
