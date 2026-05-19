@@ -220,7 +220,13 @@
     "stock_by_location": "Запасы по местам хранения",
     "movements_header": "Движения",
     "no_movements": "Движения не зарегистрированы.",
-    "columns_picker": "Столбцы"
+    "columns_picker": "Столбцы",
+    "col_code": "Код детали",
+    "col_description": "Описание",
+    "col_min": "Мин",
+    "col_reorder": "Точка заказа",
+    "col_max": "Макс",
+    "by_status": "По статусу"
   },
   "purchase": {
     "title": "Закупки",

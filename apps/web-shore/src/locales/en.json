@@ -220,7 +220,13 @@
     "stock_by_location": "Stock by location",
     "movements_header": "Movements",
     "no_movements": "No movements recorded.",
-    "columns_picker": "Columns"
+    "columns_picker": "Columns",
+    "col_code": "Part code",
+    "col_description": "Description",
+    "col_min": "Min",
+    "col_reorder": "Reorder",
+    "col_max": "Max",
+    "by_status": "By status"
   },
   "purchase": {
     "title": "Purchase",

@@ -220,7 +220,13 @@
     "stock_by_location": "المخزون حسب الموقع",
     "movements_header": "الحركات",
     "no_movements": "لم يتم تسجيل أي حركات.",
-    "columns_picker": "الأعمدة"
+    "columns_picker": "الأعمدة",
+    "col_code": "رمز القطعة",
+    "col_description": "الوصف",
+    "col_min": "الحد الأدنى",
+    "col_reorder": "نقطة إعادة الطلب",
+    "col_max": "الحد الأقصى",
+    "by_status": "حسب الحالة"
   },
   "purchase": {
     "title": "المشتريات",

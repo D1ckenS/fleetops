@@ -220,7 +220,13 @@
     "stock_by_location": "Voorraad per locatie",
     "movements_header": "Bewegingen",
     "no_movements": "Geen bewegingen geregistreerd.",
-    "columns_picker": "Kolommen"
+    "columns_picker": "Kolommen",
+    "col_code": "Onderdeelnummer",
+    "col_description": "Omschrijving",
+    "col_min": "Min",
+    "col_reorder": "Bestelpunt",
+    "col_max": "Max",
+    "by_status": "Op status"
   },
   "purchase": {
     "title": "Inkoop",

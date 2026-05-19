@@ -63,7 +63,6 @@ const T = {
 };
 const STATUS_C = { green: T.green, amber: T.amber, red: T.red, purple: T.purple };
 const STATUS_BG = { green: T.greenBg, amber: T.amberBg, red: T.redBg, purple: T.purpleBg };
-const STATUS_LABEL = { green: 'IN STOCK', amber: 'BELOW MIN', red: 'AT REORDER', purple: 'ZERO' };
 const MOVE_C: Record<string, string> = {
   RECEIPT: T.green,
   CONSUMPTION: T.red,
@@ -227,6 +226,7 @@ function DetailPane({
   onBarcodes: (id: string, name: string) => void;
 }) {
   const { t } = useTranslation();
+  const STATUS_LABEL = { green: t('inventory.status_green'), amber: t('inventory.status_amber'), red: t('inventory.status_red'), purple: t('inventory.status_purple') };
   const [movements, setMovements] = useState<Movement[]>([]);
   const [loadingMov, setLoadingMov] = useState(false);
 
@@ -513,24 +513,24 @@ function DetailPane({
 
 // ── Column definitions — append here to add more ───────────────────────────
 const COLUMNS = [
-  { key: 'status', label: '', width: 28 },
-  { key: 'code', label: 'Part code', width: 110 },
-  { key: 'name', label: 'Description', width: 240 },
-  { key: 'location', label: 'Location', width: 130 },
-  { key: 'rob', label: 'ROB', width: 70, align: 'right' },
-  { key: 'unit', label: 'Unit', width: 50 },
-  { key: 'min', label: 'Min', width: 55, align: 'right' },
-  { key: 'reorder', label: 'Reorder', width: 65, align: 'right' },
-  { key: 'max', label: 'Max', width: 55, align: 'right' },
+  { key: 'status', labelKey: '', width: 28 },
+  { key: 'code', labelKey: 'inventory.col_code', width: 110 },
+  { key: 'name', labelKey: 'inventory.col_description', width: 240 },
+  { key: 'location', labelKey: 'inventory.location', width: 130 },
+  { key: 'rob', labelKey: 'inventory.rob', width: 70, align: 'right' },
+  { key: 'unit', labelKey: 'inventory.unit', width: 50 },
+  { key: 'min', labelKey: 'inventory.col_min', width: 55, align: 'right' },
+  { key: 'reorder', labelKey: 'inventory.col_reorder', width: 65, align: 'right' },
+  { key: 'max', labelKey: 'inventory.col_max', width: 55, align: 'right' },
 ] as const;
 type ColKey = (typeof COLUMNS)[number]['key'];
 
-const FILTERS: { id: StatusFilter; label: string }[] = [
-  { id: 'all', label: 'All' },
-  { id: 'green', label: '≥ min' },
-  { id: 'amber', label: '< min' },
-  { id: 'red', label: '≤ reorder' },
-  { id: 'purple', label: 'Zero' },
+const FILTER_KEYS = [
+  { id: 'all' as StatusFilter, labelKey: 'inventory.filter_all' },
+  { id: 'green' as StatusFilter, labelKey: 'inventory.filter_in_stock' },
+  { id: 'amber' as StatusFilter, labelKey: 'inventory.filter_below_min' },
+  { id: 'red' as StatusFilter, labelKey: 'inventory.filter_at_reorder' },
+  { id: 'purple' as StatusFilter, labelKey: 'inventory.filter_zero' },
 ];
 
 // ── Main page ──────────────────────────────────────────────────────────────
@@ -800,7 +800,7 @@ export function InventoryPage() {
               marginBottom: 6,
             }}
           >
-            By status
+            {t('inventory.by_status')}
           </div>
           {(['green', 'amber', 'red', 'purple'] as const).map((s) => (
             <div
@@ -809,7 +809,7 @@ export function InventoryPage() {
             >
               <Dot status={s} />
               <span style={{ flex: 1, fontSize: 11.5, color: T.ink2 }}>
-                {{ green: '≥ min', amber: '< min', red: '≤ reorder', purple: 'zero' }[s]}
+                {({ green: t('inventory.filter_in_stock'), amber: t('inventory.filter_below_min'), red: t('inventory.filter_at_reorder'), purple: t('inventory.filter_zero') })[s]}
               </span>
               <span style={{ fontFamily: '"Geist Mono",monospace', fontSize: 10.5, color: T.ink }}>
                 {statusCounts[s]}
@@ -848,7 +848,7 @@ export function InventoryPage() {
           </span>
           <div style={{ flex: 1 }} />
           {/* Filter chips */}
-          {FILTERS.map((f) => (
+          {FILTER_KEYS.map((f) => (
             <button
               key={f.id}
               onClick={() => setFilter(f.id)}
@@ -865,13 +865,13 @@ export function InventoryPage() {
                 color: filter === f.id ? '#fff' : T.ink2,
               }}
             >
-              {f.label}
+              {t(f.labelKey)}
             </button>
           ))}
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search…"
+            placeholder={t('common.search') + '…'}
             style={{
               height: 28,
               padding: '0 10px',
@@ -922,7 +922,7 @@ export function InventoryPage() {
                     padding: 4,
                   }}
                 >
-                  {COLUMNS.filter((c) => c.label).map((c) => (
+                  {COLUMNS.filter((c) => c.labelKey).map((c) => (
                     <label
                       key={c.key}
                       style={{
@@ -946,7 +946,7 @@ export function InventoryPage() {
                         }
                         style={{ accentColor: T.navy }}
                       />
-                      {c.label}
+                      {t(c.labelKey)}
                     </label>
                   ))}
                 </div>
@@ -998,7 +998,7 @@ export function InventoryPage() {
                     justifyContent: 'align' in c && c.align === 'right' ? 'flex-end' : 'flex-start',
                   }}
                 >
-                  {c.label}
+                  {c.labelKey ? t(c.labelKey) : ''}
                 </div>
               ))}
               <div style={{ flex: 1 }} />

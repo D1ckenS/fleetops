@@ -220,7 +220,13 @@
     "stock_by_location": "按位置的库存",
     "movements_header": "移动",
     "no_movements": "未记录移动。",
-    "columns_picker": "列"
+    "columns_picker": "列",
+    "col_code": "零件编号",
+    "col_description": "说明",
+    "col_min": "最小值",
+    "col_reorder": "再订货点",
+    "col_max": "最大值",
+    "by_status": "按状态"
   },
   "purchase": {
     "title": "采购",

@@ -220,7 +220,13 @@
     "stock_by_location": "Αποθέματα ανά τοποθεσία",
     "movements_header": "Κινήσεις",
     "no_movements": "Δεν καταγράφηκαν κινήσεις.",
-    "columns_picker": "Στήλες"
+    "columns_picker": "Στήλες",
+    "col_code": "Κωδικός εξαρτήματος",
+    "col_description": "Περιγραφή",
+    "col_min": "Ελάχ.",
+    "col_reorder": "Σημείο αναπαραγγελίας",
+    "col_max": "Μέγ.",
+    "by_status": "Ανά κατάσταση"
   },
   "purchase": {
     "title": "Προμήθειες",

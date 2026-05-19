@@ -220,7 +220,13 @@
     "stock_by_location": "Bestand nach Lagerort",
     "movements_header": "Bewegungen",
     "no_movements": "Keine Bewegungen erfasst.",
-    "columns_picker": "Spalten"
+    "columns_picker": "Spalten",
+    "col_code": "Teilenummer",
+    "col_description": "Beschreibung",
+    "col_min": "Min",
+    "col_reorder": "Bestellpunkt",
+    "col_max": "Max",
+    "by_status": "Nach Status"
   },
   "purchase": {
     "title": "Einkauf",

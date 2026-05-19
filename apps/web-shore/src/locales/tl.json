@@ -220,7 +220,13 @@
     "stock_by_location": "Stock ayon sa lokasyon",
     "movements_header": "Mga Galaw",
     "no_movements": "Walang mga galaw na naitala.",
-    "columns_picker": "Mga Kolum"
+    "columns_picker": "Mga Kolum",
+    "col_code": "Code ng bahagi",
+    "col_description": "Paglalarawan",
+    "col_min": "Min",
+    "col_reorder": "Punto ng muling pag-order",
+    "col_max": "Max",
+    "by_status": "Ayon sa katayuan"
   },
   "purchase": {
     "title": "Pagbili",
